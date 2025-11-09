@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SignUp extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth; // get the shared instance of the FirebaseAuth object
 
@@ -66,17 +66,17 @@ public class SignUp extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // if successful, notify user and return to main page.
                         if(task.isSuccessful()){
-                            Toast.makeText(SignUp.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SignUp.this, MainActivity.class);
+                            Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                             startActivity(intent);
                         }else{
                             Exception e = task.getException();
                             // if fail by duplicate email, notify user.
                             if(e instanceof FirebaseAuthUserCollisionException){
-                                Toast.makeText(SignUp.this, "This email is already been used", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, "This email is already been used", Toast.LENGTH_SHORT).show();
                             }else{
                                 // Otherwise, notify user.
-                                Toast.makeText(SignUp.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

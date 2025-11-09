@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         myRef.setValue("Hello, World!");
     }
     public void GoToSignUp(android.view.View view) {
-        Intent intent = new Intent(this, SignUp.class);
+        Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
 }
