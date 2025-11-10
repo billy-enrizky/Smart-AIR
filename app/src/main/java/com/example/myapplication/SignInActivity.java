@@ -46,7 +46,6 @@ public class SignInActivity extends AppCompatActivity {
     }
     public void signInClick(android.view.View view) {
         mAuth.signInWithEmailAndPassword(emailEditText.getText().toString().trim(), passwordEditText.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            // if successful, switch to main activity
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 // if successful, notify user and return to main page.
@@ -59,6 +58,10 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    public void CreateNewAccount(android.view.View view) {
+        Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
+        startActivity(intent);
     }
 
     @Override
