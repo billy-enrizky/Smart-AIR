@@ -24,6 +24,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -60,18 +62,28 @@ public class SignUpActivity extends AppCompatActivity {
                     findViewById(R.id.textView2).setBackgroundColor(Color.parseColor("#FFCDD2"));
                     return;
                 }
+
                 // if password is not valid, then change color to red and return
                 if(!password_validation(userPasswordView)){
                     userPasswordView.setBackgroundColor(Color.parseColor("#FFCDD2"));
                     findViewById(R.id.textView3).setBackgroundColor(Color.parseColor("#FFCDD2"));
                     return;
                 }
-                // Otherwise, create new account
+               // Otherwise, create new account
                 mAuth.createUserWithEmailAndPassword(userEmailView.getText().toString().trim(), userPasswordView.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // if successful, notify user and return to main page.
                         if(task.isSuccessful()){
+                            // get reference of database
+                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                            // get reference of current user (automatically login)
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
+                            // structurize data of current user
+                            if(currentUser != null){
+                                UserData CurrentUserData = new UserData(currentUser.getUid(),userEmailView.getText().toString().trim());
+                                CurrentUserData.WriteIntoDatabase(mDatabase);
+                            }
                             Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
                             GoToMain();
                         }else{
