@@ -2,11 +2,13 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -43,18 +45,22 @@ public class SignUpActivity extends AppCompatActivity {
         EditText userPasswordView = findViewById(R.id.editTextTextPassword);
         // get the instance of the sign up button
         Button SignUpButton = findViewById(R.id.signupbutton);
+        // get the instance of the return text
+        TextView GoBackText = findViewById(R.id.textView7);
+        // underlined the return text to notify user it's clickable
+        GoBackText.setPaintFlags(GoBackText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         // Set up click listener for the sign-up button
         SignUpButton.setOnClickListener(new View.OnClickListener(){
             // On click: execute following coding
             @Override
             public void onClick(View v){
-                // if email is not valid, then change color to read and return
+                // if email is not valid, then change color to red and return
                 if(!email_validation(userEmailView)){
                     userEmailView.setBackgroundColor(Color.parseColor("#FFCDD2"));
                     findViewById(R.id.textView2).setBackgroundColor(Color.parseColor("#FFCDD2"));
                     return;
                 }
-                // if password is not valid, then change color to read and return
+                // if password is not valid, then change color to red and return
                 if(!password_validation(userPasswordView)){
                     userPasswordView.setBackgroundColor(Color.parseColor("#FFCDD2"));
                     findViewById(R.id.textView3).setBackgroundColor(Color.parseColor("#FFCDD2"));
@@ -67,8 +73,7 @@ public class SignUpActivity extends AppCompatActivity {
                         // if successful, notify user and return to main page.
                         if(task.isSuccessful()){
                             Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                            startActivity(intent);
+                            GoToMain();
                         }else{
                             Exception e = task.getException();
                             // if fail by duplicate email, notify user.
@@ -83,8 +88,14 @@ public class SignUpActivity extends AppCompatActivity {
                 });
             }
         });
+        GoBackText.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                GoToSignIn();
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -119,5 +130,13 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean password_validation(EditText PasswordView){
         String Password = PasswordView.getText().toString().trim();
         return Password.length() >= 6 && Password.matches("^.*(?=.*[a-z].*)(?=.*[A-Z].*)(?=.*\\d.*)(?=.*[!@#$%^&*()_+\\-].*).*$");
+    }
+    public void GoToSignIn() {
+        Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+        startActivity(intent);
+    }
+    public void GoToMain() {
+        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 }
