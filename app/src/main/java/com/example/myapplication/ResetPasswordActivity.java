@@ -20,6 +20,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -27,6 +33,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private Button resetPasswordButton;
     private TextView signInTextView;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         resetPasswordButton = findViewById(R.id.signupbutton);
         signInTextView = findViewById(R.id.textView7);
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
         resetPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,32 +62,32 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     return;
                 }
 
-                mAuth.fetchSignInMethodsForEmail(email)
-                        .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                                if (task.isSuccessful()) {
-                                    SignInMethodQueryResult result = task.getResult();
-                                    if (result != null && result.getSignInMethods() != null && !result.getSignInMethods().isEmpty()) {
-                                        mAuth.sendPasswordResetEmail(email)
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Toast.makeText(ResetPasswordActivity.this, "Your reset password link is already sent to your gmail. It might appear in your spam, so check it", Toast.LENGTH_LONG).show();
-                                                        } else {
-                                                            Toast.makeText(ResetPasswordActivity.this, "Fail to send reset password email!", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                });
-                                    } else {
-                                        Toast.makeText(ResetPasswordActivity.this, "Account not found with this email", Toast.LENGTH_SHORT).show();
-                                    }
-                                } else {
-                                    Toast.makeText(ResetPasswordActivity.this, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                Query query = mDatabase.orderByChild("Email").equalTo(email);
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            mAuth.sendPasswordResetEmail(email)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(ResetPasswordActivity.this, "Your reset password link is already sent to your gmail. It might appear in your spam, so check it", Toast.LENGTH_LONG).show();
+                                            } else {
+                                                Toast.makeText(ResetPasswordActivity.this, "Fail to send reset password email!", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        } else {
+                            Toast.makeText(ResetPasswordActivity.this, "Account not found with this email", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(ResetPasswordActivity.this, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
