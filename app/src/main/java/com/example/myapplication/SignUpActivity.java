@@ -45,61 +45,76 @@ public class SignUpActivity extends AppCompatActivity {
         EditText userEmailView = findViewById(R.id.editTextTextEmailAddress);
         // get the instance of Password Text
         EditText userPasswordView = findViewById(R.id.editTextTextPassword);
-        // get the instance of the sign up button
-        Button SignUpButton = findViewById(R.id.signupbutton);
         // get the instance of the return text
-        TextView GoBackText = findViewById(R.id.textView7);
+        TextView GoBackText = findViewById(R.id.signInLink);
         // underlined the return text to notify user it's clickable
         GoBackText.setPaintFlags(GoBackText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         // Set up click listener for the sign-up button
-        SignUpButton.setOnClickListener(new View.OnClickListener(){
-            // On click: execute following coding
-            @Override
-            public void onClick(View v){
-                // if email is not valid, then change color to red and return
-                if(!email_validation(userEmailView)){
-                    userEmailView.setBackgroundColor(Color.parseColor("#FFCDD2"));
-                    findViewById(R.id.textView2).setBackgroundColor(Color.parseColor("#FFCDD2"));
-                    return;
-                }
+        Button[] types = new Button[3];
+        types[0] = findViewById(R.id.choose_parent);
+        types[1] = findViewById(R.id.choose_child);
+        types[2] = findViewById(R.id.choose_provider);
+        for (int i = 0; i < types.length; i++) {
+            types[i].setOnClickListener(new View.OnClickListener() {
+                // On click: execute following coding
+                @Override
+                public void onClick(View v) {
+                    // if email is not valid, then change color to red and return
+                    if (!email_validation(userEmailView)) {
+                        userEmailView.setBackgroundColor(Color.parseColor("#FFCDD2"));
+                        findViewById(R.id.emailReqs).setBackgroundColor(Color.parseColor("#FFCDD2"));
+                        return;
+                    }
 
-                // if password is not valid, then change color to red and return
-                if(!password_validation(userPasswordView)){
-                    userPasswordView.setBackgroundColor(Color.parseColor("#FFCDD2"));
-                    findViewById(R.id.textView3).setBackgroundColor(Color.parseColor("#FFCDD2"));
-                    return;
-                }
-               // Otherwise, create new account
-                mAuth.createUserWithEmailAndPassword(userEmailView.getText().toString().trim(), userPasswordView.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        // if successful, notify user and return to main page.
-                        if(task.isSuccessful()){
-                            // get reference of database
-                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                            // get reference of current user (automatically login)
-                            FirebaseUser currentUser = mAuth.getCurrentUser();
-                            // structurize data of current user
-                            if(currentUser != null){
-                                UserData CurrentUserData = new UserData(currentUser.getUid(),userEmailView.getText().toString().trim());
-                                CurrentUserData.WriteIntoDatabase(mDatabase);
-                            }
-                            Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                            GoToMain();
-                        }else{
-                            Exception e = task.getException();
-                            // if fail by duplicate email, notify user.
-                            if(e instanceof FirebaseAuthUserCollisionException){
-                                Toast.makeText(SignUpActivity.this, "This email is already been used", Toast.LENGTH_SHORT).show();
-                            }else{
-                                // Otherwise, notify user.
-                                Toast.makeText(SignUpActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    // if password is not valid, then change color to red and return
+                    if (!password_validation(userPasswordView)) {
+                        userPasswordView.setBackgroundColor(Color.parseColor("#FFCDD2"));
+                        findViewById(R.id.passwordReqs).setBackgroundColor(Color.parseColor("#FFCDD2"));
+                        return;
+                    }
+                    // Otherwise, create new account
+                    mAuth.createUserWithEmailAndPassword(userEmailView.getText().toString().trim(), userPasswordView.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            // if successful, notify user and return to main page.
+                            if (task.isSuccessful()) {
+                                // get reference of database
+                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                                // get reference of current user (automatically login)
+                                FirebaseUser currentUser = mAuth.getCurrentUser();
+                                // structurize data of current user
+                                if (currentUser != null) {
+                                    UserData CurrentUserData = new UserData(currentUser.getUid(), userEmailView.getText().toString().trim(), accountType.PARENT); // I instantiate the object with a dummy PARENT to avoid nullPointerExceptions later
+                                    switch(((Button)v).getText().toString()) {
+                                        case "Parent":
+                                            CurrentUserData = new UserData(currentUser.getUid(), userEmailView.getText().toString().trim(), accountType.PARENT);
+                                            break;
+                                        case "Child":
+                                            CurrentUserData = new UserData(currentUser.getUid(), userEmailView.getText().toString().trim(), accountType.CHILD);
+                                            break;
+                                        case "Provider":
+                                            CurrentUserData = new UserData(currentUser.getUid(), userEmailView.getText().toString().trim(), accountType.PROVIDER);
+                                            break;
+                                    }
+                                    CurrentUserData.WriteIntoDatabase(mDatabase);
+                                }
+                                Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
+                                GoToMain();
+                            } else {
+                                Exception e = task.getException();
+                                // if fail by duplicate email, notify user.
+                                if (e instanceof FirebaseAuthUserCollisionException) {
+                                    Toast.makeText(SignUpActivity.this, "This email is already been used", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Otherwise, notify user.
+                                    Toast.makeText(SignUpActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
         GoBackText.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 GoToSignIn();
