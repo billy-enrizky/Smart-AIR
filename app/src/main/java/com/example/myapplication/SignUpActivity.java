@@ -98,8 +98,8 @@ public class SignUpActivity extends AppCompatActivity {
                                     }
                                     CurrentUserData.WriteIntoDatabase(mDatabase);
                                 }
-                                Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                                GoToMain();
+                                Toast.makeText(SignUpActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
+                                GoToSignIn();
                             } else {
                                 Exception e = task.getException();
                                 // if fail by duplicate email, notify user.
@@ -128,6 +128,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        UserManager.currentUser = new UserData();
         if(currentUser != null) {
             currentUser.reload();
         }
@@ -160,10 +161,6 @@ public class SignUpActivity extends AppCompatActivity {
     }
     public void GoToSignIn() {
         Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
-        startActivity(intent);
-    }
-    public void GoToMain() {
-        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
         startActivity(intent);
     }
 }

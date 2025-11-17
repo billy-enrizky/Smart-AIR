@@ -1,6 +1,17 @@
 package com.example.myapplication;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Map;
 
 enum accountType {PARENT, CHILD, PROVIDER}
 
@@ -8,17 +19,50 @@ public class UserData {
     String ID;
     String Email;
     accountType account;
+    Boolean firstTime;
 
+    public UserData(){
+    }
     public UserData(String ID, String Email, accountType account) {
         this.ID = ID;
         this.Email = Email;
         this.account = account;
-
+        this.firstTime = true;
     }
 
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
         mDatabase.child("users").child(ID).child("ID").setValue(ID);
         mDatabase.child("users").child(ID).child("Email").setValue(Email);
         mDatabase.child("users").child(ID).child("Account").setValue(account);
+        mDatabase.child("users").child(ID).child("FirstTime").setValue(true);
+    }
+
+    public void ReadFromDatabase(DatabaseReference mDatabase, FirebaseUser User, CallBack callback) {
+        mDatabase.child("users").child(User.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    Map<String, Object> temp = (Map<String, Object>) task.getResult().getValue();
+                    mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
+                    UserData.this.ID = (String)temp.get("ID");
+                    UserData.this.Email = (String)temp.get("Email");
+                    UserData.this.account = accountType.valueOf((String)temp.get("Account"));
+                    Boolean fT = (Boolean)temp.get("FirstTime");
+                    UserData.this.firstTime = ((fT != null ) && fT);
+                    if(callback != null){
+                        callback.onComplete();
+                    }
+                }
+            }
+        });
+    }
+
+    public void changeFirstTime(String UserID, Boolean ft){
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("users").child(UserID).child("FirstTime").setValue(ft);
+        firstTime = ft;
     }
 }

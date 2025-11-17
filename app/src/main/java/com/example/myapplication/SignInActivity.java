@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class SignInActivity extends AppCompatActivity {
@@ -51,6 +53,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        UserManager.currentUser = new UserData();
         if(currentUser != null) {
             currentUser.reload();
         }
@@ -62,8 +65,19 @@ public class SignInActivity extends AppCompatActivity {
                 // if successful, notify user and return to main page.
                 if(task.isSuccessful()){
                     Toast.makeText(SignInActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                    UserManager.currentUser.ReadFromDatabase(mDatabase, mAuth.getCurrentUser(), new CallBack(){
+                        @Override
+                        public void onComplete(){
+                            if(UserManager.currentUser.firstTime == true){
+                                Intent intent1 = new Intent(SignInActivity.this, OnBoardingActivity.class);
+                                startActivity(intent1);
+                            }else{
+                                Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    });
                 }else{
                     Toast.makeText(SignInActivity.this, "User Not Found", Toast.LENGTH_SHORT).show();
                 }
