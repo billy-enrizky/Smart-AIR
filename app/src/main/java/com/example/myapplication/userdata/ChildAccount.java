@@ -17,11 +17,9 @@ public class ChildAccount extends UserData {
     String Parent_id;
     public ChildAccount(String ID) {
         super(ID);
-        this.Account = accountType.CHILD;
     }
     @Override
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
         super.WriteIntoDatabase(mDatabase);
-        mDatabase.child("users").child(ID).child("Account").setValue("CHILD");
     }
 }

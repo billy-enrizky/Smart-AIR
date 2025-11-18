@@ -14,7 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Map;
 
-enum accountType {PARENT, CHILD, PROVIDER}
+enum accountType {PARENT, DEP_CHILD, INDEP_CHILD, PROVIDER}
 
 public class UserData {
     String ID;
@@ -44,6 +44,7 @@ public class UserData {
 
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
         mDatabase.child("users").child(ID).child("ID").setValue(ID);
+        mDatabase.child("users").child(ID).child("Account").setValue(this.Account);
         mDatabase.child("users").child(ID).child("FirstTime").setValue(true);
     }
 
