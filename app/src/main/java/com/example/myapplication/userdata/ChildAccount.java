@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.Map;
 
 public class ChildAccount extends UserData {
+    String Parent_id;
     public ChildAccount(String ID) {
         super(ID);
         this.Account = accountType.CHILD;
