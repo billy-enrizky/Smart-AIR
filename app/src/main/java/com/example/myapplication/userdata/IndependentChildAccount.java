@@ -40,6 +40,7 @@ public class IndependentChildAccount extends ChildAccount {
                     IndependentChildAccount.this.ID = (String)temp.get("ID");
                     IndependentChildAccount.this.Email = (String)temp.get("Email");
                     IndependentChildAccount.this.Account = accountType.valueOf((String)temp.get("Account"));
+                    IndependentChildAccount.this.Parent_id = (String)temp.get("Parent_id");
                     Boolean fT = (Boolean)temp.get("FirstTime");
                     IndependentChildAccount.this.firstTime = ((fT != null ) && fT);
                     if(callback != null){
