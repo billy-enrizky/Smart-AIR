@@ -14,7 +14,6 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.Map;
 
 public class DependentChildAccount extends ChildAccount {
-    String Parent_id;
 
     public DependentChildAccount(String ID, String Parent_id) {
         super(ID);
