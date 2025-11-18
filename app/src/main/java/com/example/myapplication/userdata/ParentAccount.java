@@ -17,10 +17,15 @@ import java.util.Map;
 public class ParentAccount extends UserData {
     ArrayList<String> Children_id;
     String Email;
+    public ParentAccount() {
+        super();
+        Email = "";
+        Children_id = new ArrayList<String>();
+    }
     public ParentAccount(String ID, String Email) {
         super(ID);
         this.Email = Email;
-        this.Account = accountType.PARENT;
+        this.Account = AccountType.PARENT;
         Children_id = new ArrayList<String>();
     }
 
@@ -49,7 +54,7 @@ public class ParentAccount extends UserData {
                     mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
                     ParentAccount.this.ID = (String)temp.get("ID");
                     ParentAccount.this.Email = (String)temp.get("Email");
-                    ParentAccount.this.Account = accountType.valueOf((String)temp.get("Account"));
+                    ParentAccount.this.Account = AccountType.valueOf((String)temp.get("Account"));
                     ParentAccount.this.Children_id = (ArrayList<String>)temp.get("Children_id");
                     Boolean fT = (Boolean)temp.get("FirstTime");
                     ParentAccount.this.firstTime = ((fT != null ) && fT);

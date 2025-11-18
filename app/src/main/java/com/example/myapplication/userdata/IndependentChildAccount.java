@@ -15,10 +15,16 @@ import java.util.Map;
 
 public class IndependentChildAccount extends ChildAccount {
     String Email;
+    public IndependentChildAccount () {
+        super();
+        this.Email = "";
+        this.Account = AccountType.INDEP_CHILD;
+
+    }
     public IndependentChildAccount (String ID, String Email) {
         super(ID);
         this.Email = Email;
-        this.Account = accountType.INDEP_CHILD;
+        this.Account = AccountType.INDEP_CHILD;
 
     }
 
@@ -43,7 +49,7 @@ public class IndependentChildAccount extends ChildAccount {
                     mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
                     IndependentChildAccount.this.ID = (String)temp.get("ID");
                     IndependentChildAccount.this.Email = (String)temp.get("Email");
-                    IndependentChildAccount.this.Account = accountType.valueOf((String)temp.get("Account"));
+                    IndependentChildAccount.this.Account = AccountType.valueOf((String)temp.get("Account"));
                     IndependentChildAccount.this.Parent_id = (String)temp.get("Parent_id");
                     Boolean fT = (Boolean)temp.get("FirstTime");
                     IndependentChildAccount.this.firstTime = ((fT != null ) && fT);
