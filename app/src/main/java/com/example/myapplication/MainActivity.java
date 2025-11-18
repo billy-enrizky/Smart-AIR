@@ -25,17 +25,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        int Type = 0;
         if(UserManager.currentUser.Account == AccountType.DEP_CHILD){
-            Type = 1;
-        }else if(UserManager.currentUser.Account == AccountType.INDEP_CHILD){
-            Type = 2;
-        }else if(UserManager.currentUser.Account == AccountType.PARENT){
-            Type = 3;
-        }else{
-            Type = 4;
-        }
-        if(Type  ==  1){
             UserManager.currentUser = new DependentChildAccount();
             UserManager.currentUser.ReadFromDatabase(UserManager.mDatabase, UserManager.mAuth.getCurrentUser(), new CallBack(){
                 @Override
@@ -44,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent1);
                 }
             });
-        }else if(Type  == 2){
+        }else if(UserManager.currentUser.Account == AccountType.INDEP_CHILD){
             UserManager.currentUser = new IndependentChildAccount();
             UserManager.currentUser.ReadFromDatabase(UserManager.mDatabase, UserManager.mAuth.getCurrentUser(), new CallBack(){
                 @Override
@@ -53,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent1);
                 }
             });
-        }else if(Type  == 3){
+        }else if(UserManager.currentUser.Account == AccountType.PARENT){
             UserManager.currentUser = new ParentAccount();
             UserManager.currentUser.ReadFromDatabase(UserManager.mDatabase, UserManager.mAuth.getCurrentUser(), new CallBack(){
                 @Override
