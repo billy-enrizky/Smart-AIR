@@ -14,14 +14,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Map;
 
-enum accountType {PARENT, DEP_CHILD, INDEP_CHILD, PROVIDER}
-
 public class UserData {
-    String ID;
-    accountType Account;
-    Boolean firstTime;
+    public String ID;
+    public AccountType Account;
+    public Boolean firstTime;
 
     public UserData(){
+        ID = "";
+        Account = AccountType.DEP_CHILD;
+        firstTime = true;
     }
     public UserData(String ID) {
         this.ID = ID;
@@ -58,7 +59,7 @@ public class UserData {
                     Map<String, Object> temp = (Map<String, Object>) task.getResult().getValue();
                     mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
                     UserData.this.ID = (String)temp.get("ID");
-                    UserData.this.Account = accountType.valueOf((String)temp.get("Account"));
+                    UserData.this.Account = AccountType.valueOf((String)temp.get("Account"));
                     Boolean fT = (Boolean)temp.get("FirstTime");
                     UserData.this.firstTime = ((fT != null ) && fT);
                     if(callback != null){

@@ -11,15 +11,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class ProviderAccount extends UserData {
     String Email;
+    public ProviderAccount(){
+        Email = "";
+    }
     public ProviderAccount (String ID, String Email) {
         super(ID);
         this.Email = Email;
-        this.Account = accountType.PROVIDER;
+        this.Account = AccountType.PROVIDER;
     }
 
     public void WriteIntoDatabase (DatabaseReference mDatabase) {
@@ -41,7 +43,7 @@ public class ProviderAccount extends UserData {
                     mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
                     ProviderAccount.this.ID = (String)temp.get("ID");
                     ProviderAccount.this.Email = (String)temp.get("Email");
-                    ProviderAccount.this.Account = accountType.valueOf((String)temp.get("Account"));
+                    ProviderAccount.this.Account = AccountType.valueOf((String)temp.get("Account"));
                     Boolean fT = (Boolean)temp.get("FirstTime");
                     ProviderAccount.this.firstTime = ((fT != null ) && fT);
                     if(callback != null){
