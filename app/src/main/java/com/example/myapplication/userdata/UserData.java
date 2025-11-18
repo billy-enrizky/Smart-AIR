@@ -1,9 +1,10 @@
-package com.example.myapplication;
+package com.example.myapplication.userdata;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.myapplication.CallBack;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -13,27 +14,36 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Map;
 
-enum accountType {PARENT, CHILD, PROVIDER}
+enum accountType {PARENT, DEP_CHILD, INDEP_CHILD, PROVIDER}
 
 public class UserData {
     String ID;
-    String Email;
-    accountType account;
+    accountType Account;
     Boolean firstTime;
 
     public UserData(){
     }
-    public UserData(String ID, String Email, accountType account) {
+    public UserData(String ID) {
         this.ID = ID;
-        this.Email = Email;
-        this.account = account;
         this.firstTime = true;
+    }
+
+    public String getID() {
+        return this.ID;
+    }
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+    public boolean getFirstTime() {
+        return this.firstTime;
+    }
+    public void setFirstTime (boolean firstTime) {
+        this.firstTime = firstTime;
     }
 
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
         mDatabase.child("users").child(ID).child("ID").setValue(ID);
-        mDatabase.child("users").child(ID).child("Email").setValue(Email);
-        mDatabase.child("users").child(ID).child("Account").setValue(account);
+        mDatabase.child("users").child(ID).child("Account").setValue(this.Account);
         mDatabase.child("users").child(ID).child("FirstTime").setValue(true);
     }
 
@@ -48,8 +58,7 @@ public class UserData {
                     Map<String, Object> temp = (Map<String, Object>) task.getResult().getValue();
                     mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
                     UserData.this.ID = (String)temp.get("ID");
-                    UserData.this.Email = (String)temp.get("Email");
-                    UserData.this.account = accountType.valueOf((String)temp.get("Account"));
+                    UserData.this.Account = accountType.valueOf((String)temp.get("Account"));
                     Boolean fT = (Boolean)temp.get("FirstTime");
                     UserData.this.firstTime = ((fT != null ) && fT);
                     if(callback != null){
