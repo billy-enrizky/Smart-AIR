@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
+import com.example.myapplication.userdata.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -84,16 +84,16 @@ public class SignUpActivity extends AppCompatActivity {
                                 FirebaseUser currentUser = mAuth.getCurrentUser();
                                 // structurize data of current user
                                 if (currentUser != null) {
-                                    UserData CurrentUserData = new UserData(currentUser.getUid(), userEmailView.getText().toString().trim(), accountType.PARENT); // I instantiate the object with a dummy PARENT to avoid nullPointerExceptions later
+                                    UserData CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim()); // I instantiate the object with a dummy PARENT to avoid nullPointerExceptions later
                                     switch(((Button)v).getText().toString()) {
                                         case "Parent":
-                                            CurrentUserData = new UserData(currentUser.getUid(), userEmailView.getText().toString().trim(), accountType.PARENT);
+                                            CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
                                             break;
                                         case "Child":
-                                            CurrentUserData = new UserData(currentUser.getUid(), userEmailView.getText().toString().trim(), accountType.CHILD);
+                                            CurrentUserData = new IndependentChildAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
                                             break;
                                         case "Provider":
-                                            CurrentUserData = new UserData(currentUser.getUid(), userEmailView.getText().toString().trim(), accountType.PROVIDER);
+                                            CurrentUserData = new ProviderAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
                                             break;
                                     }
                                     CurrentUserData.WriteIntoDatabase(mDatabase);

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.myapplication.userdata.UserData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -69,7 +70,7 @@ public class SignInActivity extends AppCompatActivity {
                     UserManager.currentUser.ReadFromDatabase(mDatabase, mAuth.getCurrentUser(), new CallBack(){
                         @Override
                         public void onComplete(){
-                            if(UserManager.currentUser.firstTime == true){
+                            if(UserManager.currentUser.getFirstTime()){
                                 Intent intent1 = new Intent(SignInActivity.this, OnBoardingActivity.class);
                                 startActivity(intent1);
                             }else{
