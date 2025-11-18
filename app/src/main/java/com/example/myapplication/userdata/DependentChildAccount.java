@@ -18,6 +18,8 @@ public class DependentChildAccount extends ChildAccount {
     public DependentChildAccount(String ID, String Parent_id) {
         super(ID);
         this.Parent_id = Parent_id;
+        this.Account = accountType.DEP_CHILD;
+
     }
     @Override
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
