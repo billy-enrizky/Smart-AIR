@@ -26,6 +26,8 @@ public class IndependentChildAccount extends ChildAccount {
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
         super.WriteIntoDatabase(mDatabase);
         mDatabase.child("users").child(ID).child("Email").setValue(Email);
+        mDatabase.child("users").child(ID).child("Account").setValue("INDEP_CHILD");
+
     }
 
     @Override

@@ -25,6 +25,8 @@ public class DependentChildAccount extends ChildAccount {
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
         super.WriteIntoDatabase(mDatabase);
         mDatabase.child("users").child(ID).child("Parent_id").setValue(Parent_id);
+        mDatabase.child("users").child(ID).child("Account").setValue("DEP_CHILD");
+
     }
     @Override
     public void ReadFromDatabase(DatabaseReference mDatabase, FirebaseUser User, CallBack callback) {

@@ -19,11 +19,13 @@ public class ProviderAccount extends UserData {
     public ProviderAccount (String ID, String Email) {
         super(ID);
         this.Email = Email;
+        this.Account = accountType.PROVIDER;
     }
 
     public void WriteIntoDatabase (DatabaseReference mDatabase) {
         super.WriteIntoDatabase(mDatabase);
         mDatabase.child("users").child(ID).child("Email").setValue(Email);
+        mDatabase.child("users").child(ID).child("Account").setValue("PROVIDER");
     }
 
     @Override

@@ -25,7 +25,6 @@ public class UserData {
     }
     public UserData(String ID) {
         this.ID = ID;
-        //this.account = account;
         this.firstTime = true;
     }
 
