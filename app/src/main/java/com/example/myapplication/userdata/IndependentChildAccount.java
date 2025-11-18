@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.example.myapplication.CallBack;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
@@ -37,8 +36,8 @@ public class IndependentChildAccount extends ChildAccount {
     }
 
     @Override
-    public void ReadFromDatabase(DatabaseReference mDatabase, FirebaseUser User, CallBack callback) {
-        mDatabase.child("users").child(User.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+    public void ReadFromDatabase(DatabaseReference mDatabase, String ID, CallBack callback) {
+        mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {

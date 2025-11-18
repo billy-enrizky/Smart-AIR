@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.example.myapplication.CallBack;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -15,9 +14,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.Map;
 
 public class UserData {
-    public String ID;
-    public AccountType Account;
-    public Boolean firstTime;
+    String ID;
+    AccountType Account;
+    Boolean firstTime;
 
     public UserData(){
         ID = "";
@@ -42,14 +41,19 @@ public class UserData {
         this.firstTime = firstTime;
     }
 
+    public AccountType getAccount() {
+        return Account;
+    }
+
+
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
         mDatabase.child("users").child(ID).child("ID").setValue(ID);
         mDatabase.child("users").child(ID).child("Account").setValue(this.Account);
         mDatabase.child("users").child(ID).child("FirstTime").setValue(true);
     }
 
-    public void ReadFromDatabase(DatabaseReference mDatabase, FirebaseUser User, CallBack callback) {
-        mDatabase.child("users").child(User.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+    public void ReadFromDatabase(DatabaseReference mDatabase, String ID, CallBack callback) {
+        mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
