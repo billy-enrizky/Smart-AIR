@@ -1,7 +1,5 @@
 package com.example.myapplication.userdata;
 
-import com.google.firebase.database.DatabaseReference;
-
 public class ChildAccount extends UserData {
     String Parent_id;
     public ChildAccount() {
@@ -10,9 +8,7 @@ public class ChildAccount extends UserData {
     }
     public ChildAccount(String ID) {
         super(ID);
+        Parent_id = "";
     }
-    @Override
-    public void WriteIntoDatabase(DatabaseReference mDatabase) {
-        super.WriteIntoDatabase(mDatabase);
-    }
+
 }

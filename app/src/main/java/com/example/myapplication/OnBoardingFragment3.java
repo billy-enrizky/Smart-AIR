@@ -2,12 +2,16 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,9 +69,20 @@ public class OnBoardingFragment3 extends Fragment {
         Start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserManager.currentUser.changeFirstTime(UserManager.currentUser.getID(), false);
-                Intent intent = new Intent(requireActivity(), MainActivity.class);
-                startActivity(intent);
+                UserManager.mDatabase.child("users").child(UserManager.currentUser.getID()).child("firstTime").setValue(false).addOnCompleteListener(
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Intent intent = new Intent(requireActivity(), MainActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Exception e = task.getException();
+                                    Log.e("Firebase", "Write failed", e);
+                                }
+                            }
+                        }
+                );
             }
         });
         return view;

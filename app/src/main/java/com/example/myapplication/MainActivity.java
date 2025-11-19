@@ -9,10 +9,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.myapplication.userdata.AccountType;
 import com.example.myapplication.userdata.DependentChildAccount;
+import com.example.myapplication.userdata.IndependentChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
+import com.example.myapplication.userdata.AccountType;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         });
         if(UserManager.currentUser.getAccount() == AccountType.DEP_CHILD){
             UserManager.currentUser = new DependentChildAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mDatabase, UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
+            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
                     /*Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
@@ -38,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }else if(UserManager.currentUser.getAccount() == AccountType.INDEP_CHILD){
-            UserManager.currentUser = new DependentChildAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mDatabase, UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
+            UserManager.currentUser = new IndependentChildAccount();
+            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
                     /*Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }else if(UserManager.currentUser.getAccount() == AccountType.PARENT){
             UserManager.currentUser = new ParentAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mDatabase, UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
+            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
                     Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }else{
             UserManager.currentUser = new ProviderAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mDatabase, UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
+            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
                     Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);

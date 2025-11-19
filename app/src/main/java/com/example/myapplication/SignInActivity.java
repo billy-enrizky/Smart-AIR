@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.example.myapplication.userdata.UserData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -67,7 +66,7 @@ public class SignInActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     Toast.makeText(SignInActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                    UserManager.currentUser.ReadFromDatabase(mDatabase, mAuth.getCurrentUser().getUid(), new CallBack(){
+                    UserManager.currentUser.ReadFromDatabase(mAuth.getCurrentUser().getUid(), new CallBack(){
                         @Override
                         public void onComplete(){
                             if(UserManager.currentUser.getFirstTime()){
