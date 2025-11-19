@@ -96,7 +96,13 @@ public class SignUpActivity extends AppCompatActivity {
                                             CurrentUserData = new ProviderAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
                                             break;
                                     }
-                                    CurrentUserData.WriteIntoDatabase(mDatabase);
+                                    CurrentUserData.WriteIntoDatabase(new CallBack() {
+                                        @Override
+                                        public void onComplete() {
+                                            Toast.makeText(SignUpActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
+                                            GoToSignIn();
+                                        }
+                                    });
                                 }
                                 Toast.makeText(SignUpActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
                                 GoToSignIn();

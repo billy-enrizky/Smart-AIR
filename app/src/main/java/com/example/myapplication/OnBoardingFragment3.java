@@ -65,9 +65,14 @@ public class OnBoardingFragment3 extends Fragment {
         Start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserManager.currentUser.changeFirstTime(UserManager.currentUser.getID(), false);
-                Intent intent = new Intent(requireActivity(), MainActivity.class);
-                startActivity(intent);
+                UserManager.currentUser.setFirstTime(false);
+                UserManager.currentUser.WriteIntoDatabase(new CallBack() {
+                    @Override
+                    public void onComplete() {
+                        Intent intent = new Intent(requireActivity(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
             }
         });
         return view;
