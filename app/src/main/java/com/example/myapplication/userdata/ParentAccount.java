@@ -43,13 +43,6 @@ public class ParentAccount extends UserData {
     public void setChildrenid(ArrayList<String> Children_id){
         this.Children_id = Children_id;
     }
-    @Override
-    public void WriteIntoDatabase(CallBack callback) {
-        UserManager.mDatabase.child("users").child(ID).setValue(this);
-        if(callback != null){
-            callback.onComplete();
-        }
-    }
 
     @Override
     public void ReadFromDatabase(String ID, CallBack callback) {

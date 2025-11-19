@@ -20,13 +20,7 @@ public class DependentChildAccount extends ChildAccount {
         this.Parent_id = Parent_id;
         this.Account = AccountType.DEP_CHILD;
     }
-    @Override
-    public void WriteIntoDatabase(CallBack callback) {
-        UserManager.mDatabase.child("users").child(ID).setValue(this);
-        if(callback != null){
-            callback.onComplete();
-        }
-    }
+
     @Override
     public void ReadFromDatabase(String ID, CallBack callback) {
         UserManager.mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {

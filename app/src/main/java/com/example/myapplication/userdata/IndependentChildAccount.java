@@ -30,13 +30,7 @@ public class IndependentChildAccount extends ChildAccount {
         return Email;
     }
 
-    @Override
-    public void WriteIntoDatabase(CallBack callback) {
-        UserManager.mDatabase.child("users").child(ID).setValue(this);
-        if(callback != null){
-            callback.onComplete();
-        }
-    }
+
 
     @Override
     public void ReadFromDatabase(String ID, CallBack callback) {
