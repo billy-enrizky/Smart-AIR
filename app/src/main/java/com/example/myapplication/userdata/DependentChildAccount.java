@@ -14,6 +14,7 @@ public class DependentChildAccount extends ChildAccount {
 
     public DependentChildAccount() {
         super();
+        Account = AccountType.DEP_CHILD;
     }
     public DependentChildAccount(String ID, String Parent_id) {
         super(ID);
@@ -35,6 +36,7 @@ public class DependentChildAccount extends ChildAccount {
                     DependentChildAccount.this.ID = Data.ID;
                     DependentChildAccount.this.Account = Data.Account;
                     DependentChildAccount.this.FirstTime = Data.FirstTime;
+                    DependentChildAccount.this.Parent_id = Data.Parent_id;
                     if(callback != null){
                         callback.onComplete();
                     }

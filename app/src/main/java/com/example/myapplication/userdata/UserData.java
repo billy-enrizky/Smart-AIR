@@ -23,6 +23,7 @@ public class UserData {
     public UserData(String ID) {
         this.ID = ID;
         this.FirstTime = true;
+        Account = AccountType.DEP_CHILD;
     }
 
     public String getID() {
@@ -47,12 +48,15 @@ public class UserData {
     }
 
     public void WriteIntoDatabase(CallBack callback) {
-        UserManager.mDatabase.child("users").child(ID).setValue(this);
-        if(callback != null){
-            callback.onComplete();
-        }
+        UserManager.mDatabase.child("users").child(ID).setValue(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (callback != null) {
+                    callback.onComplete();
+                }
+            }
+        });
     }
-
     public void ReadFromDatabase(String ID, CallBack callback) {
         UserManager.mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override

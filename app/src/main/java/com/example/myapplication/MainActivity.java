@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.userdata.DependentChildAccount;
+import com.example.myapplication.userdata.IndependentChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
 import com.example.myapplication.userdata.AccountType;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }else if(UserManager.currentUser.getAccount() == AccountType.INDEP_CHILD){
-            UserManager.currentUser = new DependentChildAccount();
+            UserManager.currentUser = new IndependentChildAccount();
             UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
