@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.example.myapplication.CallBack;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
@@ -15,11 +14,15 @@ import java.util.Map;
 
 public class DependentChildAccount extends ChildAccount {
 
+    public DependentChildAccount() {
+        super();
+        this.Parent_id = "";
+        this.Account = AccountType.DEP_CHILD;
+    }
     public DependentChildAccount(String ID, String Parent_id) {
         super(ID);
         this.Parent_id = Parent_id;
-        this.Account = accountType.DEP_CHILD;
-
+        this.Account = AccountType.DEP_CHILD;
     }
     @Override
     public void WriteIntoDatabase(DatabaseReference mDatabase) {
@@ -29,8 +32,8 @@ public class DependentChildAccount extends ChildAccount {
 
     }
     @Override
-    public void ReadFromDatabase(DatabaseReference mDatabase, FirebaseUser User, CallBack callback) {
-        mDatabase.child("users").child(User.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+    public void ReadFromDatabase(DatabaseReference mDatabase, String ID, CallBack callback) {
+        mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
@@ -40,7 +43,7 @@ public class DependentChildAccount extends ChildAccount {
                     Map<String, Object> temp = (Map<String, Object>) task.getResult().getValue();
                     mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
                     DependentChildAccount.this.ID = (String)temp.get("ID");
-                    DependentChildAccount.this.Account = accountType.valueOf((String)temp.get("Account"));
+                    DependentChildAccount.this.Account = AccountType.valueOf((String)temp.get("Account"));
                     DependentChildAccount.this.Parent_id = (String)temp.get("Parent_id");
                     Boolean fT = (Boolean)temp.get("FirstTime");
                     DependentChildAccount.this.firstTime = ((fT != null ) && fT);

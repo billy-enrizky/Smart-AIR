@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.example.myapplication.CallBack;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
@@ -17,10 +16,15 @@ import java.util.Map;
 public class ParentAccount extends UserData {
     ArrayList<String> Children_id;
     String Email;
+    public ParentAccount() {
+        super();
+        Email = "";
+        Children_id = new ArrayList<String>();
+    }
     public ParentAccount(String ID, String Email) {
         super(ID);
         this.Email = Email;
-        this.Account = accountType.PARENT;
+        this.Account = AccountType.PARENT;
         Children_id = new ArrayList<String>();
     }
 
@@ -37,8 +41,8 @@ public class ParentAccount extends UserData {
     }
 
     @Override
-    public void ReadFromDatabase(DatabaseReference mDatabase, FirebaseUser User, CallBack callback) {
-        mDatabase.child("users").child(User.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+    public void ReadFromDatabase(DatabaseReference mDatabase, String ID, CallBack callback) {
+        mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
@@ -49,7 +53,7 @@ public class ParentAccount extends UserData {
                     mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
                     ParentAccount.this.ID = (String)temp.get("ID");
                     ParentAccount.this.Email = (String)temp.get("Email");
-                    ParentAccount.this.Account = accountType.valueOf((String)temp.get("Account"));
+                    ParentAccount.this.Account = AccountType.valueOf((String)temp.get("Account"));
                     ParentAccount.this.Children_id = (ArrayList<String>)temp.get("Children_id");
                     Boolean fT = (Boolean)temp.get("FirstTime");
                     ParentAccount.this.firstTime = ((fT != null ) && fT);
