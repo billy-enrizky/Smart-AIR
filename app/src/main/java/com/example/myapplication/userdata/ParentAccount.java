@@ -5,14 +5,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.myapplication.CallBack;
+import com.example.myapplication.UserManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ParentAccount extends UserData {
     ArrayList<String> Children_id;
@@ -27,32 +25,36 @@ public class ParentAccount extends UserData {
     public void addChild(String id) {
         Children_id.add(id);
     }
+    public void setEmail(String Email){
+        this.Email = Email;
+    }
+    public String getEmail(){
+        return Email;
+    }
     @Override
-    public void WriteIntoDatabase(DatabaseReference mDatabase) {
-        super.WriteIntoDatabase(mDatabase);
-        mDatabase.child("users").child(ID).child("Account").setValue("PARENT");
-        mDatabase.child("users").child(ID).child("Email").setValue(Email);
-        mDatabase.child("users").child(ID).child("Children_id").setValue(Children_id);
-
+    public void WriteIntoDatabase(CallBack callback) {
+        UserManager.mDatabase.child("users").child(ID).setValue(this);
+        if(callback != null){
+            callback.onComplete();
+        }
     }
 
     @Override
-    public void ReadFromDatabase(DatabaseReference mDatabase, FirebaseUser User, CallBack callback) {
-        mDatabase.child("users").child(User.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+    public void ReadFromDatabase(String ID, CallBack callback) {
+        UserManager.mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
                     Log.e("firebase", "Error getting data", task.getException());
                 }
                 else {
-                    Map<String, Object> temp = (Map<String, Object>) task.getResult().getValue();
-                    mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
-                    ParentAccount.this.ID = (String)temp.get("ID");
-                    ParentAccount.this.Email = (String)temp.get("Email");
-                    ParentAccount.this.Account = accountType.valueOf((String)temp.get("Account"));
-                    ParentAccount.this.Children_id = (ArrayList<String>)temp.get("Children_id");
-                    Boolean fT = (Boolean)temp.get("FirstTime");
-                    ParentAccount.this.firstTime = ((fT != null ) && fT);
+                    DataSnapshot Snapshot = task.getResult();
+                    ParentAccount Data = Snapshot.getValue(ParentAccount.class);
+                    ParentAccount.this.ID = Data.ID;
+                    ParentAccount.this.Account = Data.Account;
+                    ParentAccount.this.firstTime = Data.firstTime;
+                    ParentAccount.this.Email = Data.Email;
+                    ParentAccount.this.Children_id = Data.Children_id;
                     if(callback != null){
                         callback.onComplete();
                     }
