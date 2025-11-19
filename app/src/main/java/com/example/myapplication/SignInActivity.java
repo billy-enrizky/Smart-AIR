@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.example.myapplication.userdata.UserData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -47,6 +46,22 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        /*    FirebaseDatabase database = FirebaseDatabase.getInstance();
+        ParentAccount parent1 = new ParentAccount("111", "passi@123");
+        DependentChildAccount child1 = new DependentChildAccount("112", "passi@124");
+        DependentChildAccount child2 = new DependentChildAccount("113", "passi@125");
+        parent1.addChild("112");
+        parent1.addChild("113");
+        parent1.setFirstTime(false);
+        parent1.WriteIntoDatabase(null);
+        ParentAccount parent2 = new ParentAccount("115", "passi@123");
+        parent2.ReadFromDatabase("111", new CallBack() {
+            @Override
+            public void onComplete() {
+                parent2.setID("114");
+                parent2.WriteIntoDatabase(null);
+            }
+        });*/
     }
 
     @Override
@@ -67,7 +82,7 @@ public class SignInActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     Toast.makeText(SignInActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                    UserManager.currentUser.ReadFromDatabase(mDatabase, mAuth.getCurrentUser().getUid(), new CallBack(){
+                    UserManager.currentUser.ReadFromDatabase(mAuth.getCurrentUser().getUid(), new CallBack(){
                         @Override
                         public void onComplete(){
                             if(UserManager.currentUser.getFirstTime()){

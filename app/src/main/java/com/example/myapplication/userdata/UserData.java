@@ -5,27 +5,24 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.myapplication.CallBack;
+import com.example.myapplication.UserManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.Map;
 
 public class UserData {
     String ID;
     AccountType Account;
-    Boolean firstTime;
+    Boolean FirstTime;
 
     public UserData(){
         ID = "";
         Account = AccountType.DEP_CHILD;
-        firstTime = true;
+        FirstTime = true;
     }
     public UserData(String ID) {
         this.ID = ID;
-        this.firstTime = true;
+        this.FirstTime = true;
     }
 
     public String getID() {
@@ -35,48 +32,45 @@ public class UserData {
         this.ID = ID;
     }
     public boolean getFirstTime() {
-        return this.firstTime;
+        return this.FirstTime;
     }
-    public void setFirstTime (boolean firstTime) {
-        this.firstTime = firstTime;
+    public void setFirstTime (boolean FirstTime) {
+        this.FirstTime = FirstTime;
+    }
+
+    public void setAccount (AccountType Account) {
+        this.Account = Account;
     }
 
     public AccountType getAccount() {
-        return Account;
+        return this.Account;
     }
 
-
-    public void WriteIntoDatabase(DatabaseReference mDatabase) {
-        mDatabase.child("users").child(ID).child("ID").setValue(ID);
-        mDatabase.child("users").child(ID).child("Account").setValue(this.Account);
-        mDatabase.child("users").child(ID).child("FirstTime").setValue(true);
+    public void WriteIntoDatabase(CallBack callback) {
+        UserManager.mDatabase.child("users").child(ID).setValue(this);
+        if(callback != null){
+            callback.onComplete();
+        }
     }
 
-    public void ReadFromDatabase(DatabaseReference mDatabase, String ID, CallBack callback) {
-        mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+    public void ReadFromDatabase(String ID, CallBack callback) {
+        UserManager.mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
                     Log.e("firebase", "Error getting data", task.getException());
                 }
                 else {
-                    Map<String, Object> temp = (Map<String, Object>) task.getResult().getValue();
-                    mDatabase.child("test").setValue((Boolean)temp.get("FirstTime"));
-                    UserData.this.ID = (String)temp.get("ID");
-                    UserData.this.Account = AccountType.valueOf((String)temp.get("Account"));
-                    Boolean fT = (Boolean)temp.get("FirstTime");
-                    UserData.this.firstTime = ((fT != null ) && fT);
+                    DataSnapshot Snapshot = task.getResult();
+                    UserData Data = Snapshot.getValue(UserData.class);
+                    UserData.this.ID = Data.ID;
+                    UserData.this.Account = Data.Account;
+                    UserData.this.FirstTime = Data.FirstTime;
                     if(callback != null){
                         callback.onComplete();
                     }
                 }
             }
         });
-    }
-
-    public void changeFirstTime(String UserID, Boolean ft){
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("users").child(UserID).child("FirstTime").setValue(ft);
-        firstTime = ft;
     }
 }
