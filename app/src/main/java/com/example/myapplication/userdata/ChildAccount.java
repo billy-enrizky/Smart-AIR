@@ -21,14 +21,13 @@ public class ChildAccount extends UserData {
     public ChildAccount(String ID) {
         super(ID);
     }
+    public ChildAccount() {
+        super();
+    }
     public void setDob(int year, int month, int day) {
         this.dob = LocalDate.of(year, month, day);
     }
     public void setAge(int age) {
         this.age = age;
-    }
-    @Override
-    public void WriteIntoDatabase(DatabaseReference mDatabase) {
-        super.WriteIntoDatabase(mDatabase);
     }
 }

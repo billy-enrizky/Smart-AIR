@@ -56,5 +56,4 @@ public class IndependentChildAccount extends ChildAccount {
             }
         });
     }
-
 }

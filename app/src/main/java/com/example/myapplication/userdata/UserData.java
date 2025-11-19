@@ -17,7 +17,6 @@ public class UserData {
 
     public UserData(){
         ID = "";
-        Account = AccountType.DEP_CHILD;
         FirstTime = true;
     }
     public UserData(String ID) {
