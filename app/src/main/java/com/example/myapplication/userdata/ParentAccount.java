@@ -19,6 +19,7 @@ public class ParentAccount extends UserData {
         super();
         Email = "";
         Children_id = new ArrayList<String>();
+        Account = AccountType.PARENT;
     }
     public ParentAccount(String ID, String Email) {
         super(ID);

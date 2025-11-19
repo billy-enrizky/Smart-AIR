@@ -104,8 +104,6 @@ public class SignUpActivity extends AppCompatActivity {
                                         }
                                     });
                                 }
-                                Toast.makeText(SignUpActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
-                                GoToSignIn();
                             } else {
                                 Exception e = task.getException();
                                 // if fail by duplicate email, notify user.

@@ -15,6 +15,7 @@ public class ProviderAccount extends UserData {
     public ProviderAccount () {
         super();
         this.Email = "";
+        Account = AccountType.PROVIDER;
     }
     public ProviderAccount (String ID, String Email) {
         super(ID);

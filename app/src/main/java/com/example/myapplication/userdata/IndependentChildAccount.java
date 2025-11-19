@@ -15,6 +15,7 @@ public class IndependentChildAccount extends ChildAccount {
     public IndependentChildAccount () {
         super();
         this.Email = "";
+        Account = AccountType.INDEP_CHILD;
 
     }
     public IndependentChildAccount (String ID, String Email) {
