@@ -15,12 +15,13 @@ public class IndependentChildAccount extends ChildAccount {
     public IndependentChildAccount () {
         super();
         this.Email = "";
+        this.Account = AccountType.INDEP_CHILD;
 
     }
     public IndependentChildAccount (String ID, String Email) {
         super(ID);
         this.Email = Email;
-        this.Account = accountType.INDEP_CHILD;
+        this.Account = AccountType.INDEP_CHILD;
 
     }
     public void setEmail(String Email){

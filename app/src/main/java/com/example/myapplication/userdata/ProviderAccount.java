@@ -19,7 +19,7 @@ public class ProviderAccount extends UserData {
     public ProviderAccount (String ID, String Email) {
         super(ID);
         this.Email = Email;
-        this.Account = accountType.PROVIDER;
+        this.Account = AccountType.PROVIDER;
     }
     public void setEmail(String Email){
         this.Email = Email;

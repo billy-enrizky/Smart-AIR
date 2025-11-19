@@ -23,7 +23,7 @@ public class ParentAccount extends UserData {
     public ParentAccount(String ID, String Email) {
         super(ID);
         this.Email = Email;
-        this.Account = accountType.PARENT;
+        this.Account = AccountType.PARENT;
         Children_id = new ArrayList<String>();
     }
 

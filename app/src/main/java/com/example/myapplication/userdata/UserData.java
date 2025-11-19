@@ -10,8 +10,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 
-enum accountType {PARENT, DEP_CHILD, INDEP_CHILD, PROVIDER}
-
 public class UserData {
     String ID;
     accountType Account;
