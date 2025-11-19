@@ -11,7 +11,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 
 public class DependentChildAccount extends ChildAccount {
-
+    String notes;
     public DependentChildAccount() {
         super();
         Account = AccountType.DEP_CHILD;
@@ -20,6 +20,10 @@ public class DependentChildAccount extends ChildAccount {
         super(ID);
         this.Parent_id = Parent_id;
         this.Account = AccountType.DEP_CHILD;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     @Override
