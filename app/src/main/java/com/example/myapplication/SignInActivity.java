@@ -46,22 +46,6 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        /*    FirebaseDatabase database = FirebaseDatabase.getInstance();
-        ParentAccount parent1 = new ParentAccount("111", "passi@123");
-        DependentChildAccount child1 = new DependentChildAccount("112", "passi@124");
-        DependentChildAccount child2 = new DependentChildAccount("113", "passi@125");
-        parent1.addChild("112");
-        parent1.addChild("113");
-        parent1.setFirstTime(false);
-        parent1.WriteIntoDatabase(null);
-        ParentAccount parent2 = new ParentAccount("115", "passi@123");
-        parent2.ReadFromDatabase("111", new CallBack() {
-            @Override
-            public void onComplete() {
-                parent2.setID("114");
-                parent2.WriteIntoDatabase(null);
-            }
-        });*/
     }
 
     @Override
