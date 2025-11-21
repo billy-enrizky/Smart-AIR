@@ -10,7 +10,10 @@ import com.example.myapplication.UserManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -90,32 +93,29 @@ public class InviteCode {
     }
 
     public static void CodeInquiry(String InputCode, ResultCallBack callback){
-        checkExpire(new CallBack() {
+        DatabaseReference usersRef = UserManager.mDatabase.child("users");
+        Query query = usersRef.orderByChild("inviteCode/code").equalTo(InputCode);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onComplete() {
-                DatabaseReference userLists = UserManager.mDatabase.child("users");
-                userLists.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("firebase", "Error getting data", task.getException());
-                        }
-                        else {
-                            DataSnapshot Snapshot = task.getResult();
-                            for(DataSnapshot child: Snapshot.getChildren()){
-                                if(child.getValue(UserData.class).getAccount() == AccountType.PARENT){
-                                    ParentAccount parent = child.getValue(ParentAccount.class);
-                                    if(parent.getInviteCode() != null){
-                                        if(parent.getInviteCode().getCode().equals(InputCode)){
-                                            callback.onComplete(parent);
-                                        }
-                                    }
-                                }
-                            }
-                            callback.onComplete(null);
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        ParentAccount parent = child.getValue(ParentAccount.class);
+                        if(parent.getInviteCode().IsValid()){
+                            callback.onComplete(parent);
+                            return;
+                        }else{
+                            parent.setInviteCode(null);
+                            parent.WriteIntoDatabase(null);
                         }
                     }
-                });
+                } else {
+                    callback.onComplete(null);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                callback.onComplete(null);
             }
         });
     }
