@@ -10,7 +10,7 @@ public interface ResultCallBack<T> {
     /*
     The difference between this and the very CallBack interface is:
     we can use it to return value after interacting with database.
-    For example,
+    For example(pseudo code),
         //Below is incorrect cuz the user_info before get() is done would be null.
         // yet the database interaction and return statement are done asynchronously.
         // meaning, probably the user_info is null when we return.
