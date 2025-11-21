@@ -101,7 +101,7 @@ public class InviteCode {
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         ParentAccount parent = child.getValue(ParentAccount.class);
-                        if(parent.getInviteCode().IsValid()){
+                        if(parent.getInviteCode().IsValid() && parent.getInviteCode().getCode().equals(InputCode)){
                             callback.onComplete(parent);
                             return;
                         }else{
