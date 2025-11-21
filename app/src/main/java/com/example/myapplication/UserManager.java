@@ -31,22 +31,19 @@ public class UserManager {
 
     public static void checkUserNull(AppCompatActivity activity){
         if(mAuth.getCurrentUser() == null) {
-            Intent intent1 = new Intent(activity, SignInActivity.class);
-            activity.startActivity(intent1);
+            backToLogin(activity);
         }
     }
 
-    public static void IsParentAccount(AppCompatActivity activity){
+    public static void isParentAccount(AppCompatActivity activity){
         if(!(currentUser instanceof ParentAccount)){
-            Intent intent1 = new Intent(activity, SignInActivity.class);
-            activity.startActivity(intent1);
+            backToLogin(activity);
         }
     }
 
-    public static void IsProviderAccount(AppCompatActivity activity){
+    public static void isProviderAccount(AppCompatActivity activity){
         if(!(currentUser instanceof ProviderAccount)) {
-            Intent intent1 = new Intent(activity, SignInActivity.class);
-            activity.startActivity(intent1);
+            backToLogin(activity);
         }
     }
 
@@ -54,5 +51,6 @@ public class UserManager {
         mAuth.signOut();
         Intent intent1 = new Intent(activity, SignInActivity.class);
         activity.startActivity(intent1);
+        activity.finish();
     }
 }

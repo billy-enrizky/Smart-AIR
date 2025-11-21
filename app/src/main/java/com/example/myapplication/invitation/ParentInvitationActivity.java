@@ -35,7 +35,7 @@ public class ParentInvitationActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         UserManager.checkUserNull(this);
-        UserManager.IsParentAccount(this);
+        UserManager.isParentAccount(this);
         currentParent = (ParentAccount) UserManager.currentUser;
         InviteCode.checkExpire(new CallBack() {
             @Override

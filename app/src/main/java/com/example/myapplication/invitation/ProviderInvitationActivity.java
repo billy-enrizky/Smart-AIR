@@ -37,7 +37,7 @@ public class ProviderInvitationActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         UserManager.checkUserNull(this);
-        UserManager.IsProviderAccount(this);
+        UserManager.isProviderAccount(this);
         currentProvider = (ProviderAccount) UserManager.currentUser;
     }
     public void GoBackToHome(android.view.View view){
