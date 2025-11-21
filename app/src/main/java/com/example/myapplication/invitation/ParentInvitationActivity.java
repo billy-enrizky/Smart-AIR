@@ -76,8 +76,8 @@ public class ParentInvitationActivity extends AppCompatActivity {
         TextView CodeText = findViewById(R.id.textView19);
         TextView ExipireDateText = findViewById(R.id.textView21);
         if(currentParent.getInviteCode() == null){
-            CodeText.setText("Code: " + currentParent.getInviteCode());
-            ExipireDateText.setText("Expire Date: " + currentParent.getInviteCode());
+            CodeText.setText("Code: null");
+            ExipireDateText.setText("Expire Date: null");
         }else{
             CodeText.setText("Code: " + currentParent.getInviteCode().getCode());
             ExipireDateText.setText("Expire Date: " + currentParent.getInviteCode().ExipireDate());
