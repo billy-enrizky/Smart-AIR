@@ -15,10 +15,13 @@ import java.util.ArrayList;
 public class ParentAccount extends UserData {
     ArrayList<String> Children_id;
     String Email;
+    InviteCode InviteCode;
+    ArrayList<String> LinkedProvidersId;
     public ParentAccount() {
         super();
         Email = "";
         Children_id = new ArrayList<String>();
+        LinkedProvidersId = new ArrayList<String>();
         Account = AccountType.PARENT;
     }
     public ParentAccount(String ID, String Email) {
@@ -26,8 +29,20 @@ public class ParentAccount extends UserData {
         this.Email = Email;
         this.Account = AccountType.PARENT;
         Children_id = new ArrayList<String>();
+        LinkedProvidersId = new ArrayList<String>();
     }
-
+    public void setInviteCode(InviteCode InviteCode){
+        this.InviteCode = InviteCode;
+    }
+    public InviteCode getInviteCode(){
+        return InviteCode;
+    }
+    public void setLinkedProvidersId(ArrayList<String> LinkedProviders){
+        this.LinkedProvidersId = LinkedProviders;
+    }
+    public ArrayList<String> getLinkedProvidersId(){
+        return LinkedProvidersId;
+    }
     public void addChild(String id) {
         Children_id.add(id);
     }
@@ -43,6 +58,10 @@ public class ParentAccount extends UserData {
 
     public void setChildrenid(ArrayList<String> Children_id){
         this.Children_id = Children_id;
+    }
+
+    public void addLinkedProvider(String ID){
+        LinkedProvidersId.add(ID);
     }
 
     @Override
@@ -62,6 +81,9 @@ public class ParentAccount extends UserData {
                     ParentAccount.this.FirstTime = Data.FirstTime;
                     ParentAccount.this.Email = Data.Email;
                     ParentAccount.this.Children_id = Data.Children_id;
+                    ParentAccount.this.InviteCode = Data.InviteCode;
+                    ParentAccount.this.LinkedProvidersId = Data.LinkedProvidersId;
+
                     //UserManager.mDatabase.child("test").setValue(ParentAccount.this.Children_id);
                     if(callback != null){
                         callback.onComplete();

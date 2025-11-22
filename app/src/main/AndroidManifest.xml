@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".invitation.ProviderInvitationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".invitation.ParentInvitationActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProviderActivity"
             android:exported="false" />
         <activity
