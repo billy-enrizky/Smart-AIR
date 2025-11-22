@@ -25,11 +25,11 @@ public class SignInView extends AppCompatActivity {
         emailEditText = (EditText) findViewById(R.id.sign_in_email);
         passwordEditText = (EditText) findViewById(R.id.sign_in_password);
         SigninPresenter = new SignInPresenter(this, new SignInModel());
-
+        SigninPresenter.initialize();
     }
 
     void onClickSigninButton(android.view.View view){
-        SigninPresenter.signin(emailEditText.getText().toString(), passwordEditText.getText().toString());
+        //SigninPresenter.signin(emailEditText.getText().toString(), passwordEditText.getText().toString());
     }
 
     void onClickForgotPasswordButton(android.view.View view){
@@ -37,7 +37,7 @@ public class SignInView extends AppCompatActivity {
     }
 
     void onClickSignupButton(android.view.View view){
-        SigninPresenter.signUp();
+        SigninPresenter.signup();
     }
 
     void showShortMessage(String message){
