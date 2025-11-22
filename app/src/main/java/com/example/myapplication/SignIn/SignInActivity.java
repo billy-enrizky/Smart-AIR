@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.SignIn;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.CallBack;
+import com.example.myapplication.MainActivity;
+import com.example.myapplication.OnBoardingActivity;
+import com.example.myapplication.R;
+import com.example.myapplication.ResetPasswordActivity;
+import com.example.myapplication.SignUpActivity;
+import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.UserData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
