@@ -10,17 +10,28 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.ArrayList;
+
 public class ProviderAccount extends UserData {
     String Email;
+    ArrayList<String> LinkedParentsId;
     public ProviderAccount () {
         super();
         this.Email = "";
         Account = AccountType.PROVIDER;
+        LinkedParentsId = new ArrayList<String>();
     }
     public ProviderAccount (String ID, String Email) {
         super(ID);
         this.Email = Email;
         this.Account = AccountType.PROVIDER;
+        LinkedParentsId = new ArrayList<String>();
+    }
+    public void setLinkedParentsId(ArrayList<String> LinkedParentsId){
+        this.LinkedParentsId = LinkedParentsId;
+    }
+    public ArrayList<String> getLinkedParentsId(){
+        return LinkedParentsId;
     }
     public void setEmail(String Email){
         this.Email = Email;
@@ -28,7 +39,9 @@ public class ProviderAccount extends UserData {
     public String getEmail(){
         return Email;
     }
-
+    public void addLinkedParents(String ID){
+        LinkedParentsId.add(ID);
+    }
     @Override
     public void ReadFromDatabase(String ID, CallBack callback) {
         UserManager.mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -44,6 +57,7 @@ public class ProviderAccount extends UserData {
                     ProviderAccount.this.Account = Data.Account;
                     ProviderAccount.this.FirstTime = Data.FirstTime;
                     ProviderAccount.this.Email = Data.Email;
+                    ProviderAccount.this.LinkedParentsId = Data.LinkedParentsId;
                     if(callback != null){
                         callback.onComplete();
                     }
