@@ -1,16 +1,21 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.userdata.AccountType;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
 import com.example.myapplication.userdata.UserData;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class UserManager {
     /*
@@ -27,6 +32,7 @@ public class UserManager {
      */
     public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     public static DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    private static ValueEventListener userListener;
 
     //Below are some methods that is probably would be frequently used, use them if they help.
 
@@ -53,5 +59,51 @@ public class UserManager {
         Intent intent1 = new Intent(activity, SignInView.class);
         activity.startActivity(intent1);
         activity.finish();
+    }
+
+    public static void UserDataListener(String uid) {
+
+        if (userListener != null) return;
+
+        userListener = mDatabase.child("users").child(uid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        currentUser = snapshot.getValue(UserData.class);
+                        Log.d("UserManager", "User updated: " + currentUser);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {}
+                });
+    }
+
+    public static void UserListener(String uid, AccountType type) {
+
+        if (userListener != null) return;
+
+        userListener = mDatabase.child("users").child(uid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if(type == AccountType.PARENT){
+                            currentUser = snapshot.getValue(ParentAccount.class);
+                        }else{
+                            currentUser = snapshot.getValue(ProviderAccount.class);
+                        }
+                        Log.d("UserManager", "User updated: " + currentUser);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {}
+                });
+    }
+
+    public static void stopUserListener(String uid) {
+        if (userListener != null) {
+            mDatabase.child("users").child(uid)
+                    .removeEventListener(userListener);
+            userListener = null;
+        }
     }
 }
