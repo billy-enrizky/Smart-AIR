@@ -9,6 +9,8 @@ import com.example.myapplication.UserManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 public class UserData {
     String ID;
@@ -80,6 +82,22 @@ public class UserData {
                     }
                 }
             }
+        });
+    }
+    public void ReadAndListenFromDatabase(String ID, CallBack callback) {
+        UserManager.mDatabase.child("users").child(ID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                UserData Data = snapshot.getValue(UserData.class);
+                UserData.this.ID = Data.ID;
+                UserData.this.Account = Data.Account;
+                UserData.this.FirstTime = Data.FirstTime;
+                if(callback != null){
+                    callback.onComplete();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {}
         });
     }
 }
