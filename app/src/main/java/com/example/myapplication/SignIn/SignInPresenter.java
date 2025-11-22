@@ -20,17 +20,21 @@ public class SignInPresenter {
         this.model = model;
     }
 
-    public Auth
+    void initialize(){
+        UserManager.currentUser = new UserData();
+        model.ReloadUserAuth();
+    }
+
     void signin(String emailinput, String passwordinput) {
         String email = emailinput.trim();
         String password = passwordinput.trim();;
-        model.AuthSignIn(email, password, new ResultCallBack<Boolean>() {
+        model.SignInAuth(email, password, new ResultCallBack<Boolean>() {
             @Override
             public void onComplete(Boolean result) {
                 if(result){
                     view.showShortMessage("Welcome!");
-                    String ID = model.AuthGetCurrentUID();
-                    model.DataBaseRead(ID, new ResultCallBack<UserData>() {
+                    String ID = model.GetCurrentUIDAuth();
+                    model.QueryDB(ID, new ResultCallBack<UserData>() {
                         @Override
                         public void onComplete(UserData result) {
                             UserManager.currentUser = result;
@@ -44,7 +48,7 @@ public class SignInPresenter {
                         }
                     });
                 }else{
-                    view.showShortMessage("User Not Find");
+                    view.showShortMessage("User Not Found");
                 }
             }
         });
@@ -55,7 +59,7 @@ public class SignInPresenter {
         view.startActivity(intent);
     }
 
-    public void signUp() {
+    public void signup() {
         Intent intent = new Intent(view, SignUpActivity.class);
         view.startActivity(intent);
     }

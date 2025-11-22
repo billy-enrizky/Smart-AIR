@@ -25,7 +25,12 @@ public class SignInModel {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
-    void AuthSignIn(String email, String password, ResultCallBack<Boolean> callBack) {
+    public void ReloadUserAuth(){
+        if(mAuth.getCurrentUser() != null){
+            mAuth.getCurrentUser().reload();
+        }
+    }
+    void SignInAuth(String email, String password, ResultCallBack<Boolean> callBack) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -48,11 +53,11 @@ public class SignInModel {
             }
         });
     }
-    String AuthGetCurrentUID(){
+    String GetCurrentUIDAuth(){
         return mAuth.getCurrentUser().getUid();
     }
 
-    void DataBaseRead(String ID, ResultCallBack<UserData> callBack){
+    void QueryDB(String ID, ResultCallBack<UserData> callBack){
         mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
