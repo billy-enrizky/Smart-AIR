@@ -33,7 +33,7 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".SignIn.SignInActivity"
+            android:name=".SignIn.SignInView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

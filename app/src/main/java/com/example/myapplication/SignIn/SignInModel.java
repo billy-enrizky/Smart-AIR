@@ -18,9 +18,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class SignInModel {
 
-    public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    public static DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    static void AuthSignIn(String email, String password, ResultCallBack<Boolean> callBack) {
+    public FirebaseAuth mAuth;
+    public DatabaseReference mDatabase;
+
+    public SignInModel(){
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
+    void AuthSignIn(String email, String password, ResultCallBack<Boolean> callBack) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -43,11 +48,11 @@ public class SignInModel {
             }
         });
     }
-    static String AuthGetCurrentUID(){
+    String AuthGetCurrentUID(){
         return mAuth.getCurrentUser().getUid();
     }
 
-    static void DataBaseRead(String ID, ResultCallBack<UserData> callBack){
+    void DataBaseRead(String ID, ResultCallBack<UserData> callBack){
         mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {

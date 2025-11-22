@@ -10,7 +10,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.myapplication.SignIn.SignInActivity;
+import com.example.myapplication.SignIn.SignInView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SignOutButtonFragment extends Fragment {
@@ -35,7 +35,7 @@ public class SignOutButtonFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                Intent intent = new Intent(getActivity(), SignInView.class);
                 startActivity(intent);
                 getActivity().finish();
             }
