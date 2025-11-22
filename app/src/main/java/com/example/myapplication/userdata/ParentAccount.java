@@ -92,6 +92,7 @@ public class ParentAccount extends UserData implements Cloneable {
                     ParentAccount.this.FirstTime = Data.FirstTime;
                     ParentAccount.this.Email = Data.Email;
                     ParentAccount.this.children = Data.children;
+                    ParentAccount.this.InviteCode = Data.InviteCode;
                     ParentAccount.this.LinkedProvidersId = Data.LinkedProvidersId;
                     if(callback != null){
                         callback.onComplete();
