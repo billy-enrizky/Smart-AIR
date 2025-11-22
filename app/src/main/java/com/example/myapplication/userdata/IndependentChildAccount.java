@@ -1,10 +1,14 @@
 package com.example.myapplication.userdata;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.example.myapplication.CallBack;
 import com.example.myapplication.UserManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 public class IndependentChildAccount extends ChildAccount {
     String Email;
@@ -31,21 +35,26 @@ public class IndependentChildAccount extends ChildAccount {
 
     @Override
     public void ReadFromDatabase(String ID, CallBack callback) {
-        UserManager.mDatabase.child("users").child(ID).addValueEventListener(new ValueEventListener() {
+        UserManager.mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                IndependentChildAccount Data = snapshot.getValue(IndependentChildAccount.class);
-                IndependentChildAccount.this.ID = Data.ID;
-                IndependentChildAccount.this.Account = Data.Account;
-                IndependentChildAccount.this.FirstTime = Data.FirstTime;
-                IndependentChildAccount.this.Email = Data.Email;
-                IndependentChildAccount.this.Parent_id = Data.Parent_id;
-                if(callback != null){
-                    callback.onComplete();
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    DataSnapshot Snapshot = task.getResult();
+                    IndependentChildAccount Data = Snapshot.getValue(IndependentChildAccount.class);
+                    IndependentChildAccount.this.ID = Data.ID;
+                    IndependentChildAccount.this.Account = Data.Account;
+                    IndependentChildAccount.this.FirstTime = Data.FirstTime;
+                    IndependentChildAccount.this.Email = Data.Email;
+                    IndependentChildAccount.this.Parent_id = Data.Parent_id;
+                    if(callback != null){
+                        callback.onComplete();
+                    }
                 }
             }
-            @Override
-            public void onCancelled(DatabaseError error) {}
         });
     }
+
 }

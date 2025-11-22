@@ -1,10 +1,14 @@
 package com.example.myapplication.userdata;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.example.myapplication.CallBack;
 import com.example.myapplication.UserManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 public class ProviderAccount extends UserData {
     String Email;
@@ -27,20 +31,25 @@ public class ProviderAccount extends UserData {
 
     @Override
     public void ReadFromDatabase(String ID, CallBack callback) {
-        UserManager.mDatabase.child("users").child(ID).addValueEventListener(new ValueEventListener() {
+        UserManager.mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                ProviderAccount Data = snapshot.getValue(ProviderAccount.class);
-                ProviderAccount.this.ID = Data.ID;
-                ProviderAccount.this.Account = Data.Account;
-                ProviderAccount.this.FirstTime = Data.FirstTime;
-                ProviderAccount.this.Email = Data.Email;
-                if(callback != null){
-                    callback.onComplete();
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    DataSnapshot Snapshot = task.getResult();
+                    ProviderAccount Data = Snapshot.getValue(ProviderAccount.class);
+                    ProviderAccount.this.ID = Data.ID;
+                    ProviderAccount.this.Account = Data.Account;
+                    ProviderAccount.this.FirstTime = Data.FirstTime;
+                    ProviderAccount.this.Email = Data.Email;
+                    if(callback != null){
+                        callback.onComplete();
+                    }
                 }
             }
-            @Override
-            public void onCancelled(DatabaseError error) {}
         });
     }
+
 }

@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         });
         if(UserManager.currentUser.getAccount() == AccountType.DEP_CHILD){
             UserManager.currentUser = new DependentChildAccount();
-            UserManager.currentUser.ReadAndListenFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
+            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
                     /*Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }else if(UserManager.currentUser.getAccount() == AccountType.INDEP_CHILD){
             UserManager.currentUser = new IndependentChildAccount();
-            UserManager.currentUser.ReadAndListenFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
+            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
                     /*Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }else if(UserManager.currentUser.getAccount() == AccountType.PARENT){
             UserManager.currentUser = new ParentAccount();
-            UserManager.currentUser.ReadAndListenFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
+            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
                     Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }else{
             UserManager.currentUser = new ProviderAccount();
-            UserManager.currentUser.ReadAndListenFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
+            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
                     Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);
