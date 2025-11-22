@@ -14,7 +14,8 @@ import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.UserData;
 
 public class SignInPresenter {
-    static void signIn(AppCompatActivity activity, String email, String password) {
+    static void signIn(AppCompatActivity activity, String emailinput, String passwordinput) {
+        String email = emailinput.
         SignInModel.AuthSignIn(email, password, new ResultCallBack<Boolean>() {
             @Override
             public void onComplete(Boolean result) {
