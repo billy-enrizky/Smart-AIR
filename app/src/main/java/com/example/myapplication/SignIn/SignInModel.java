@@ -60,7 +60,7 @@ public class SignInModel {
                     UserData Data = Snapshot.getValue(UserData.class);
                     if(callBack != null){
                         callBack.onComplete(Data);
-                    }
+                   }
                 }
             }
         });
