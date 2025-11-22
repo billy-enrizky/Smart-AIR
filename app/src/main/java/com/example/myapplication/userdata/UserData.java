@@ -17,7 +17,6 @@ public class UserData {
 
     public UserData(){
         ID = "";
-        Account = AccountType.DEP_CHILD;
         FirstTime = true;
     }
     public UserData(String ID) {
@@ -45,6 +44,12 @@ public class UserData {
 
     public AccountType getAccount() {
         return this.Account;
+    }
+
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     public void WriteIntoDatabase(CallBack callback) {

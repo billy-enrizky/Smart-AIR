@@ -10,19 +10,42 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="com.example.myapplication.SignOutButtonFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="157dp"
+        android:layout_height="54dp"
         android:layout_marginStart="19dp"
         android:layout_marginTop="34dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_signoutbutton" />
+
+    <Button
+        android:id="@+id/createChildPageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="107dp"
+        android:layout_marginEnd="253dp"
+        android:layout_marginBottom="736dp"
+        android:text="Add New Child"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView3"
         android:name="com.example.myapplication.invitation.GoToProvidersManagerFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="113dp"
-        app:layout_constraintStart_toStartOf="@+id/fragmentContainerView"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="193dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="63dp"
+        android:layout_marginTop="54dp"
+        android:layout_marginEnd="155dp"
+        android:layout_marginBottom="633dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/createChildPageButton"
+        tools:layout="@layout/fragment_go_to_providers_manager" />
 </androidx.constraintlayout.widget.ConstraintLayout>
