@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
 import com.example.myapplication.userdata.UserData;
@@ -49,7 +50,7 @@ public class UserManager {
 
     public static void backToLogin(AppCompatActivity activity){
         mAuth.signOut();
-        Intent intent1 = new Intent(activity, SignInActivity.class);
+        Intent intent1 = new Intent(activity, SignInView.class);
         activity.startActivity(intent1);
         activity.finish();
     }
