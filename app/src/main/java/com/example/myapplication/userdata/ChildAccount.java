@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class ChildAccount extends UserData {
     String Parent_id;
-    LocalDate dob;
+    String dob;
     int age;
     public ChildAccount(String ID) {
         super(ID);
@@ -24,8 +24,14 @@ public class ChildAccount extends UserData {
     public ChildAccount() {
         super();
     }
+    public ChildAccount(String ID, String Parent_id, String dob, int age) {
+        this.ID = ID;
+        this.Parent_id = Parent_id;
+        this.dob = dob;
+        this.age = age;
+    }
     public void setDob(int year, int month, int day) {
-        this.dob = LocalDate.of(year, month, day);
+        this.dob = ""+year+"/" + month + "/" + day;
     }
     public void setAge(int age) {
         this.age = age;

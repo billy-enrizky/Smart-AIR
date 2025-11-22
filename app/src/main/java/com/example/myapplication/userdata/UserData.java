@@ -46,6 +46,12 @@ public class UserData {
         return this.Account;
     }
 
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     public void WriteIntoDatabase(CallBack callback) {
         UserManager.mDatabase.child("users").child(ID).setValue(this).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

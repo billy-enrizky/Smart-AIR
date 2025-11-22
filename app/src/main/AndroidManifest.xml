@@ -18,7 +18,7 @@
             android:name=".ParentActivity"
             android:exported="false" />
         <activity
-            android:name=".ChildActivity"
+            android:name=".CreateChildActivity"
             android:exported="false" />
         <activity
             android:name=".OnBoardingActivity"
