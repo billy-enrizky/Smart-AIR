@@ -45,7 +45,10 @@ public class SignInModel {
         });
     }
     String GetCurrentUIDAuth(){
-        return mAuth.getCurrentUser().getUid();
+        if(mAuth.getCurrentUser() != null){
+            return mAuth.getCurrentUser().getUid();
+        }
+        return null;
     }
 
     void QueryDB(String ID, ResultCallBack<UserData> callBack){

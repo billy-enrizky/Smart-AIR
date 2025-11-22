@@ -1,12 +1,6 @@
 package com.example.myapplication.SignIn;
 
-import android.content.Intent;
-
-import com.example.myapplication.MainActivity;
-import com.example.myapplication.OnBoardingActivity;
-import com.example.myapplication.ResetPasswordActivity;
 import com.example.myapplication.ResultCallBack;
-import com.example.myapplication.SignUpActivity;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.UserData;
 
@@ -28,6 +22,14 @@ public class SignInPresenter {
     void signin(String emailinput, String passwordinput) {
         String email = emailinput.trim();
         String password = passwordinput.trim();;
+        if(isNull(email)){
+            view.showShortMessage("email cannot be empty");
+            return;
+        }
+        if(isNull(password)){
+            view.showShortMessage("password cannot be empty");
+            return;
+        }
         model.SignInAuth(email, password, new ResultCallBack<Boolean>() {
             @Override
             public void onComplete(Boolean result) {
@@ -39,11 +41,9 @@ public class SignInPresenter {
                         public void onComplete(UserData result) {
                             UserManager.currentUser = result;
                             if(UserManager.currentUser.getFirstTime()){
-                                Intent intent1 = new Intent(view, OnBoardingActivity.class);
-                                view.startActivity(intent1);
+                                view.GoToOnBoardingActivity();
                             }else{
-                                Intent intent1 = new Intent(view, MainActivity.class);
-                                view.startActivity(intent1);
+                                view.GoToMainActivity();
                             }
                         }
                     });
@@ -54,13 +54,11 @@ public class SignInPresenter {
         });
     }
 
-    public void forgotPassword() {
-        Intent intent = new Intent(view, ResetPasswordActivity.class);
-        view.startActivity(intent);
-    }
-
-    public void signup() {
-        Intent intent = new Intent(view, SignUpActivity.class);
-        view.startActivity(intent);
+    Boolean isNull(String Input){
+        if( Input == null || Input.equals("")){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
