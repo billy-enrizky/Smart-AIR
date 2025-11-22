@@ -36,7 +36,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -46,9 +48,9 @@ public class CreateChildActivity extends AppCompatActivity {
 
     private EditText childNameEditText;
     private CalendarView childDobCalendarView;
-    public int year;
-    public int month;
-    public int day;
+    public int year = Calendar.getInstance().get(Calendar.YEAR);
+    public int month = Calendar.getInstance().get(Calendar.MONTH)+1;
+    public int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
     private EditText childAgeEditText;
     private EditText childNotesEditText;
     private Button createChildButton;
@@ -72,7 +74,7 @@ public class CreateChildActivity extends AppCompatActivity {
         childDobCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                setDate(year, month, dayOfMonth);
+                setDate(year, month+1, dayOfMonth);
             }
         });
         childAgeEditText = (EditText)findViewById(R.id.input_child_age);
@@ -81,7 +83,7 @@ public class CreateChildActivity extends AppCompatActivity {
         mAuth = getInstance();
     }
 
-    public void createChildClick(View view) throws CloneNotSupportedException {
+    public void createChildClick(View view) {
         usernameTaken = false;
         FirebaseUser currentUser = mAuth.getCurrentUser();
         ParentAccount parentData = (ParentAccount) UserManager.currentUser;
