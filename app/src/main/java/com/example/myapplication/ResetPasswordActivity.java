@@ -30,6 +30,14 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
+    public void setFirebase(FirebaseAuth auth) {
+        this.mAuth = auth;
+    }
+
+    public void setDatabase(DatabaseReference database) {
+        this.mDatabase = database;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
