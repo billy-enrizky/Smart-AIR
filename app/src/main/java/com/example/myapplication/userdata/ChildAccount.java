@@ -10,5 +10,4 @@ public class ChildAccount extends UserData {
         super(ID);
         Parent_id = "";
     }
-
 }
