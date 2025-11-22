@@ -10,6 +10,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.myapplication.SignIn.SignInActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SignOutButtonFragment extends Fragment {
