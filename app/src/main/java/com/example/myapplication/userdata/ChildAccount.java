@@ -15,7 +15,6 @@ public class ChildAccount extends UserData {
         super();
     }
     public ChildAccount(String Parent_id, String password, String dob, String name, String notes, String age, String ID) {
-
         this.Parent_id = Parent_id;
         this.password = password;
         this.dob = dob;
@@ -23,7 +22,6 @@ public class ChildAccount extends UserData {
         this.notes = notes;
         this.age = age;
         this.ID = ID;
-
     }
     public void setDob(String Dob) {
         this.dob = Dob;
@@ -64,5 +62,5 @@ public class ChildAccount extends UserData {
     public String getAge(){
         return age;
     }
-    
+
 }
