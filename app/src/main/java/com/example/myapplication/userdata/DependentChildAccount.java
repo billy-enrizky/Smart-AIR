@@ -10,10 +10,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 
-import java.time.LocalDate;
-
 public class DependentChildAccount extends ChildAccount {
-    String notes;
     public DependentChildAccount() {
         super();
         Account = AccountType.DEP_CHILD;
@@ -24,14 +21,7 @@ public class DependentChildAccount extends ChildAccount {
         this.Account = AccountType.DEP_CHILD;
     }
 
-    public DependentChildAccount(String ID, String Parent_id, String dob, int age, String notes) {
-        super(ID, Parent_id, dob, age);
-        this.notes = notes;
-    }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
 
     @Override
     public void WriteIntoDatabase(CallBack callback) {
