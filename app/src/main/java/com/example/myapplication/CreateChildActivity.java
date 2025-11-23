@@ -85,6 +85,10 @@ public class CreateChildActivity extends AppCompatActivity {
             return;
 
         }
+        if(password.equals("")) {
+            Toast.makeText(CreateChildActivity.this, "Must have password", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // check to see if username taken
         //boolean usernameTaken = false;
