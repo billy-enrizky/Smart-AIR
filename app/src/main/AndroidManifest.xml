@@ -12,6 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".childrenprofile.ScrollingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/Theme.MyApplication.NoActionBar" />
+        <activity
+            android:name=".childrenprofile.ChildrenProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChildActivity"
+            android:exported="false" />
+        <activity
             android:name=".selector.SelectorActivity"
             android:exported="false" />
         <activity
@@ -27,7 +38,7 @@
             android:name=".ParentActivity"
             android:exported="false" />
         <activity
-            android:name=".CreateChildActivity"
+            android:name=".childrenprofile.CreateChildActivity"
             android:exported="false" />
         <activity
             android:name=".OnBoardingActivity"

@@ -92,7 +92,7 @@ public class InviteCode {
         });
     }
 
-    public static void CodeInquiry(String InputCode, ResultCallBack callback){
+    public static void CodeInquiry(String InputCode, ResultCallBack<ParentAccount> callback){
         DatabaseReference usersRef = UserManager.mDatabase.child("users");
         Query query = usersRef.orderByChild("inviteCode/code").equalTo(InputCode);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -103,7 +103,6 @@ public class InviteCode {
                         ParentAccount parent = child.getValue(ParentAccount.class);
                         if(parent.getInviteCode().IsValid() && parent.getInviteCode().getCode().equals(InputCode)){
                             callback.onComplete(parent);
-                            return;
                         }else{
                             parent.setInviteCode(null);
                             parent.WriteIntoDatabase(null);

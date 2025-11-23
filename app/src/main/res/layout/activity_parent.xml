@@ -21,8 +21,8 @@
         android:id="@+id/createChildPageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="143dp"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="88dp"
         android:text="Add New Child"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,4 +36,12 @@
         android:layout_marginTop="279dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Children Profile"
+        tools:layout_editor_absoluteX="51dp"
+        tools:layout_editor_absoluteY="393dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

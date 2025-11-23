@@ -11,6 +11,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.childrenprofile.ChildrenProfileActivity;
+import com.example.myapplication.childrenprofile.CreateChildActivity;
+
 public class ParentActivity extends AppCompatActivity {
 
     Button createChildButton;
@@ -34,6 +37,11 @@ public class ParentActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void ChildrenProfile(){
+        Intent intent = new Intent(ParentActivity.this, ChildrenProfileActivity.class);
+        startActivity(intent);
     }
     @Override
     public void onResume() {

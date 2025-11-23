@@ -47,6 +47,7 @@ public class ParentInvitationActivity extends AppCompatActivity {
     public void GoBackToHome(android.view.View view){
         Intent intent = new Intent(this, ParentActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void GenerateCode(android.view.View view){

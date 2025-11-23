@@ -1,6 +1,16 @@
 package com.example.myapplication.userdata;
 
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.example.myapplication.CallBack;
+import com.example.myapplication.UserManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+
 public class ChildAccount extends UserData {
     String Parent_id;
     String password;
@@ -8,6 +18,7 @@ public class ChildAccount extends UserData {
     String name;
     String notes;
     String age;
+
     public ChildAccount(String ID) {
         super(ID);
     }
@@ -22,6 +33,8 @@ public class ChildAccount extends UserData {
         this.notes = notes;
         this.age = age;
         this.ID = ID;
+        this.Account = AccountType.DEP_CHILD;
+        this.FirstTime = true;
     }
     public void setDob(String Dob) {
         this.dob = Dob;
@@ -62,5 +75,43 @@ public class ChildAccount extends UserData {
     public String getAge(){
         return age;
     }
+    @Override
+    public void WriteIntoDatabase(CallBack callback) {
+        UserManager.mDatabase.child("users").child(Parent_id).child("children").child(ID).setValue(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (callback != null) {
+                    callback.onComplete();
+                }
+            }
+        });
+    }
 
+
+    public void ReadFromDatabase(String Parent_id,String ID, CallBack callback) {
+        UserManager.mDatabase.child("users").child(Parent_id).child("children").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    DataSnapshot Snapshot = task.getResult();
+                    ChildAccount Data = Snapshot.getValue(ChildAccount.class);
+                    ChildAccount.this.ID = Data.ID;
+                    ChildAccount.this.Account = Data.Account;
+                    ChildAccount.this.FirstTime = Data.FirstTime;
+                    ChildAccount.this.Parent_id = Data.Parent_id;
+                    ChildAccount.this.dob = Data.dob;
+                    ChildAccount.this.age = Data.age;
+                    ChildAccount.this.notes = Data.notes;
+                    ChildAccount.this.password = Data.password;
+                    ChildAccount.this.name = Data.name;
+                    if(callback != null){
+                        callback.onComplete();
+                    }
+                }
+            }
+        });
+    }
 }
