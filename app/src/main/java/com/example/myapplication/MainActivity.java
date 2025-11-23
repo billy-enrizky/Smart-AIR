@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         }else{
             String uid = UserManager.mAuth.getCurrentUser().getUid();
             UserManager.UserListener(uid, AccountType.PROVIDER);
-            Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
+            Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);
             startActivity(intent1);
         }
     }
