@@ -1,6 +1,5 @@
 package com.example.myapplication.userdata;
 
-import com.example.myapplication.userdata.selectoritem.SharedItems;
 
 public class ChildAccount extends UserData {
     String Parent_id;
@@ -9,7 +8,6 @@ public class ChildAccount extends UserData {
     String name;
     String notes;
     String age;
-    SharedItems SharedItems;
     public ChildAccount(String ID) {
         super(ID);
     }
@@ -66,11 +64,5 @@ public class ChildAccount extends UserData {
     public String getAge(){
         return age;
     }
-
-    public void setSharedItems(SharedItems SharedItems) {
-        this.SharedItems = SharedItems;
-    }
-    public SharedItems getSharedItems() {
-        return SharedItems;
-    }
+    
 }
