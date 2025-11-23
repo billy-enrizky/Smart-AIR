@@ -34,11 +34,11 @@ public class SignOutButtonFragment extends Fragment {
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
                 if(UserManager.mAuth.getUid() != null){
                     UserManager.stopUserListener(UserManager.mAuth.getUid());
                 }
                 UserManager.currentUser = null;
+                FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(getActivity(), SignInView.class);
                 startActivity(intent);
                 getActivity().finish();
