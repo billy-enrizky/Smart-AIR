@@ -1,39 +1,66 @@
 package com.example.myapplication.userdata;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.example.myapplication.CallBack;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-
-import java.time.LocalDate;
-import java.util.Map;
 
 public class ChildAccount extends UserData {
     String Parent_id;
+    String password;
     String dob;
-    int age;
+    String name;
+    String notes;
+    String age;
     public ChildAccount(String ID) {
         super(ID);
     }
     public ChildAccount() {
         super();
     }
-    public ChildAccount(String ID, String Parent_id, String dob, int age) {
-        this.ID = ID;
+    public ChildAccount(String Parent_id, String password, String dob, String name, String notes, String age, String ID) {
         this.Parent_id = Parent_id;
+        this.password = password;
         this.dob = dob;
+        this.name = name;
+        this.notes = notes;
+        this.age = age;
+        this.ID = ID;
+    }
+    public void setDob(String Dob) {
+        this.dob = Dob;
+    }
+    public void setAge(String age) {
         this.age = age;
     }
-    public void setDob(int year, int month, int day) {
-        this.dob = ""+year+"/" + month + "/" + day;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
-    public void setAge(int age) {
-        this.age = age;
+    public void setName(String name) {
+        this.name = name;
     }
+    public void setParent_id(String Parent_id) {
+        this.Parent_id = Parent_id;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+    public String getParent_id(){
+        return Parent_id;
+    }
+    public String getPassword(){
+        return password;
+    }
+    public String getDob(){
+        return dob;
+    }
+    public String getName(){
+        return name;
+    }
+    public String getNotes(){
+        return notes;
+    }
+    public String getAge(){
+        return age;
+    }
+
 }
