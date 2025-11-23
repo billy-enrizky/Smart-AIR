@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.userdata.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -164,7 +166,7 @@ public class SignUpActivity extends AppCompatActivity {
         return Password.length() >= 6 && Password.matches("^.*(?=.*[a-z].*)(?=.*[A-Z].*)(?=.*\\d.*)(?=.*[!@#$%^&*()_+\\-].*).*$");
     }
     public void GoToSignIn() {
-        Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+        Intent intent = new Intent(SignUpActivity.this, SignInView.class);
         startActivity(intent);
     }
 }

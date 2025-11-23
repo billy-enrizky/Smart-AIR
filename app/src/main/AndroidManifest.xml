@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".selector.SelectorActivity"
+            android:exported="false" />
+        <activity
             android:name=".invitation.ProviderInvitationActivity"
             android:exported="false" />
         <activity
@@ -39,7 +42,7 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".SignInActivity"
+            android:name=".SignIn.SignInView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
