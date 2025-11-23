@@ -48,6 +48,8 @@ public class IndependentChildAccount extends ChildAccount {
                     IndependentChildAccount.this.Account = Data.Account;
                     IndependentChildAccount.this.FirstTime = Data.FirstTime;
                     IndependentChildAccount.this.Email = Data.Email;
+                    IndependentChildAccount.this.dob = Data.dob;
+                    IndependentChildAccount.this.age = Data.age;
                     IndependentChildAccount.this.Parent_id = Data.Parent_id;
                     if(callback != null){
                         callback.onComplete();
@@ -56,5 +58,4 @@ public class IndependentChildAccount extends ChildAccount {
             }
         });
     }
-
 }
