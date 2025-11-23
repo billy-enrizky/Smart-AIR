@@ -9,104 +9,85 @@
         android:id="@+id/create_child_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="75dp"
-        android:layout_marginTop="55dp"
-        android:layout_marginEnd="75dp"
-        android:layout_marginBottom="783dp"
+        android:layout_marginTop="26dp"
         android:text="Add New Child"
         android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/input_child_username"
         android:layout_width="339dp"
-        android:layout_height="57dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginEnd="46dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="79dp"
         android:ems="10"
         android:hint="Username (unique)"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/create_child_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/input_child_name"
         android:layout_width="337dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="96dp"
-        android:layout_marginEnd="42dp"
+        android:layout_marginTop="126dp"
         android:hint="Name"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/create_child_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <CalendarView
         android:id="@+id/input_child_dob"
         android:layout_width="391dp"
         android:layout_height="311dp"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="42dp"
+        android:layout_marginTop="267dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.396"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dob_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/dob_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="43dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="268dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="243dp"
         android:text="Date of Birth"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/input_child_dob"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_child_name"
-        app:layout_constraintVertical_bias="0.708" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/input_child_age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="43dp"
-        android:layout_marginTop="27dp"
-        android:layout_marginEnd="158dp"
+        android:layout_marginStart="87dp"
+        android:layout_marginTop="578dp"
         android:ems="10"
         android:hint="Age"
         android:inputType="number"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.423"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_child_dob" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/input_child_notes_layout"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="85dp"
         android:layout_marginEnd="1dp"
-        android:layout_marginBottom="79dp"
+        android:layout_marginBottom="113dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_child_age"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/input_child_notes">
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,29 +95,36 @@
         android:id="@+id/input_child_notes"
         android:layout_width="400dp"
         android:layout_height="70dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginBottom="157dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="628dp"
         android:hint="notes (optional)"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_child_age"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/create_child_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="127dp"
-        android:layout_marginEnd="156dp"
-        android:layout_marginBottom="13dp"
+        android:layout_marginTop="720dp"
         android:onClick="createChildClick"
         android:text="Add"
         android:textSize="44sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextTextPassword2"
+        android:layout_width="337dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="177dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
