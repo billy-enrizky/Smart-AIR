@@ -52,7 +52,7 @@ public class IndependentChildAccount extends ChildAccount {
                     IndependentChildAccount.this.age = Data.age;
                     IndependentChildAccount.this.Parent_id = Data.Parent_id;
                     if(callback != null){
-                        callback.onComplete();
+                        callback.onComplete();//
                     }
                 }
             }

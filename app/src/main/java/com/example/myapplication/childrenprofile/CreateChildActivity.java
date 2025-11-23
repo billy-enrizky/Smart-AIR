@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.childrenprofile;
 
 import static com.google.firebase.auth.FirebaseAuth.getInstance;
 
@@ -13,6 +13,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.CallBack;
+import com.example.myapplication.ParentActivity;
+import com.example.myapplication.R;
+import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.google.firebase.auth.FirebaseAuth;
@@ -119,6 +123,10 @@ public class CreateChildActivity extends AppCompatActivity {
             }
 
         });
-
+    }
+    public void GoBackToHome(android.view.View view){
+        Intent intent = new Intent(this, ParentActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

@@ -40,20 +40,24 @@ public class SignInView extends AppCompatActivity {
     public void GoToResetPasswordActivity(android.view.View view){
         Intent intent = new Intent(this, ResetPasswordActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void GoToSignUpActivity(android.view.View view){
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
+        finish();
     }
     public void GoToMainActivity(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void GoToOnBoardingActivity(){
         Intent intent = new Intent(this, OnBoardingActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void showShortMessage(String message){

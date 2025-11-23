@@ -9,11 +9,10 @@
         android:id="@+id/create_child_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="48dp"
         android:text="Add New Child"
         android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,12 +20,12 @@
         android:id="@+id/input_child_username"
         android:layout_width="339dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="79dp"
+        android:layout_marginTop="96dp"
         android:ems="10"
         android:hint="Username (unique)"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.472"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,11 +33,11 @@
         android:id="@+id/input_child_name"
         android:layout_width="337dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="126dp"
+        android:layout_marginTop="144dp"
         android:hint="Name"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -118,12 +117,22 @@
         android:id="@+id/editTextTextPassword2"
         android:layout_width="337dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="177dp"
+        android:layout_marginTop="196dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.486"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:onClick="GoBackToHome"
+        android:text="Back To Home"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
