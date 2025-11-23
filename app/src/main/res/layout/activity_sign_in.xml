@@ -69,7 +69,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:backgroundTint="#4CAF50"
-        android:onClick="signInClick"
+        android:onClick="GoToSignInActivity"
         android:text="Sign in" />
 
     <Button
@@ -79,6 +79,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:backgroundTint="#F44336"
+        android:onClick="GoToResetPasswordActivity"
         android:text="Forgot Password?" />
 
     <Button
@@ -87,7 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
-        android:onClick="CreateNewAccount"
+        android:onClick="GoToSignUpActivity"
         android:text="Create an Account" />
 
     </LinearLayout>

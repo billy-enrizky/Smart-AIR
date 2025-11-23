@@ -9,11 +9,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.myapplication.userdata.DependentChildAccount;
-import com.example.myapplication.userdata.IndependentChildAccount;
-import com.example.myapplication.userdata.ParentAccount;
-import com.example.myapplication.userdata.ProviderAccount;
+import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.userdata.AccountType;
+import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.userdata.IndependentChildAccount;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         if(UserManager.currentUser.getAccount() == AccountType.DEP_CHILD){
-            UserManager.currentUser = new DependentChildAccount();
+            UserManager.currentUser = new ChildAccount();
             UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
                 @Override
                 public void onComplete(){
@@ -48,23 +47,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }else if(UserManager.currentUser.getAccount() == AccountType.PARENT){
-            UserManager.currentUser = new ParentAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
-                @Override
-                public void onComplete(){
-                    Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
-                    startActivity(intent1);
-                }
-            });
+            String uid = UserManager.mAuth.getCurrentUser().getUid();
+            UserManager.UserListener(uid, AccountType.PARENT);
+            Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
+            startActivity(intent1);
         }else{
-            UserManager.currentUser = new ProviderAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
-                @Override
-                public void onComplete(){
-                    Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);
-                    startActivity(intent1);
-                }
-            });
+            String uid = UserManager.mAuth.getCurrentUser().getUid();
+            UserManager.UserListener(uid, AccountType.PROVIDER);
+            Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);
+            startActivity(intent1);
         }
     }
 
@@ -78,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public void GoToSignIn(android.view.View view) {
-        Intent intent = new Intent(this, SignInActivity.class);
+        Intent intent = new Intent(this, SignInView.class);
         startActivity(intent);
     }
 }
