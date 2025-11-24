@@ -1,4 +1,4 @@
-package com.example.myapplication.childrenprofile;
+package com.example.myapplication.childmanaging;
 
 import static com.google.firebase.auth.FirebaseAuth.getInstance;
 
@@ -23,8 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
@@ -65,6 +63,7 @@ public class CreateChildActivity extends AppCompatActivity {
                 setDate(year, month+1, dayOfMonth);
             }
         });
+        UserManager.isParentAccount(this);
         childAgeEditText = (EditText)findViewById(R.id.input_child_age);
         childNotesEditText = (EditText)findViewById(R.id.input_child_notes);
         createChildButton = (Button)findViewById(R.id.create_child_button);
@@ -87,7 +86,6 @@ public class CreateChildActivity extends AppCompatActivity {
         if (username.equals("")) {
             Toast.makeText(CreateChildActivity.this, "Must have username", Toast.LENGTH_SHORT).show();
             return;
-
         }
         if(password.equals("")) {
             Toast.makeText(CreateChildActivity.this, "Must have password", Toast.LENGTH_SHORT).show();
@@ -96,11 +94,11 @@ public class CreateChildActivity extends AppCompatActivity {
 
         // check to see if username taken
         //boolean usernameTaken = false;
-        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        UserManager.mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+                    if(userSnapshot.child("account").getValue() == null)continue;
                     if (userSnapshot.child("account").getValue().equals("PARENT") && userSnapshot.child("children").hasChild(username)) {
                         Toast.makeText(CreateChildActivity.this, "Username already in use", Toast.LENGTH_SHORT).show();
                         return;
@@ -114,6 +112,7 @@ public class CreateChildActivity extends AppCompatActivity {
                         Toast.makeText(CreateChildActivity.this, "Child Creation Successful!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CreateChildActivity.this, ParentActivity.class);
                         startActivity(intent);
+                        finish();
                     }
                 });
             }

@@ -112,10 +112,16 @@ public class UserManager {
         });
     }
 
+    public static void stopChildUserListener(String parent_id, String username) {
+        if (userListener != null) {
+            mDatabase.child("users").child(parent_id).child("children").child(username).removeEventListener(userListener);
+            userListener = null;
+        }
+    }
+
     public static void stopUserListener(String uid) {
         if (userListener != null) {
-            mDatabase.child("users").child(uid)
-                    .removeEventListener(userListener);
+            mDatabase.child("users").child(uid).removeEventListener(userListener);
             userListener = null;
         }
     }

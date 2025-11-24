@@ -12,12 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
-            android:name=".childrenprofile.ScrollingActivity"
+            android:name=".providermanaging.AccessPermissionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".childmanaging.ScrollingActivity"
             android:exported="false"
             android:label="@string/title_activity_scrolling"
             android:theme="@style/Theme.MyApplication.NoActionBar" />
         <activity
-            android:name=".childrenprofile.ChildrenProfileActivity"
+            android:name=".childmanaging.SignInChildProfileActivity"
             android:exported="false" />
         <activity
             android:name=".ChildActivity"
@@ -26,10 +29,10 @@
             android:name=".selector.SelectorActivity"
             android:exported="false" />
         <activity
-            android:name=".invitation.ProviderInvitationActivity"
+            android:name=".providermanaging.InvitationAcceptActivity"
             android:exported="false" />
         <activity
-            android:name=".invitation.ParentInvitationActivity"
+            android:name=".providermanaging.InvitationCreateActivity"
             android:exported="false" />
         <activity
             android:name=".ProviderActivity"
@@ -38,7 +41,7 @@
             android:name=".ParentActivity"
             android:exported="false" />
         <activity
-            android:name=".childrenprofile.CreateChildActivity"
+            android:name=".childmanaging.CreateChildActivity"
             android:exported="false" />
         <activity
             android:name=".OnBoardingActivity"

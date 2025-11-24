@@ -17,7 +17,7 @@ public class SignInPresenter {
     }
 
     void initialize(){
-        UserManager.currentUser = new UserData();
+        UserManager.currentUser = null;
         model.ReloadUserAuth();
     }
 
