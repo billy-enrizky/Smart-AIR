@@ -4,6 +4,7 @@ import android.util.Patterns;
 
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.UserData;
 
 public class SignInPresenter {
@@ -69,11 +70,16 @@ public class SignInPresenter {
                     view.showShortMessage("User Not Found");
                 }else{
                     String parentID = result;
-                    view.showShortMessage("Welcome!");
                     model.QueryDBforChildren(parentID, username, new ResultCallBack<UserData>() {
                         @Override
                         public void onComplete(UserData result) {
+                            ChildAccount child = (ChildAccount) result;
+                            if(!child.getPassword().equals(password)){
+                                view.showShortMessage("User Not Found");
+                                return;
+                            }
                             UserManager.currentUser = result;
+                            view.showShortMessage("Welcome!");
                             if(UserManager.currentUser.getFirstTime()){
                                 view.GoToOnBoardingActivity();
                             }else{

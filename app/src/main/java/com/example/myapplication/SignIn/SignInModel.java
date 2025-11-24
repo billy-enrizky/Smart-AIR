@@ -97,7 +97,7 @@ public class SignInModel {
                             }
                         }
                     }
-                    if(exists = false){
+                    if(!exists){
                         callBack.onComplete("");
                     }
                 }

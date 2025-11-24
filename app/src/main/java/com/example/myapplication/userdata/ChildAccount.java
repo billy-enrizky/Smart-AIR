@@ -40,7 +40,12 @@ public class ChildAccount extends UserData {
         this.permission = new Permission();
     }
 
-    public Permission getPermission() {return permission;}
+    public Permission getPermission() {
+        if (permission == null) {
+            permission = new Permission();
+        }
+        return permission;
+    }
     public void setPermission(Permission permission) {
         this.permission = permission;
     }
@@ -115,7 +120,7 @@ public class ChildAccount extends UserData {
                     ChildAccount.this.notes = Data.notes;
                     ChildAccount.this.password = Data.password;
                     ChildAccount.this.name = Data.name;
-                 //   ChildAccount.this.permission = Data.permission;
+                    ChildAccount.this.permission = Data.permission;
                     if(callback != null){
                         callback.onComplete();
                     }
