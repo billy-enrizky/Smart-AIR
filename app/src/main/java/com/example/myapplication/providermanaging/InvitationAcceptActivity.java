@@ -1,4 +1,4 @@
-package com.example.myapplication.invitation;
+package com.example.myapplication.providermanaging;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,18 +15,17 @@ import com.example.myapplication.ProviderActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.UserManager;
-import com.example.myapplication.userdata.InviteCode;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
 
-public class ProviderInvitationActivity extends AppCompatActivity {
+public class InvitationAcceptActivity extends AppCompatActivity {
     ProviderAccount currentProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_provider_invitation);
+        setContentView(R.layout.activity_invitation_accept);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -58,12 +57,12 @@ public class ProviderInvitationActivity extends AppCompatActivity {
                         currentProvider.addLinkedParents(Parent.getID());
                         currentProvider.WriteIntoDatabase(null);
                         Parent.WriteIntoDatabase(null);
-                        Toast.makeText(ProviderInvitationActivity.this, "Invitation accepted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(InvitationAcceptActivity.this, "Invitation accepted", Toast.LENGTH_SHORT).show();
                     }else{
-                        Toast.makeText(ProviderInvitationActivity.this, "Already linked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(InvitationAcceptActivity.this, "Already linked", Toast.LENGTH_SHORT).show();
                     }
                 }else{
-                    Toast.makeText(ProviderInvitationActivity.this, "No user found with this code", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(InvitationAcceptActivity.this, "No user found with this code", Toast.LENGTH_SHORT).show();
                 }
             }
         });

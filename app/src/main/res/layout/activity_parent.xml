@@ -7,33 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".ParentActivity">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainerView"
-        android:name="com.example.myapplication.SignOutButtonFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="92dp"
-        android:layout_marginTop="60dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/createChildPageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="148dp"
         android:text="Add New Child"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainerView3"
-        android:name="com.example.myapplication.invitation.GoToProvidersManagerFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="133dp"
-        android:layout_marginTop="279dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,7 +21,43 @@
         android:id="@+id/button12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Children Profile"
-        tools:layout_editor_absoluteX="51dp"
-        tools:layout_editor_absoluteY="393dp" />
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="247dp"
+        android:onClick="SignInChildrenProfile"
+        android:text="Sign In to Child"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="44dp"
+        android:onClick="Signout"
+        android:text="Sign out"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button12" />
+
+    <Button
+        android:id="@+id/button18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="26dp"
+        android:onClick="CreateInvitation"
+        android:text="Link to new Provider"
+        app:layout_constraintStart_toStartOf="@+id/button17"
+        app:layout_constraintTop_toBottomOf="@+id/button17" />
+
+    <Button
+        android:id="@+id/button19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        android:layout_marginEnd="3dp"
+        android:onClick="AccessPermission"
+        android:text="Access Permission"
+        app:layout_constraintEnd_toEndOf="@+id/button18"
+        app:layout_constraintTop_toBottomOf="@+id/button18" />
 </androidx.constraintlayout.widget.ConstraintLayout>

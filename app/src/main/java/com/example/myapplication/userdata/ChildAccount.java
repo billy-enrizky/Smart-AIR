@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.example.myapplication.CallBack;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.providermanaging.Permission;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +19,7 @@ public class ChildAccount extends UserData {
     String name;
     String notes;
     String age;
+    Permission permission;
 
     public ChildAccount(String ID) {
         super(ID);
@@ -35,6 +37,12 @@ public class ChildAccount extends UserData {
         this.ID = ID;
         this.Account = AccountType.DEP_CHILD;
         this.FirstTime = true;
+        this.permission = new Permission();
+    }
+
+    public Permission getPermission() {return permission;}
+    public void setPermission(Permission permission) {
+        this.permission = permission;
     }
     public void setDob(String Dob) {
         this.dob = Dob;
@@ -107,6 +115,7 @@ public class ChildAccount extends UserData {
                     ChildAccount.this.notes = Data.notes;
                     ChildAccount.this.password = Data.password;
                     ChildAccount.this.name = Data.name;
+                 //   ChildAccount.this.permission = Data.permission;
                     if(callback != null){
                         callback.onComplete();
                     }
