@@ -7,10 +7,10 @@ public class DailyCheckin {
     // a constructor of empty parameter is also needed.
     public DailyCheckin() {
     }
-    public String getUsername(){ // format of getName, mind the upper case
+    public String getUsername(){ // format: getName, mind the upper case
         return username;
     }
-    public void setUsername(String username){ // getName
+    public void setUsername(String username){ // setName
         this.username = username;
     }
 
