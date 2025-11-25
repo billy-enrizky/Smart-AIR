@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.userdata.AccountType;
+import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
 import com.example.myapplication.userdata.UserData;
@@ -79,30 +80,48 @@ public class UserManager {
     }
 
     public static void UserListener(String uid, AccountType type) {
-
         if (userListener != null) return;
+        userListener = mDatabase.child("users").child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if(type == AccountType.PARENT){
+                    currentUser = snapshot.getValue(ParentAccount.class);
+                }else{
+                    currentUser = snapshot.getValue(ProviderAccount.class);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("UserManager", "Listener failed: " + currentUser);
+            }
+        });
+    }
 
-        userListener = mDatabase.child("users").child(uid)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        if(type == AccountType.PARENT){
-                            currentUser = snapshot.getValue(ParentAccount.class);
-                        }else{
-                            currentUser = snapshot.getValue(ProviderAccount.class);
-                        }
-                        Log.d("UserManager", "User updated: " + currentUser);
-                    }
+    public static void ChildUserListener(String parent_id, String username) {
+        if (userListener != null) return;
+        userListener = mDatabase.child("users").child(parent_id).child("children").child(username).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                currentUser = snapshot.getValue(ChildAccount.class);
+                Log.d("UserManager", "User updated: " + currentUser);
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("UserManager", "Listener failed: " + currentUser);
+            }
+        });
+    }
 
-                    @Override
-                    public void onCancelled(DatabaseError error) {}
-                });
+    public static void stopChildUserListener(String parent_id, String username) {
+        if (userListener != null) {
+            mDatabase.child("users").child(parent_id).child("children").child(username).removeEventListener(userListener);
+            userListener = null;
+        }
     }
 
     public static void stopUserListener(String uid) {
         if (userListener != null) {
-            mDatabase.child("users").child(uid)
-                    .removeEventListener(userListener);
+            mDatabase.child("users").child(uid).removeEventListener(userListener);
             userListener = null;
         }
     }

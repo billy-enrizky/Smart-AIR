@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.userdata.AccountType;
 import com.example.myapplication.userdata.ChildAccount;
-import com.example.myapplication.userdata.IndependentChildAccount;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -28,34 +27,26 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        if(UserManager.currentUser.getAccount() == AccountType.DEP_CHILD){
-            UserManager.currentUser = new ChildAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
-                @Override
-                public void onComplete(){
-                    /*Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
-                    startActivity(intent1);*/
-                }
-            });
-        }else if(UserManager.currentUser.getAccount() == AccountType.INDEP_CHILD){
-            UserManager.currentUser = new IndependentChildAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
-                @Override
-                public void onComplete(){
-                    /*Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
-                    startActivity(intent1);*/
-                }
-            });
+        if(UserManager.currentUser.getAccount() == AccountType.CHILD){
+            ChildAccount child = (ChildAccount) UserManager.currentUser;
+            String parentID = child.getParent_id();
+            String username = child.getID();
+            UserManager.ChildUserListener(parentID, username);
+            Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
+            startActivity(intent1);
+            finish();
         }else if(UserManager.currentUser.getAccount() == AccountType.PARENT){
-            String uid = UserManager.mAuth.getCurrentUser().getUid();
+            String uid = UserManager.currentUser.getID();
             UserManager.UserListener(uid, AccountType.PARENT);
             Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
             startActivity(intent1);
+            finish();
         }else{
-            String uid = UserManager.mAuth.getCurrentUser().getUid();
+            String uid = UserManager.currentUser.getID();
             UserManager.UserListener(uid, AccountType.PROVIDER);
             Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);
             startActivity(intent1);
+            finish();
         }
     }
 

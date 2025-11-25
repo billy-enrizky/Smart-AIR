@@ -1,4 +1,4 @@
-package com.example.myapplication.userdata;
+package com.example.myapplication.providermanaging;
 
 import android.util.Log;
 
@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 import com.example.myapplication.CallBack;
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.userdata.AccountType;
+import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.userdata.UserData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -92,7 +95,7 @@ public class InviteCode {
         });
     }
 
-    public static void CodeInquiry(String InputCode, ResultCallBack callback){
+    public static void CodeInquiry(String InputCode, ResultCallBack<ParentAccount> callback){
         DatabaseReference usersRef = UserManager.mDatabase.child("users");
         Query query = usersRef.orderByChild("inviteCode/code").equalTo(InputCode);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -103,7 +106,6 @@ public class InviteCode {
                         ParentAccount parent = child.getValue(ParentAccount.class);
                         if(parent.getInviteCode().IsValid() && parent.getInviteCode().getCode().equals(InputCode)){
                             callback.onComplete(parent);
-                            return;
                         }else{
                             parent.setInviteCode(null);
                             parent.WriteIntoDatabase(null);

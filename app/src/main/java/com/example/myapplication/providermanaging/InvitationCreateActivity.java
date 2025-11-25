@@ -1,4 +1,4 @@
-package com.example.myapplication.invitation;
+package com.example.myapplication.providermanaging;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,22 +14,20 @@ import com.example.myapplication.CallBack;
 import com.example.myapplication.ParentActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
-import com.example.myapplication.userdata.InviteCode;
 import com.example.myapplication.userdata.ParentAccount;
 
-public class ParentInvitationActivity extends AppCompatActivity {
+public class InvitationCreateActivity extends AppCompatActivity {
     ParentAccount currentParent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_parent_invitation);
+        setContentView(R.layout.activity_invitation_create);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
     }
     @Override
     public void onStart() {
@@ -47,6 +45,7 @@ public class ParentInvitationActivity extends AppCompatActivity {
     public void GoBackToHome(android.view.View view){
         Intent intent = new Intent(this, ParentActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void GenerateCode(android.view.View view){

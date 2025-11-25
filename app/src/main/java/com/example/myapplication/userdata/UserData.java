@@ -22,7 +22,7 @@ public class UserData {
     public UserData(String ID) {
         this.ID = ID;
         this.FirstTime = true;
-        Account = AccountType.DEP_CHILD;
+        Account = AccountType.CHILD;
     }
 
     public String getID() {

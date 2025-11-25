@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.userdata.AccountType;
+import com.example.myapplication.userdata.ChildAccount;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SignOutButtonFragment extends Fragment {
@@ -34,8 +36,11 @@ public class SignOutButtonFragment extends Fragment {
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(UserManager.mAuth.getUid() != null){
-                    UserManager.stopUserListener(UserManager.mAuth.getUid());
+                if(UserManager.currentUser.getAccount() == AccountType.CHILD){
+                    ChildAccount child = (ChildAccount) UserManager.currentUser;
+                    UserManager.stopChildUserListener(child.getParent_id(),child.getID());
+                }else{
+                    UserManager.stopUserListener(UserManager.currentUser.getID());
                 }
                 UserManager.currentUser = null;
                 FirebaseAuth.getInstance().signOut();
