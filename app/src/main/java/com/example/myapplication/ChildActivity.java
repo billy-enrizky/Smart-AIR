@@ -8,6 +8,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
@@ -43,6 +47,7 @@ public class ChildActivity extends AppCompatActivity {
     private Button buttonTriage;
     
     private ChildAccount childAccount;
+    private ActivityResultLauncher<Intent> pefEntryLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +76,22 @@ public class ChildActivity extends AppCompatActivity {
         buttonViewPEFHistory = findViewById(R.id.buttonViewPEFHistory);
         buttonTriage = findViewById(R.id.buttonTriage);
 
+        pefEntryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK) {
+                            refreshZoneDisplay();
+                        }
+                    }
+                });
+
         buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ChildActivity.this, PEFEntryActivity.class);
-                startActivityForResult(intent, 1);
+                pefEntryLauncher.launch(intent);
             }
         });
 
@@ -102,14 +118,6 @@ public class ChildActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         refreshZoneDisplay();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            refreshZoneDisplay();
-        }
     }
 
     private void refreshZoneDisplay() {
