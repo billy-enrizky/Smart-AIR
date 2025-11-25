@@ -31,6 +31,7 @@ import com.example.myapplication.providermanaging.InvitationCreateActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -126,11 +127,14 @@ public class ParentActivity extends AppCompatActivity {
             return;
         }
         
-        childrenZoneInfo.clear();
+        runOnUiThread(() -> {
+            childrenZoneInfo.clear();
+            adapter.notifyDataSetChanged();
+        });
+        
         HashMap<String, ChildAccount> children = parentAccount.getChildren();
         
         if (children.isEmpty()) {
-            adapter.notifyDataSetChanged();
             return;
         }
         
@@ -197,15 +201,31 @@ public class ParentActivity extends AppCompatActivity {
     }
 
     private void updateChildZoneInfo(ChildZoneInfo newInfo) {
-        for (int i = 0; i < childrenZoneInfo.size(); i++) {
-            if (childrenZoneInfo.get(i).child.getID().equals(newInfo.child.getID())) {
-                childrenZoneInfo.set(i, newInfo);
-                adapter.notifyItemChanged(i);
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        runOnUiThread(() -> {
+            if (isFinishing() || isDestroyed()) {
                 return;
             }
-        }
-        childrenZoneInfo.add(newInfo);
-        adapter.notifyItemInserted(childrenZoneInfo.size() - 1);
+            boolean found = false;
+            for (int i = 0; i < childrenZoneInfo.size(); i++) {
+                if (childrenZoneInfo.get(i).child.getID().equals(newInfo.child.getID())) {
+                    childrenZoneInfo.set(i, newInfo);
+                    if (adapter != null) {
+                        adapter.notifyItemChanged(i);
+                    }
+                    found = true;
+                    return;
+                }
+            }
+            if (!found) {
+                childrenZoneInfo.add(newInfo);
+                if (adapter != null) {
+                    adapter.notifyItemInserted(childrenZoneInfo.size() - 1);
+                }
+            }
+        });
     }
 
     public void SignInChildrenProfile(android.view.View view) {
@@ -250,7 +270,7 @@ public class ParentActivity extends AppCompatActivity {
     }
 
     private class ChildrenZoneAdapter extends RecyclerView.Adapter<ChildrenZoneAdapter.ViewHolder> {
-        private List<ChildZoneInfo> children;
+        private final List<ChildZoneInfo> children;
 
         public ChildrenZoneAdapter(List<ChildZoneInfo> children) {
             this.children = children;
@@ -265,6 +285,9 @@ public class ParentActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+            if (position < 0 || position >= children.size()) {
+                return;
+            }
             ChildZoneInfo info = children.get(position);
             holder.textViewChildName.setText(info.child.getName());
             holder.textViewZoneName.setText(info.zone.getDisplayName());
