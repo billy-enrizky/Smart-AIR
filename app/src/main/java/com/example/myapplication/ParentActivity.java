@@ -11,6 +11,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
+import com.example.myapplication.childmanaging.CreateChildActivity;
+import com.example.myapplication.providermanaging.AccessPermissionActivity;
+import com.example.myapplication.providermanaging.InvitationCreateActivity;
+import com.google.firebase.auth.FirebaseAuth;
+
 public class ParentActivity extends AppCompatActivity {
 
     Button createChildButton;
@@ -34,6 +41,31 @@ public class ParentActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void SignInChildrenProfile(android.view.View view){
+        Intent intent = new Intent(ParentActivity.this, SignInChildProfileActivity.class);
+        startActivity(intent);
+    }
+
+    public void Signout(android.view.View view){
+        UserManager.currentUser = null;
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, SignInView.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void CreateInvitation(android.view.View view){
+        Intent intent = new Intent(this, InvitationCreateActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void AccessPermission(android.view.View view){
+        Intent intent = new Intent(this, AccessPermissionActivity.class);
+        startActivity(intent);
+        this.finish();
     }
     @Override
     public void onResume() {

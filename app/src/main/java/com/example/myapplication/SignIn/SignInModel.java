@@ -5,6 +5,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.myapplication.ResultCallBack;
+import com.example.myapplication.userdata.AccountType;
+import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.userdata.ProviderAccount;
 import com.example.myapplication.userdata.UserData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -51,7 +55,7 @@ public class SignInModel {
         return null;
     }
 
-    void QueryDB(String ID, ResultCallBack<UserData> callBack){
+    void QueryDBforNonChildren(String ID, ResultCallBack<UserData> callBack){
         mDatabase.child("users").child(ID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -60,10 +64,61 @@ public class SignInModel {
                 }
                 else {
                     DataSnapshot Snapshot = task.getResult();
-                    UserData Data = Snapshot.getValue(UserData.class);
+                    AccountType type =  Snapshot.child("account").getValue(AccountType.class);
+                    UserData Data;
+                    if(type == AccountType.PARENT){
+                        Data = Snapshot.getValue(ParentAccount.class);
+                    }else{
+                        Data = Snapshot.getValue(ProviderAccount.class);
+                    }
                     if(callBack != null){
                         callBack.onComplete(Data);
                    }
+                }
+            }
+        });
+    }
+    void usernameExists(String username, ResultCallBack<String> callBack){
+        mDatabase.child("users").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    DataSnapshot Snapshot = task.getResult();
+                    Boolean exists = false;
+                    for(DataSnapshot userSnapshot: Snapshot.getChildren()){
+                        if(userSnapshot.child("account").getValue().equals("PARENT") && userSnapshot.child("children").hasChild(username)){
+                            if(callBack!=null){
+                                callBack.onComplete(userSnapshot.getKey());
+                                exists = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!exists){
+                        callBack.onComplete("");
+                    }
+                }
+            }
+        });
+    }
+
+    void QueryDBforChildren(String ParentID, String username, ResultCallBack<UserData> callBack){
+        mDatabase.child("users").child(ParentID).child("children").child(username).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    DataSnapshot Snapshot = task.getResult();
+                    AccountType type =  Snapshot.child("account").getValue(AccountType.class);
+                    UserData Data = Snapshot.getValue(ChildAccount.class);;
+                    if(callBack != null){
+                        callBack.onComplete(Data);
+                    }
                 }
             }
         });

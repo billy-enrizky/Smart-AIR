@@ -13,12 +13,12 @@ import com.google.firebase.database.DataSnapshot;
 public class DependentChildAccount extends ChildAccount {
     public DependentChildAccount() {
         super();
-        Account = AccountType.DEP_CHILD;
+        Account = AccountType.CHILD;
     }
     public DependentChildAccount(String ID, String Parent_id) {
         super(ID);
         this.Parent_id = Parent_id;
-        this.Account = AccountType.DEP_CHILD;
+        this.Account = AccountType.CHILD;
     }
 
 
