@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.userdata.AccountType;
 import com.example.myapplication.userdata.ChildAccount;
 import com.google.android.material.chip.Chip;
@@ -33,11 +34,11 @@ public class CheckInView extends AppCompatActivity {
         activityLimitsChips = (ChipGroup) findViewById(R.id.activity_limits);
         coughWheezeLevelSlider = (Slider) findViewById(R.id.cough_wheeze_slider);
         triggersChips = (ChipGroup) findViewById(R.id.triggers);
-        if (UserManager.currentUser.getAccount().equals(AccountType.CHILD)) {
+        /*if (UserManager.currentUser.getAccount().equals(AccountType.CHILD)) {
             this.username = ((ChildAccount)UserManager.currentUser).getID();
         } else {
-            // what if parent's logging?
-        }
+            this.username = SignInChildProfileActivity.getCurrentChildUsername();
+        }*/
         presenter = new CheckInPresenter(this, new CheckInModel());
         presenter.initialize();
     }

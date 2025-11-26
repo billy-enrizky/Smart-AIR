@@ -57,15 +57,13 @@
             android:id="@+id/some_interfere_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Symptoms somewhat interfered with physical activity"
-            app:chipText="is" />
+            android:text="Symptoms somewhat interfered with physical activity" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/all_interfere_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Symptoms greatly interfered with physical activity"
-            app:chipText="a" />
+            android:text="Symptoms greatly interfered with physical activity" />
 
     </com.google.android.material.chip.ChipGroup>
 

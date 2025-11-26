@@ -17,14 +17,17 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.ParentActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.dailycheckin.CheckInPresenter;
+import com.example.myapplication.dailycheckin.CheckInView;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 
 public class SignInChildProfileActivity extends AppCompatActivity {
     ParentAccount user;
     LinearLayout container;
-    ChildAccount currentChild;
+    static ChildAccount currentChild;
     TextView textView23;
     EditText editTextText2;
     @Override
@@ -51,6 +54,16 @@ public class SignInChildProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ParentActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void GoToDailyCheckIn(android.view.View view) {
+        Intent intent = new Intent(this, CheckInView.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public static String getCurrentChildUsername() {
+        return currentChild.getID();
     }
 
     public void addChildToUI(ChildAccount child){

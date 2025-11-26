@@ -1,4 +1,4 @@
-package com.example.myapplication.userdata;
+/*package com.example.myapplication.userdata;
 
 import android.util.Log;
 
@@ -58,3 +58,4 @@ public class IndependentChildAccount extends ChildAccount {
     }
 
 }
+*/
