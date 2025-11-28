@@ -39,8 +39,8 @@ public class PEFHistoryActivity extends AppCompatActivity {
     
     private RecyclerView recyclerViewPEF;
     private TextView textViewEmpty;
-    private PEFHistoryAdapter adapter;
-    private List<PEFReading> pefReadings;
+    private HistoryAdapter adapter;
+    private List<HistoryItem> historyItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,16 +92,17 @@ public class PEFHistoryActivity extends AppCompatActivity {
             }
         });
         
-        pefReadings = new ArrayList<>();
-        adapter = new PEFHistoryAdapter(pefReadings);
+        historyItems = new ArrayList<>();
+        adapter = new HistoryAdapter(historyItems);
         recyclerViewPEF.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewPEF.setAdapter(adapter);
 
-        loadPEFHistory(parentId, childId);
+        loadHistory(parentId, childId);
     }
 
-    private void loadPEFHistory(String parentId, String childId) {
-
+    private void loadHistory(String parentId, String childId) {
+        historyItems.clear();
+        
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
@@ -109,100 +110,232 @@ public class PEFHistoryActivity extends AppCompatActivity {
                 .child(childId)
                 .child("pefReadings");
 
-        Query query = pefRef.orderByChild("timestamp");
+        DatabaseReference historyRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId)
+                .child("history");
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query pefQuery = pefRef.orderByChild("timestamp");
+        Query historyQuery = historyRef.orderByKey();
+
+        final int[] loadCount = {0};
+        final int totalLoads = 2;
+
+        pefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                pefReadings.clear();
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         PEFReading reading = child.getValue(PEFReading.class);
                         if (reading != null) {
-                            pefReadings.add(reading);
+                            historyItems.add(new HistoryItem(reading));
                         }
                     }
-                    Collections.reverse(pefReadings);
                 }
-                
-                adapter.notifyDataSetChanged();
-                
-                if (pefReadings.isEmpty()) {
-                    textViewEmpty.setVisibility(View.VISIBLE);
-                    recyclerViewPEF.setVisibility(View.GONE);
-                } else {
-                    textViewEmpty.setVisibility(View.GONE);
-                    recyclerViewPEF.setVisibility(View.VISIBLE);
+                loadCount[0]++;
+                if (loadCount[0] == totalLoads) {
+                    Collections.sort(historyItems, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
+                    adapter.notifyDataSetChanged();
+                    
+                    if (historyItems.isEmpty()) {
+                        textViewEmpty.setVisibility(View.VISIBLE);
+                        recyclerViewPEF.setVisibility(View.GONE);
+                    } else {
+                        textViewEmpty.setVisibility(View.GONE);
+                        recyclerViewPEF.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.e(TAG, "Error loading PEF history", error.toException());
+                loadCount[0]++;
+            }
+        });
+
+        historyQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        ZoneChangeEvent event = child.getValue(ZoneChangeEvent.class);
+                        if (event != null && event.getNewZone() != null && event.getPreviousZone() != null) {
+                            if (event.getPreviousZone() != Zone.UNKNOWN || event.getNewZone() != Zone.UNKNOWN) {
+                                historyItems.add(new HistoryItem(event));
+                            }
+                        }
+                    }
+                }
+                loadCount[0]++;
+                if (loadCount[0] == totalLoads) {
+                    Collections.sort(historyItems, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
+                    adapter.notifyDataSetChanged();
+                    
+                    if (historyItems.isEmpty()) {
+                        textViewEmpty.setVisibility(View.VISIBLE);
+                        recyclerViewPEF.setVisibility(View.GONE);
+                    } else {
+                        textViewEmpty.setVisibility(View.GONE);
+                        recyclerViewPEF.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, "Error loading zone change history", error.toException());
+                loadCount[0]++;
             }
         });
     }
 
-    private static class PEFHistoryAdapter extends RecyclerView.Adapter<PEFHistoryAdapter.ViewHolder> {
-        private List<PEFReading> readings;
+    private static class HistoryItem {
+        private PEFReading pefReading;
+        private ZoneChangeEvent zoneChange;
+        private boolean isZoneChange;
+
+        HistoryItem(PEFReading reading) {
+            this.pefReading = reading;
+            this.isZoneChange = false;
+        }
+
+        HistoryItem(ZoneChangeEvent event) {
+            this.zoneChange = event;
+            this.isZoneChange = true;
+        }
+
+        long getTimestamp() {
+            return isZoneChange ? zoneChange.getTimestamp() : pefReading.getTimestamp();
+        }
+
+        boolean isZoneChange() {
+            return isZoneChange;
+        }
+
+        PEFReading getPefReading() {
+            return pefReading;
+        }
+
+        ZoneChangeEvent getZoneChange() {
+            return zoneChange;
+        }
+    }
+
+    private static class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private static final int TYPE_PEF = 0;
+        private static final int TYPE_ZONE_CHANGE = 1;
+        
+        private List<HistoryItem> items;
         private SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
 
-        public PEFHistoryAdapter(List<PEFReading> readings) {
-            this.readings = readings;
+        public HistoryAdapter(List<HistoryItem> items) {
+            this.items = items;
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_pef_reading, parent, false);
-            return new ViewHolder(view);
+        public int getItemViewType(int position) {
+            return items.get(position).isZoneChange() ? TYPE_ZONE_CHANGE : TYPE_PEF;
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            PEFReading reading = readings.get(position);
-            holder.textViewDate.setText(sdf.format(new Date(reading.getTimestamp())));
-            holder.textViewPEFValue.setText("PEF: " + reading.getValue() + " L/min");
-            
-            if (reading.isPreMed()) {
-                holder.textViewPreMed.setVisibility(View.VISIBLE);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == TYPE_ZONE_CHANGE) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_zone_change, parent, false);
+                return new ZoneChangeViewHolder(view);
             } else {
-                holder.textViewPreMed.setVisibility(View.GONE);
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_pef_reading, parent, false);
+                return new PEFViewHolder(view);
             }
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            HistoryItem item = items.get(position);
             
-            if (reading.isPostMed()) {
-                holder.textViewPostMed.setVisibility(View.VISIBLE);
-            } else {
-                holder.textViewPostMed.setVisibility(View.GONE);
-            }
-            
-            if (reading.getNotes() != null && !reading.getNotes().isEmpty()) {
-                holder.textViewNotes.setText("Notes: " + reading.getNotes());
-                holder.textViewNotes.setVisibility(View.VISIBLE);
-            } else {
-                holder.textViewNotes.setVisibility(View.GONE);
+            if (holder instanceof PEFViewHolder) {
+                PEFViewHolder pefHolder = (PEFViewHolder) holder;
+                PEFReading reading = item.getPefReading();
+                pefHolder.textViewDate.setText(sdf.format(new Date(reading.getTimestamp())));
+                pefHolder.textViewPEFValue.setText("PEF: " + reading.getValue() + " L/min");
+                
+                if (reading.isPreMed()) {
+                    pefHolder.textViewPreMed.setVisibility(View.VISIBLE);
+                } else {
+                    pefHolder.textViewPreMed.setVisibility(View.GONE);
+                }
+                
+                if (reading.isPostMed()) {
+                    pefHolder.textViewPostMed.setVisibility(View.VISIBLE);
+                } else {
+                    pefHolder.textViewPostMed.setVisibility(View.GONE);
+                }
+                
+                if (reading.getNotes() != null && !reading.getNotes().isEmpty()) {
+                    pefHolder.textViewNotes.setText("Notes: " + reading.getNotes());
+                    pefHolder.textViewNotes.setVisibility(View.VISIBLE);
+                } else {
+                    pefHolder.textViewNotes.setVisibility(View.GONE);
+                }
+            } else if (holder instanceof ZoneChangeViewHolder) {
+                ZoneChangeViewHolder zoneHolder = (ZoneChangeViewHolder) holder;
+                ZoneChangeEvent event = item.getZoneChange();
+                zoneHolder.textViewDate.setText(sdf.format(new Date(event.getTimestamp())));
+                
+                String zoneChangeText = event.getPreviousZone().getDisplayName() + " → " + event.getNewZone().getDisplayName();
+                zoneHolder.textViewZoneChange.setText(zoneChangeText);
+                zoneHolder.textViewZoneChange.setTextColor(event.getNewZone().getColorResource());
+                
+                String details = String.format(Locale.getDefault(), "%.1f%% of Personal Best", event.getPercentage());
+                zoneHolder.textViewZoneDetails.setText(details);
+                
+                if (event.getPefValue() > 0) {
+                    zoneHolder.textViewPEFValue.setText("PEF: " + event.getPefValue() + " L/min");
+                    zoneHolder.textViewPEFValue.setVisibility(View.VISIBLE);
+                } else {
+                    zoneHolder.textViewPEFValue.setVisibility(View.GONE);
+                }
             }
         }
 
         @Override
         public int getItemCount() {
-            return readings.size();
+            return items.size();
         }
 
-        static class ViewHolder extends RecyclerView.ViewHolder {
+        static class PEFViewHolder extends RecyclerView.ViewHolder {
             TextView textViewDate;
             TextView textViewPEFValue;
             TextView textViewPreMed;
             TextView textViewPostMed;
             TextView textViewNotes;
 
-            ViewHolder(View itemView) {
+            PEFViewHolder(View itemView) {
                 super(itemView);
                 textViewDate = itemView.findViewById(R.id.textViewDate);
                 textViewPEFValue = itemView.findViewById(R.id.textViewPEFValue);
                 textViewPreMed = itemView.findViewById(R.id.textViewPreMed);
                 textViewPostMed = itemView.findViewById(R.id.textViewPostMed);
                 textViewNotes = itemView.findViewById(R.id.textViewNotes);
+            }
+        }
+
+        static class ZoneChangeViewHolder extends RecyclerView.ViewHolder {
+            TextView textViewDate;
+            TextView textViewZoneChange;
+            TextView textViewZoneDetails;
+            TextView textViewPEFValue;
+
+            ZoneChangeViewHolder(View itemView) {
+                super(itemView);
+                textViewDate = itemView.findViewById(R.id.textViewDate);
+                textViewZoneChange = itemView.findViewById(R.id.textViewZoneChange);
+                textViewZoneDetails = itemView.findViewById(R.id.textViewZoneDetails);
+                textViewPEFValue = itemView.findViewById(R.id.textViewPEFValue);
             }
         }
     }
