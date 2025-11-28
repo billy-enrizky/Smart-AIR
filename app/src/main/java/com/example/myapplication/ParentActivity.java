@@ -323,6 +323,10 @@ public class ParentActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             });
+            
+            holder.buttonDeleteChild.setOnClickListener(v -> {
+                deleteChild(info.child, position);
+            });
         }
 
     @Override
@@ -335,6 +339,7 @@ public class ParentActivity extends AppCompatActivity {
             TextView textViewZoneName;
             TextView textViewZonePercentage;
             TextView textViewLastPEF;
+            Button buttonDeleteChild;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -342,7 +347,35 @@ public class ParentActivity extends AppCompatActivity {
                 textViewZoneName = itemView.findViewById(R.id.textViewZoneName);
                 textViewZonePercentage = itemView.findViewById(R.id.textViewZonePercentage);
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
+                buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
     }
 }
+    }
+    
+    private void deleteChild(ChildAccount child, int position) {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Delete Child")
+                .setMessage("Are you sure you want to delete " + child.getName() + "? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    DatabaseReference childRef = UserManager.mDatabase
+                            .child("users")
+                            .child(child.getParent_id())
+                            .child("children")
+                            .child(child.getID());
+                    
+                    childRef.removeValue().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            childrenZoneInfo.remove(position);
+                            adapter.notifyItemRemoved(position);
+                            adapter.notifyItemRangeChanged(position, childrenZoneInfo.size() - position);
+                            android.widget.Toast.makeText(this, "Child deleted successfully", android.widget.Toast.LENGTH_SHORT).show();
+                        } else {
+                            android.util.Log.e("ParentActivity", "Failed to delete child", task.getException());
+                            android.widget.Toast.makeText(this, "Failed to delete child", android.widget.Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }
