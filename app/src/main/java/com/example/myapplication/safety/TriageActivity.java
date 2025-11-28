@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +72,14 @@ public class TriageActivity extends AppCompatActivity {
         redFlags = new HashMap<>();
         
         frameLayoutSteps = findViewById(R.id.frameLayoutSteps);
+        Button buttonBack = findViewById(R.id.buttonBack);
+        
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         
         sendTriageStartNotification();
         showRedFlagsStep();
@@ -254,6 +264,35 @@ public class TriageActivity extends AppCompatActivity {
             session.setPefValue(null);
             calculateCurrentZone();
             showDecisionStep();
+        });
+        
+        editTextPEF.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text = s.toString().trim();
+                if (!text.isEmpty()) {
+                    try {
+                        int value = Integer.parseInt(text);
+                        if (value > 0 && value <= 800) {
+                            buttonNext.setVisibility(View.VISIBLE);
+                        } else {
+                            buttonNext.setVisibility(View.GONE);
+                        }
+                    } catch (NumberFormatException e) {
+                        buttonNext.setVisibility(View.GONE);
+                    }
+                } else {
+                    buttonNext.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
         });
         
         buttonNext.setOnClickListener(v -> {
