@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -59,6 +60,15 @@ public class PEFHistoryActivity extends AppCompatActivity {
         ChildAccount childAccount = (ChildAccount) UserManager.currentUser;
         recyclerViewPEF = findViewById(R.id.recyclerViewPEF);
         textViewEmpty = findViewById(R.id.textViewEmpty);
+        Button buttonBack = findViewById(R.id.buttonBack);
+        
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        
         pefReadings = new ArrayList<>();
         adapter = new PEFHistoryAdapter(pefReadings);
         recyclerViewPEF.setLayoutManager(new LinearLayoutManager(this));
