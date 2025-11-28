@@ -6,14 +6,17 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.myapplication.data.dao.ChildDao;
 import com.example.myapplication.data.dao.InhalerDao;
+import com.example.myapplication.models.Child;
 import com.example.myapplication.models.Inhaler;
 
-@Database(entities = {Inhaler.class}, version = 1)
+@Database(entities = {Child.class, Inhaler.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase instance;
 
+    public abstract ChildDao childDao();
     public abstract InhalerDao inhalerDao();
 
     public static synchronized AppDatabase getInstance(Context context) {
