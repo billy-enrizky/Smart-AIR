@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".providers.AccessInfoActivity"
+            android:exported="false" />
+        <activity
             android:name=".providermanaging.AccessPermissionActivity"
             android:exported="false" />
         <activity

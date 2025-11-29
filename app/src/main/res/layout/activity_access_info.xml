@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".providers.AccessInfoActivity">
+
+    <Button
+        android:id="@+id/button24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="GoBackToHome"
+        android:text="Back To Home"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="30dp" />
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="409dp"
+        android:layout_height="400dp"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="78dp">
+
+        <LinearLayout
+            android:id="@+id/childListContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/sym"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="Symptoms"
+        android:text="Symptoms"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="583dp" />
+
+    <Button
+        android:id="@+id/tri"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="Triggers"
+        android:text="Triggers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="631dp" />
+
+    <Button
+        android:id="@+id/pef"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="PeakFlow"
+        android:text="Peak-flow (PEF)"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="681dp" />
+
+    <Button
+        android:id="@+id/ti"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="TriageIncidents"
+        android:text="Triage incidents"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="729dp" />
+
+    <Button
+        android:id="@+id/sc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="SummaryCharts"
+        android:text="Summary charts"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="774dp" />
+
+    <Button
+        android:id="@+id/cas"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="ControllerAdherenceSummary"
+        android:text="Controller adherence summary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="534dp" />
+
+    <Button
+        android:id="@+id/rl"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="RescueLogs"
+        android:text=" Rescue Logs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="486dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
