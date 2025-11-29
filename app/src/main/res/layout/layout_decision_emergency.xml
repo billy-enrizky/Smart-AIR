@@ -44,7 +44,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="24dp"
         android:text="View Action Plan Steps"
-        android:textColor="#FF0000" />
+        android:textColor="#FFFFFF" />
 
 </LinearLayout>
 
