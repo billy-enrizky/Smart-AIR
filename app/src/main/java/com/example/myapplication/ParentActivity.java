@@ -22,6 +22,7 @@ import com.example.myapplication.safety.PEFReading;
 import com.example.myapplication.safety.SetPersonalBestActivity;
 import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
+import com.example.myapplication.safety.ActionPlanActivity;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.SignIn.SignInView;
@@ -327,6 +328,13 @@ public class ParentActivity extends AppCompatActivity {
             holder.buttonDeleteChild.setOnClickListener(v -> {
                 deleteChild(info.child, position);
             });
+
+            holder.buttonActionPlan.setOnClickListener(v -> {
+                Intent intent = new Intent(ParentActivity.this, ActionPlanActivity.class);
+                intent.putExtra("childId", info.child.getID());
+                intent.putExtra("parentId", info.child.getParent_id());
+                startActivity(intent);
+            });
         }
 
     @Override
@@ -340,6 +348,7 @@ public class ParentActivity extends AppCompatActivity {
             TextView textViewZonePercentage;
             TextView textViewLastPEF;
             Button buttonDeleteChild;
+            Button buttonActionPlan;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -348,10 +357,11 @@ public class ParentActivity extends AppCompatActivity {
                 textViewZonePercentage = itemView.findViewById(R.id.textViewZonePercentage);
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
+                buttonActionPlan = itemView.findViewById(R.id.buttonActionPlan);
+            }
+        }
     }
-}
-    }
-    
+
     private void deleteChild(ChildAccount child, int position) {
         new android.app.AlertDialog.Builder(this)
                 .setTitle("Delete Child")

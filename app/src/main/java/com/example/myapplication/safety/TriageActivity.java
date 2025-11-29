@@ -485,6 +485,30 @@ public class TriageActivity extends AppCompatActivity {
     }
 
     private String getActionPlanSteps(Zone zone) {
+        // Prefer child-specific action plan from ChildAccount if available
+        if (childAccount != null) {
+            switch (zone) {
+                case GREEN:
+                    if (childAccount.getActionPlanGreen() != null && !childAccount.getActionPlanGreen().isEmpty()) {
+                        return childAccount.getActionPlanGreen();
+                    }
+                    break;
+                case YELLOW:
+                    if (childAccount.getActionPlanYellow() != null && !childAccount.getActionPlanYellow().isEmpty()) {
+                        return childAccount.getActionPlanYellow();
+                    }
+                    break;
+                case RED:
+                    if (childAccount.getActionPlanRed() != null && !childAccount.getActionPlanRed().isEmpty()) {
+                        return childAccount.getActionPlanRed();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Fallback default steps if no custom plan exists
         switch (zone) {
             case GREEN:
                 return "1. Continue current medication as prescribed\n2. Monitor symptoms regularly\n3. Follow your regular routine\n4. Keep rescue medication available\n5. Contact healthcare provider if symptoms change";

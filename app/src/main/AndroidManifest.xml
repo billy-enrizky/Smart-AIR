@@ -82,6 +82,9 @@
         <activity
             android:name=".safety.ProviderReportActivity"
             android:exported="false" />
+        <activity
+            android:name=".safety.ActionPlanActivity"
+            android:exported="false" />
         <service
             android:name=".safety.MyFirebaseMessagingService"
             android:exported="false">
