@@ -95,6 +95,8 @@ public class AccessInfoActivity extends AppCompatActivity {
                     Toast.makeText(AccessInfoActivity.this, "Access Info Updated", Toast.LENGTH_SHORT).show();
                     AccessInfoModel.removeAllListeners();
                     container.removeAllViews();
+                    initialization();
+                    SetButtonVisibility();
                 }
             });
         }

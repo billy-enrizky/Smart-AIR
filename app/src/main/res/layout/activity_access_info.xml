@@ -40,88 +40,85 @@
 
     <Button
         android:id="@+id/sym"
-        android:layout_width="0dp"
+        android:layout_width="411dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="583dp"
         android:onClick="Symptoms"
         android:text="Symptoms"
-        app:layout_constraintBottom_toTopOf="@+id/tri"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cas" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/tri"
-        android:layout_width="0dp"
+        android:layout_width="411dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="631dp"
         android:onClick="Triggers"
         android:text="Triggers"
-        app:layout_constraintBottom_toTopOf="@+id/pef"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sym" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/pef"
-        android:layout_width="0dp"
+        android:layout_width="411dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="45dp"
+        android:layout_marginTop="681dp"
         android:onClick="PeakFlow"
         android:text="Peak-flow (PEF)"
-        app:layout_constraintBottom_toTopOf="@+id/sc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tri" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/ti"
-        android:layout_width="0dp"
+        android:layout_width="411dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="729dp"
         android:onClick="TriageIncidents"
         android:text="Triage incidents"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pef" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/sc"
-        android:layout_width="0dp"
+        android:layout_width="411dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="69dp"
+        android:layout_marginTop="774dp"
         android:onClick="SummaryCharts"
         android:text="Summary charts"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pef" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/cas"
-        android:layout_width="0dp"
+        android:layout_width="411dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
+        android:layout_marginTop="534dp"
         android:onClick="ControllerAdherenceSummary"
         android:text="Controller adherence summary"
-        app:layout_constraintBottom_toTopOf="@+id/sym"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rl" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/rl"
-        android:layout_width="0dp"
+        android:layout_width="411dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="486dp"
         android:onClick="RescueLogs"
         android:text=" Rescue Logs"
-        app:layout_constraintBottom_toTopOf="@+id/cas"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollview" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

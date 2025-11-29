@@ -42,7 +42,7 @@ public class AccessInfoModel {
 
         DatabaseReference ref = UserManager.mDatabase.child("users").child(parentId);
         ref.removeEventListener(listener);
-        userListeners.remove(key);  // 从 Map 中删除
+        userListeners.remove(key);
     }
     public static void removeAllListeners() {
         for (String ParentID : userListeners.keySet()) {
