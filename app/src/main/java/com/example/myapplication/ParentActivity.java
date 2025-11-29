@@ -56,6 +56,7 @@ public class ParentActivity extends AppCompatActivity {
     private com.google.firebase.database.DatabaseReference triageSessionsRef;
     private com.google.firebase.database.ChildEventListener triageListener;
     private java.util.Map<String, String> lastSeenSessions = new java.util.HashMap<>();
+    private java.util.Map<String, String> lastSeenWorseningIds = new java.util.HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,17 +243,6 @@ public class ParentActivity extends AppCompatActivity {
             return;
         }
 
-        String sessionId = snapshot.child("sessionId").getValue(String.class);
-        if (sessionId == null || sessionId.isEmpty()) {
-            return;
-        }
-
-        String lastSeen = lastSeenSessions.get(childId);
-        if (sessionId.equals(lastSeen)) {
-            return;
-        }
-        lastSeenSessions.put(childId, sessionId);
-
         String childName = snapshot.child("childName").getValue(String.class);
         if (childName == null && parentAccount != null && parentAccount.getChildren() != null) {
             ChildAccount childAccount = parentAccount.getChildren().get(childId);
@@ -262,19 +252,53 @@ public class ParentActivity extends AppCompatActivity {
         }
         final String finalChildName = childName != null ? childName : "Your child";
 
-        runOnUiThread(() -> {
-            new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
-                    .setTitle("Breathing Assessment Started")
-                    .setMessage(finalChildName + " started a breathing assessment.")
-                    .setPositiveButton("OK", null)
-                    .show();
+        // Handle triage start notification (sessionId changes)
+        String sessionId = snapshot.child("sessionId").getValue(String.class);
+        if (sessionId != null && !sessionId.isEmpty()) {
+            String lastSeen = lastSeenSessions.get(childId);
+            if (!sessionId.equals(lastSeen)) {
+                lastSeenSessions.put(childId, sessionId);
 
-            android.widget.Toast.makeText(
-                    ParentActivity.this,
-                    finalChildName + " started a breathing assessment.",
-                    android.widget.Toast.LENGTH_SHORT
-            ).show();
-        });
+                runOnUiThread(() -> {
+                    new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
+                            .setTitle("Breathing Assessment Started")
+                            .setMessage(finalChildName + " started a breathing assessment.")
+                            .setPositiveButton("OK", null)
+                            .show();
+
+                    android.widget.Toast.makeText(
+                            ParentActivity.this,
+                            finalChildName + " started a breathing assessment.",
+                            android.widget.Toast.LENGTH_SHORT
+                    ).show();
+                });
+            }
+        }
+
+        // Handle worsening notification after 10-minute re-check
+        String worseningId = snapshot.child("worseningId").getValue(String.class);
+        Boolean worseningHasRedFlag = snapshot.child("worseningHasRedFlag").getValue(Boolean.class);
+
+        if (worseningId != null && !worseningId.isEmpty() && Boolean.TRUE.equals(worseningHasRedFlag)) {
+            String lastWorsening = lastSeenWorseningIds.get(childId);
+            if (!worseningId.equals(lastWorsening)) {
+                lastSeenWorseningIds.put(childId, worseningId);
+
+                runOnUiThread(() -> {
+                    new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
+                            .setTitle("Breathing Symptoms Still Present")
+                            .setMessage(finalChildName + " still has breathing symptoms after the 10-minute re-check.")
+                            .setPositiveButton("OK", null)
+                            .show();
+
+                    android.widget.Toast.makeText(
+                            ParentActivity.this,
+                            finalChildName + " still has breathing symptoms after the 10-minute re-check.",
+                            android.widget.Toast.LENGTH_LONG
+                    ).show();
+                });
+            }
+        }
     }
 
     private void updateChildZoneInfo(ChildZoneInfo newInfo) {

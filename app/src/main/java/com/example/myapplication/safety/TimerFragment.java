@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.example.myapplication.R;
 
 public class TimerFragment extends Fragment {
-    private static final long TIMER_DURATION = 10 * 60 * 1000; // 10 minutes
+    private static final long TIMER_DURATION = 1 * 5 * 1000; // 10 minutes
     private TextView textViewTimer;
     private Button buttonRecheck;
     private Button buttonDismiss;

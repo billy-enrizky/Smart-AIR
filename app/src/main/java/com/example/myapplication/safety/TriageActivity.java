@@ -3,7 +3,6 @@ package com.example.myapplication.safety;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +38,7 @@ public class TriageActivity extends AppCompatActivity {
     
     private FrameLayout frameLayoutSteps;
     private TriageSession session;
+    private TriageSession previousSession;
     private int currentStep;
     private ChildAccount childAccount;
     private View currentStepView;
@@ -48,6 +47,7 @@ public class TriageActivity extends AppCompatActivity {
     private boolean rescueAttempts;
     private int rescueCount;
     private Integer pefValue;
+    private boolean isRecheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +109,10 @@ public class TriageActivity extends AppCompatActivity {
             return;
         }
         session = new TriageSession();
+        previousSession = null;
         currentStep = STEP_RED_FLAGS;
         redFlags = new HashMap<>();
+        isRecheck = false;
         
         frameLayoutSteps = findViewById(R.id.frameLayoutSteps);
         Button buttonBack = findViewById(R.id.buttonBack);
@@ -177,6 +179,14 @@ public class TriageActivity extends AppCompatActivity {
         
         buttonNext.setOnClickListener(v -> {
             session.setRedFlags(redFlags);
+
+            if (isRecheck) {
+                boolean hasRedFlagNow = session.hasAnyRedFlag();
+                if (hasRedFlagNow) {
+                    checkAutoEscalation();
+                }
+            }
+
             showRescueStep();
         });
     }
@@ -423,15 +433,16 @@ public class TriageActivity extends AppCompatActivity {
         
         boolean hasRedFlag = session.hasAnyRedFlag();
 
-        if (hasRedFlag) {
-            // Critical flags → Emergency decision card only, no 10-minute timer
+        if (hasRedFlag && !isRecheck) {
+            // Initial triage with critical flags → Emergency decision card only, no 10-minute timer
             showEmergencyDecisionCard(inflater);
             saveTriageIncident();
         } else {
-            // Controllable symptoms → Home Steps card + 10-minute timer & re-check
+            // Home-steps path and all 10-minute re-check sessions:
+            // always show Home Steps + timer. For re-checks with red-flag symptoms,
+            // parent notification is handled by checkAutoEscalation().
             showHomeStepsDecisionCard(inflater);
             saveTriageIncident();
-            startTimer();
         }
     }
     
@@ -476,6 +487,13 @@ public class TriageActivity extends AppCompatActivity {
         
         frameLayoutSteps.removeAllViews();
         frameLayoutSteps.addView(currentStepView);
+
+        // Always attach a fresh TimerFragment so the 10-minute countdown restarts
+        // every time Home Steps are shown (initial decision and each re-check loop).
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.timerContainer, new TimerFragment())
+                .commitAllowingStateLoss();
     }
 
     private String getActionPlanSteps(Zone zone) {
@@ -600,79 +618,64 @@ public class TriageActivity extends AppCompatActivity {
     private void sendRapidRescueAlert() {
         Toast.makeText(this, "Rapid rescue alert: rescue used 3+ times in 3 hours. Consider seeking medical care.", Toast.LENGTH_LONG).show();
     }
-
-    private void startTimer() {
-        View timerView = LayoutInflater.from(this).inflate(R.layout.fragment_timer, frameLayoutSteps, false);
-        frameLayoutSteps.removeAllViews();
-        frameLayoutSteps.addView(timerView);
-        
-        TextView textViewTimer = timerView.findViewById(R.id.textViewTimer);
-        Button buttonRecheck = timerView.findViewById(R.id.buttonRecheck);
-        Button buttonDismiss = timerView.findViewById(R.id.buttonDismiss);
-        
-        CountDownTimer countDownTimer = new CountDownTimer(10 * 60 * 1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long minutes = millisUntilFinished / 60000;
-                long seconds = (millisUntilFinished % 60000) / 1000;
-                String timeString = String.format("%02d:%02d", minutes, seconds);
-                textViewTimer.setText(timeString);
-            }
-
-            @Override
-            public void onFinish() {
-                textViewTimer.setText("00:00");
-                buttonRecheck.setVisibility(View.VISIBLE);
-                buttonDismiss.setVisibility(View.VISIBLE);
-            }
-        };
-        countDownTimer.start();
-        
-        buttonRecheck.setOnClickListener(v -> {
-            countDownTimer.cancel();
-            restartTriage();
-        });
-        
-        buttonDismiss.setOnClickListener(v -> {
-            countDownTimer.cancel();
-            finish();
-        });
-    }
     
     public void restartTriage() {
-        TriageSession previousSession = session;
+        previousSession = session;
         session = new TriageSession();
         redFlags = new HashMap<>();
         rescueAttempts = false;
         rescueCount = 0;
         pefValue = null;
-        
-        checkAutoEscalation(previousSession);
+        isRecheck = true;
+
         showRedFlagsStep();
     }
-    
-    private void checkAutoEscalation(TriageSession previousSession) {
-        if (previousSession == null) {
+
+    private void checkAutoEscalation() {
+        // After 10-minute re-check, if there is still any red-flag symptom,
+        // notify parent with a worsening alert and mark session as escalated.
+        if (session == null) {
             return;
         }
-        
-        boolean shouldEscalate = false;
-        
-        if (previousSession.getRedFlags() != null && session.getRedFlags() != null) {
-            for (Map.Entry<String, Boolean> entry : previousSession.getRedFlags().entrySet()) {
-                Boolean previousValue = entry.getValue();
-                Boolean currentValue = session.getRedFlags().get(entry.getKey());
-                if ((previousValue == null || !previousValue) && (currentValue != null && currentValue)) {
-                    shouldEscalate = true;
-                    break;
-                }
-            }
-        }
-        
-        if (shouldEscalate) {
+
+        if (session.hasAnyRedFlag()) {
             session.setEscalated(true);
-            sendTriageEscalationNotification();
+            sendWorseningAlertToParent();
         }
+    }
+
+    private void sendWorseningAlertToParent() {
+        if (childAccount == null) {
+            Log.e(TAG, "sendWorseningAlertToParent: childAccount is null");
+            return;
+        }
+
+        String parentId = childAccount.getParent_id();
+        String childId = childAccount.getID();
+
+        if (parentId == null || childId == null) {
+            Log.e(TAG, "sendWorseningAlertToParent: parentId or childId is null");
+            return;
+        }
+
+        DatabaseReference triageRef = UserManager.mDatabase
+                .child("triageSessions")
+                .child(parentId)
+                .child(childId);
+
+        long now = System.currentTimeMillis();
+        Map<String, Object> update = new HashMap<>();
+        update.put("worseningId", String.valueOf(now));
+        update.put("worseningTime", now);
+        update.put("worseningHasRedFlag", true);
+
+        triageRef.updateChildren(update);
+
+        Toast.makeText(
+                this,
+                "Symptoms are still present after the 10-minute check. Your parent has been notified.",
+                Toast.LENGTH_LONG
+        ).show();
     }
     
     private void highlightButton(Button selectedButton, Button otherButton, boolean isYes) {
