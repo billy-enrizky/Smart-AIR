@@ -36,7 +36,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +53,9 @@ public class ParentActivity extends AppCompatActivity {
     private ParentAccount parentAccount;
     private ChildrenZoneAdapter adapter;
     private List<ChildZoneInfo> childrenZoneInfo;
+    private com.google.firebase.database.DatabaseReference triageSessionsRef;
+    private com.google.firebase.database.ChildEventListener triageListener;
+    private java.util.Map<String, String> lastSeenSessions = new java.util.HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,39 +91,14 @@ public class ParentActivity extends AppCompatActivity {
             }
         });
         
-        registerFCMToken();
         loadChildrenZones();
-    }
-    
-    private void registerFCMToken() {
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                        return;
-                    }
-                    
-                    String token = task.getResult();
-                    Log.d(TAG, "FCM Registration Token: " + token);
-                    
-                    if (parentAccount != null && token != null) {
-                        String parentId = parentAccount.getID();
-                        UserManager.mDatabase.child("users").child(parentId).child("fcmToken").setValue(token)
-                                .addOnCompleteListener(setTask -> {
-                                    if (setTask.isSuccessful()) {
-                                        Log.d(TAG, "FCM token saved to database");
-                                    } else {
-                                        Log.e(TAG, "Failed to save FCM token", setTask.getException());
-                                    }
-                                });
-                    }
-                });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         loadChildrenZones();
+        attachTriageListener();
     }
 
     private void loadChildrenZones() {
@@ -199,6 +176,104 @@ public class ParentActivity extends AppCompatActivity {
                 ChildZoneInfo info = new ChildZoneInfo(child, Zone.UNKNOWN, 0.0, null, null);
                 updateChildZoneInfo(info);
             }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        detachTriageListener();
+    }
+
+    private void attachTriageListener() {
+        if (parentAccount == null) {
+            return;
+        }
+        if (triageSessionsRef == null) {
+            triageSessionsRef = UserManager.mDatabase
+                    .child("triageSessions")
+                    .child(parentAccount.getID());
+        }
+        if (triageListener != null) {
+            return;
+        }
+
+        triageListener = new com.google.firebase.database.ChildEventListener() {
+            @Override
+            public void onChildAdded(com.google.firebase.database.DataSnapshot snapshot, String previousChildName) {
+                handleTriageSnapshot(snapshot);
+            }
+
+            @Override
+            public void onChildChanged(com.google.firebase.database.DataSnapshot snapshot, String previousChildName) {
+                handleTriageSnapshot(snapshot);
+            }
+
+            @Override
+            public void onChildRemoved(com.google.firebase.database.DataSnapshot snapshot) {
+            }
+
+            @Override
+            public void onChildMoved(com.google.firebase.database.DataSnapshot snapshot, String previousChildName) {
+            }
+
+            @Override
+            public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                Log.e(TAG, "Triage listener cancelled", error.toException());
+            }
+        };
+
+        triageSessionsRef.addChildEventListener(triageListener);
+    }
+
+    private void detachTriageListener() {
+        if (triageSessionsRef != null && triageListener != null) {
+            triageSessionsRef.removeEventListener(triageListener);
+            triageListener = null;
+        }
+    }
+
+    private void handleTriageSnapshot(com.google.firebase.database.DataSnapshot snapshot) {
+        if (snapshot == null) {
+            return;
+        }
+        String childId = snapshot.getKey();
+        if (childId == null) {
+            return;
+        }
+
+        String sessionId = snapshot.child("sessionId").getValue(String.class);
+        if (sessionId == null || sessionId.isEmpty()) {
+            return;
+        }
+
+        String lastSeen = lastSeenSessions.get(childId);
+        if (sessionId.equals(lastSeen)) {
+            return;
+        }
+        lastSeenSessions.put(childId, sessionId);
+
+        String childName = snapshot.child("childName").getValue(String.class);
+        if (childName == null && parentAccount != null && parentAccount.getChildren() != null) {
+            ChildAccount childAccount = parentAccount.getChildren().get(childId);
+            if (childAccount != null && childAccount.getName() != null) {
+                childName = childAccount.getName();
+            }
+        }
+        final String finalChildName = childName != null ? childName : "Your child";
+
+        runOnUiThread(() -> {
+            new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
+                    .setTitle("Breathing Assessment Started")
+                    .setMessage(finalChildName + " started a breathing assessment.")
+                    .setPositiveButton("OK", null)
+                    .show();
+
+            android.widget.Toast.makeText(
+                    ParentActivity.this,
+                    finalChildName + " started a breathing assessment.",
+                    android.widget.Toast.LENGTH_SHORT
+            ).show();
         });
     }
 
@@ -358,7 +433,7 @@ public class ParentActivity extends AppCompatActivity {
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
                 buttonActionPlan = itemView.findViewById(R.id.buttonActionPlan);
-            }
+    }
         }
     }
 

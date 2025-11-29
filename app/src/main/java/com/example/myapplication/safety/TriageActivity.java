@@ -121,28 +121,22 @@ public class TriageActivity extends AppCompatActivity {
                 finish();
             }
         });
-        
-        sendTriageStartNotification();
-        showRedFlagsStep();
-    }
 
-    private void sendTriageStartNotification() {
+        // Write triage session flag for parent real-time alert
         String parentId = childAccount.getParent_id();
-        String childName = childAccount.getName();
-        
-        DatabaseReference notificationRef = UserManager.mDatabase
-                .child("notifications")
+        String childId = childAccount.getID();
+        DatabaseReference triageRef = UserManager.mDatabase
+                .child("triageSessions")
                 .child(parentId)
-                .push();
-        
-        Map<String, Object> notification = new HashMap<>();
-        notification.put("type", "triage_start");
-        notification.put("childName", childName);
-        notification.put("childId", childAccount.getID());
-        notification.put("timestamp", System.currentTimeMillis());
-        notification.put("sessionId", session.getSessionId());
-        
-        notificationRef.setValue(notification);
+                .child(childId);
+        Map<String, Object> triageInfo = new HashMap<>();
+        triageInfo.put("sessionId", session.getSessionId());
+        triageInfo.put("startTime", session.getStartTime());
+        triageInfo.put("childName", childAccount.getName());
+        triageRef.setValue(triageInfo);
+
+        Toast.makeText(this, "Breathing assessment started", Toast.LENGTH_SHORT).show();
+        showRedFlagsStep();
     }
 
     private void showRedFlagsStep() {
@@ -522,22 +516,7 @@ public class TriageActivity extends AppCompatActivity {
     }
 
     private void sendTriageEscalationNotification() {
-        String parentId = childAccount.getParent_id();
-        String childName = childAccount.getName();
-        
-        DatabaseReference notificationRef = UserManager.mDatabase
-                .child("notifications")
-                .child(parentId)
-                .push();
-        
-        Map<String, Object> notification = new HashMap<>();
-        notification.put("type", "triage_escalation");
-        notification.put("childName", childName);
-        notification.put("childId", childAccount.getID());
-        notification.put("timestamp", System.currentTimeMillis());
-        notification.put("sessionId", session.getSessionId());
-        
-        notificationRef.setValue(notification);
+        Toast.makeText(this, "Emergency guidance shown. Consider calling emergency services.", Toast.LENGTH_LONG).show();
     }
 
     private void saveTriageIncident() {
@@ -619,22 +598,7 @@ public class TriageActivity extends AppCompatActivity {
     }
 
     private void sendRapidRescueAlert() {
-        String parentId = childAccount.getParent_id();
-        String childName = childAccount.getName();
-        
-        DatabaseReference notificationRef = UserManager.mDatabase
-                .child("notifications")
-                .child(parentId)
-                .push();
-        
-        Map<String, Object> notification = new HashMap<>();
-        notification.put("type", "rapid_rescue");
-        notification.put("childName", childName);
-        notification.put("childId", childAccount.getID());
-        notification.put("timestamp", System.currentTimeMillis());
-        notification.put("message", childName + " used rescue medication 3+ times in 3 hours. Consider seeking medical care.");
-        
-        notificationRef.setValue(notification);
+        Toast.makeText(this, "Rapid rescue alert: rescue used 3+ times in 3 hours. Consider seeking medical care.", Toast.LENGTH_LONG).show();
     }
 
     private void startTimer() {
