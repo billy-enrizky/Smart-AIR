@@ -304,7 +304,6 @@ public class TriageActivity extends AppCompatActivity {
             pefValue = null;
             session.setPefValue(null);
             calculateCurrentZone();
-            showDecisionStep();
         });
         
         editTextPEF.addTextChangedListener(new TextWatcher() {
@@ -382,12 +381,46 @@ public class TriageActivity extends AppCompatActivity {
 
     private void calculateCurrentZone() {
         Integer personalBest = childAccount.getPersonalBest();
-        if (personalBest != null && personalBest > 0 && pefValue != null) {
+        if (personalBest == null || personalBest <= 0) {
+            session.setCurrentZone(Zone.UNKNOWN);
+            return;
+        }
+        
+        if (pefValue != null) {
             Zone zone = ZoneCalculator.calculateZone(pefValue, personalBest);
             session.setCurrentZone(zone);
         } else {
-            session.setCurrentZone(Zone.UNKNOWN);
+            fetchLatestPEFAndCalculateZone(personalBest);
         }
+    }
+    
+    private void fetchLatestPEFAndCalculateZone(Integer personalBest) {
+        String parentId = childAccount.getParent_id();
+        String childId = childAccount.getID();
+        
+        DatabaseReference pefRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId)
+                .child("pefReadings");
+        
+        pefRef.orderByChild("timestamp").limitToLast(1).get().addOnCompleteListener(task -> {
+            Zone calculatedZone = Zone.UNKNOWN;
+            if (task.isSuccessful() && task.getResult().hasChildren()) {
+                for (com.google.firebase.database.DataSnapshot snapshot : task.getResult().getChildren()) {
+                    PEFReading reading = snapshot.getValue(PEFReading.class);
+                    if (reading != null) {
+                        calculatedZone = ZoneCalculator.calculateZone(reading.getValue(), personalBest);
+                        break;
+                    }
+                }
+            }
+            session.setCurrentZone(calculatedZone);
+            runOnUiThread(() -> {
+                showDecisionStep();
+            });
+        });
     }
 
     private void showDecisionStep() {
@@ -395,68 +428,72 @@ public class TriageActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         
         boolean hasRedFlag = session.hasAnyRedFlag();
-        
+
         if (hasRedFlag) {
-            currentStepView = inflater.inflate(R.layout.layout_decision_emergency, frameLayoutSteps, false);
-            session.setDecisionShown("EMERGENCY");
-            sendTriageEscalationNotification();
+            // Critical flags → Emergency decision card only, no 10-minute timer
+            showEmergencyDecisionCard(inflater);
+            saveTriageIncident();
         } else {
-            currentStepView = inflater.inflate(R.layout.layout_decision_home_steps, frameLayoutSteps, false);
-            session.setDecisionShown("HOME_STEPS");
-            
-            TextView textViewZoneInfo = currentStepView.findViewById(R.id.textViewZoneInfo);
-            TextView textViewSteps = currentStepView.findViewById(R.id.textViewSteps);
-            
-            Zone zone = session.getCurrentZone();
-            if (zone == Zone.UNKNOWN) {
-                textViewZoneInfo.setText("Zone: Not Available");
-            } else {
-                textViewZoneInfo.setText("Current Zone: " + zone.getDisplayName());
-            }
-            
-            String steps = getActionPlanSteps(zone);
-            textViewSteps.setText(steps);
+            // Controllable symptoms → Home Steps card + 10-minute timer & re-check
+            showHomeStepsDecisionCard(inflater);
+            saveTriageIncident();
+            startTimer();
         }
+    }
+    
+    private void showEmergencyDecisionCard(LayoutInflater inflater) {
+        currentStepView = inflater.inflate(R.layout.layout_decision_emergency, frameLayoutSteps, false);
+        session.setDecisionShown("EMERGENCY");
         
         frameLayoutSteps.removeAllViews();
         frameLayoutSteps.addView(currentStepView);
         
-        if (hasRedFlag) {
-            Button buttonViewSteps = currentStepView.findViewById(R.id.buttonViewSteps);
+        Button buttonViewSteps = currentStepView.findViewById(R.id.buttonViewSteps);
+        if (buttonViewSteps != null) {
             buttonViewSteps.setOnClickListener(v -> {
-                View homeStepsView = inflater.inflate(R.layout.layout_decision_home_steps, frameLayoutSteps, false);
-                TextView textViewZoneInfo = homeStepsView.findViewById(R.id.textViewZoneInfo);
-                TextView textViewSteps = homeStepsView.findViewById(R.id.textViewSteps);
-                
-                Zone zone = session.getCurrentZone();
-                if (zone == Zone.UNKNOWN) {
-                    textViewZoneInfo.setText("Zone: Not Available");
-                } else {
-                    textViewZoneInfo.setText("Current Zone: " + zone.getDisplayName());
-                }
-                
-                String steps = getActionPlanSteps(zone);
-                textViewSteps.setText(steps);
-                
-                frameLayoutSteps.removeAllViews();
-                frameLayoutSteps.addView(homeStepsView);
+                showHomeStepsDecisionCard(inflater);
             });
         }
         
-        saveTriageIncident();
-        startTimer();
+        sendTriageEscalationNotification();
+    }
+    
+    private void showHomeStepsDecisionCard(LayoutInflater inflater) {
+        currentStepView = inflater.inflate(R.layout.layout_decision_home_steps, frameLayoutSteps, false);
+        session.setDecisionShown("HOME_STEPS");
+        
+        TextView textViewZoneInfo = currentStepView.findViewById(R.id.textViewZoneInfo);
+        TextView textViewSteps = currentStepView.findViewById(R.id.textViewSteps);
+        
+        Zone zone = session.getCurrentZone();
+        if (zone == null) {
+            zone = Zone.UNKNOWN;
+        }
+        
+        if (zone == Zone.UNKNOWN) {
+            textViewZoneInfo.setText("Zone: Not Available");
+        } else {
+            textViewZoneInfo.setText("Current Zone: " + zone.getDisplayName());
+            textViewZoneInfo.setTextColor(zone.getColorResource());
+        }
+        
+        String steps = getActionPlanSteps(zone);
+        textViewSteps.setText(steps);
+        
+        frameLayoutSteps.removeAllViews();
+        frameLayoutSteps.addView(currentStepView);
     }
 
     private String getActionPlanSteps(Zone zone) {
         switch (zone) {
             case GREEN:
-                return "1. Continue current medication\n2. Monitor symptoms\n3. Follow regular routine";
+                return "1. Continue current medication as prescribed\n2. Monitor symptoms regularly\n3. Follow your regular routine\n4. Keep rescue medication available\n5. Contact healthcare provider if symptoms change";
             case YELLOW:
-                return "1. Use rescue medication as prescribed\n2. Monitor symptoms closely\n3. Rest and avoid triggers\n4. Contact healthcare provider if symptoms persist";
+                return "1. Use rescue medication as prescribed by your healthcare provider\n2. Monitor symptoms closely every 15-30 minutes\n3. Rest in a comfortable position\n4. Avoid known triggers (dust, pollen, exercise, etc.)\n5. Contact your healthcare provider if symptoms do not improve within 1 hour\n6. Be prepared to seek emergency care if symptoms worsen";
             case RED:
-                return "1. Use rescue medication immediately\n2. Rest in comfortable position\n3. Monitor symptoms closely\n4. Contact healthcare provider\n5. Be prepared to seek emergency care if symptoms worsen";
+                return "1. Use rescue medication immediately as prescribed\n2. Rest in a comfortable, upright position\n3. Monitor symptoms very closely\n4. Contact your healthcare provider right away\n5. Be prepared to seek emergency care immediately if symptoms do not improve or worsen\n6. Have someone stay with you if possible\n7. Keep emergency contact numbers readily available";
             default:
-                return "1. Follow your action plan\n2. Monitor symptoms\n3. Contact healthcare provider if needed";
+                return "1. Follow your personalized action plan\n2. Monitor symptoms closely\n3. Use rescue medication as prescribed\n4. Contact your healthcare provider if you have concerns\n5. Seek emergency care if symptoms become severe";
         }
     }
 
