@@ -49,6 +49,34 @@ public class CreateChildActivity extends AppCompatActivity {
         this.day = day;
     }
 
+    private void updateAgeFromDob() {
+        Calendar today = Calendar.getInstance();
+        Calendar birthDate = Calendar.getInstance();
+        birthDate.set(year, month - 1, day);
+
+        int calculatedAge = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+
+        if (today.get(Calendar.MONTH) < birthDate.get(Calendar.MONTH)
+                || (today.get(Calendar.MONTH) == birthDate.get(Calendar.MONTH)
+                && today.get(Calendar.DAY_OF_MONTH) < birthDate.get(Calendar.DAY_OF_MONTH))) {
+            calculatedAge--;
+        }
+
+        if (calculatedAge < 0) {
+            Toast.makeText(CreateChildActivity.this, "Date of birth cannot be in the future", Toast.LENGTH_SHORT).show();
+
+            Calendar todayReset = Calendar.getInstance();
+            year = todayReset.get(Calendar.YEAR);
+            month = todayReset.get(Calendar.MONTH) + 1;
+            day = todayReset.get(Calendar.DAY_OF_MONTH);
+            childDobCalendarView.setDate(todayReset.getTimeInMillis(), true, true);
+
+            calculatedAge = 0;
+        }
+
+        childAgeEditText.setText(String.valueOf(calculatedAge) + " years old");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,13 +89,42 @@ public class CreateChildActivity extends AppCompatActivity {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 setDate(year, month+1, dayOfMonth);
+                updateAgeFromDob();
             }
         });
         UserManager.isParentAccount(this);
         childAgeEditText = (EditText)findViewById(R.id.input_child_age);
+        updateAgeFromDob();
         childNotesEditText = (EditText)findViewById(R.id.input_child_notes);
         createChildButton = (Button)findViewById(R.id.create_child_button);
         mAuth = getInstance();
+
+        Button prevYearButton = findViewById(R.id.button_prev_year);
+        Button nextYearButton = findViewById(R.id.button_next_year);
+
+        prevYearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar current = Calendar.getInstance();
+                current.set(year, month - 1, day);
+                current.add(Calendar.YEAR, -1);
+                setDate(current.get(Calendar.YEAR), current.get(Calendar.MONTH) + 1, current.get(Calendar.DAY_OF_MONTH));
+                childDobCalendarView.setDate(current.getTimeInMillis(), true, true);
+                updateAgeFromDob();
+            }
+        });
+
+        nextYearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar current = Calendar.getInstance();
+                current.set(year, month - 1, day);
+                current.add(Calendar.YEAR, 1);
+                setDate(current.get(Calendar.YEAR), current.get(Calendar.MONTH) + 1, current.get(Calendar.DAY_OF_MONTH));
+                childDobCalendarView.setDate(current.getTimeInMillis(), true, true);
+                updateAgeFromDob();
+            }
+        });
     }
 
     public void createChildClick(View view) {
@@ -77,10 +134,8 @@ public class CreateChildActivity extends AppCompatActivity {
         String username = childUsernameEditText.getText().toString().trim();
         String name = childNameEditText.getText().toString().trim();
         String dob = ""+this.year+"/"+this.month+"/"+this.day;
-        String age = childAgeEditText.getText().toString().trim();
         String notes = childNotesEditText.getText().toString().trim();
         String password = childPasswordEditText.getText().toString().trim();
-
 
         // check if username given
         if (username.equals("")) {
@@ -91,6 +146,26 @@ public class CreateChildActivity extends AppCompatActivity {
             Toast.makeText(CreateChildActivity.this, "Must have password", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // validate DOB is not in the future (age must not be negative)
+        Calendar today = Calendar.getInstance();
+        Calendar birthDate = Calendar.getInstance();
+        birthDate.set(year, month - 1, day);
+
+        int calculatedAge = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+
+        if (today.get(Calendar.MONTH) < birthDate.get(Calendar.MONTH)
+                || (today.get(Calendar.MONTH) == birthDate.get(Calendar.MONTH)
+                && today.get(Calendar.DAY_OF_MONTH) < birthDate.get(Calendar.DAY_OF_MONTH))) {
+            calculatedAge--;
+        }
+
+        if (calculatedAge < 0) {
+            Toast.makeText(CreateChildActivity.this, "Child birthday is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String age = String.valueOf(calculatedAge);
 
         // check to see if username taken
         //boolean usernameTaken = false;
