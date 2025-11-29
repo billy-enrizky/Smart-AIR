@@ -35,7 +35,7 @@
             android:name=".providermanaging.InvitationCreateActivity"
             android:exported="false" />
         <activity
-            android:name=".ProviderActivity"
+            android:name=".providers.ProviderActivity"
             android:exported="false" />
         <activity
             android:name=".ParentActivity"

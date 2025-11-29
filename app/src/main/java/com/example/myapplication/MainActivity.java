@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.providers.ProviderActivity;
 import com.example.myapplication.userdata.AccountType;
 import com.example.myapplication.userdata.ChildAccount;
 import com.google.firebase.database.DatabaseReference;

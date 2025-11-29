@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.providers;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.R;
 import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.UserManager;
 import com.example.myapplication.providermanaging.InvitationAcceptActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -38,5 +40,8 @@ public class ProviderActivity extends AppCompatActivity {
         Intent intent = new Intent(this, InvitationAcceptActivity.class);
         startActivity(intent);
         this.finish();
+    }
+    public void getLinkedParents(){
+
     }
 }
