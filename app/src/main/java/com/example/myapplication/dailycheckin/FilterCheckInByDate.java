@@ -18,6 +18,7 @@ import com.applandeo.materialcalendarview.CalendarView;
 import com.example.myapplication.R;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,7 +44,13 @@ public class FilterCheckInByDate extends AppCompatActivity {
         }
         Calendar start = selectedDates.getFirst();
         Calendar end = selectedDates.getLast();
-        start.getTimeInMillis();
+        BigInteger threeMonths = new BigInteger("7889238000");
+        BigInteger sixMonths = new BigInteger("15778476000");
+        BigInteger startToEnd = new BigInteger(String.valueOf(end.getTimeInMillis()-start.getTimeInMillis()));
+        if (startToEnd.compareTo(threeMonths) < 0 || startToEnd.compareTo(sixMonths) > 0) {
+            Toast.makeText(this, "Time not within 3-6 months", Toast.LENGTH_SHORT).show();
+            return;
+        }
         CheckInHistoryFilters filters = CheckInHistoryFilters.getInstance();
         filters.setStartDate(String.format("%tF", start.getTimeInMillis()));
         filters.setEndDate(String.format("%tF", end.getTimeInMillis()));
