@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.service.controls.Control;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -11,16 +12,29 @@ import android.widget.TextView;
 import android.util.TypedValue;
 import android.graphics.Color;
 
+import com.example.myapplication.SignIn.SignInView;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ChildInhalerLogs extends AppCompatActivity {
+    private static final String TAG = "ChildInhalerLogs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inhaler_logs);
+        
+        // Check if user is logged in
+        if (UserManager.currentUser == null) {
+            Log.w(TAG, "No user logged in, redirecting to SignIn");
+            Intent intent = new Intent(ChildInhalerLogs.this, SignInView.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        
         findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
