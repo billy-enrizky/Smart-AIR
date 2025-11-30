@@ -59,6 +59,10 @@ public class SignInChildProfileActivity extends AppCompatActivity {
     }
 
     public void GoToDailyCheckIn(android.view.View view) {
+        if(currentChild == null){
+            Toast.makeText(this, "Please select a child", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Intent intent = new Intent(this, CheckInView.class);
         startActivity(intent);
         finish();

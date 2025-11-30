@@ -78,27 +78,31 @@
         app:layout_constraintStart_toStartOf="@+id/childListContainer"
         app:layout_constraintTop_toBottomOf="@+id/childListContainer" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/CheckInFragmentContainerParent"
-        android:name="com.example.myapplication.GoToDailyCheckinFragment"
-        android:layout_width="130dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="248dp"
-        android:layout_marginTop="664dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/go_to_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="88dp"
-        android:layout_marginTop="25dp"
         android:layout_marginEnd="33dp"
+        android:layout_marginBottom="92dp"
         android:onClick="goToFilterByDate"
         android:text="Filter History"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button20"
-        app:layout_constraintTop_toBottomOf="@+id/CheckInFragmentContainerParent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/button20" />
+
+    <Button
+        android:id="@+id/logEntry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="47dp"
+        android:onClick="GoToDailyCheckIn"
+        android:text="Log Entry"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button21"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

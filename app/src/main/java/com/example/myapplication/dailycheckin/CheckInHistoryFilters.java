@@ -4,6 +4,7 @@ import android.widget.Toast;
 
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
+import com.example.myapplication.userdata.AccountType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +14,7 @@ public final class CheckInHistoryFilters extends CheckInEntry {
     String startDate;
     String endDate;
     boolean nightWakingInput;
+
     private static CheckInHistoryFilters filters;
     String history;
     private CheckInHistoryFilters() {
