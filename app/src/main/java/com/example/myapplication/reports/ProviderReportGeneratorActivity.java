@@ -469,7 +469,11 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
 
     private BarChart createBarChartForPDF(int width, int height) {
         BarChart barChart = new BarChart(this);
-        barChart.setLayoutParams(new android.view.ViewGroup.LayoutParams(width, height));
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        );
+        barChart.setLayoutParams(params);
         barChart.setBackgroundColor(Color.WHITE);
         
         if (reportData.getZoneDistribution() != null && !reportData.getZoneDistribution().isEmpty()) {
@@ -481,7 +485,11 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
 
     private LineChart createLineChartForPDF(int width, int height) {
         LineChart lineChart = new LineChart(this);
-        lineChart.setLayoutParams(new android.view.ViewGroup.LayoutParams(width, height));
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        );
+        lineChart.setLayoutParams(params);
         lineChart.setBackgroundColor(Color.WHITE);
         
         if (reportData.getPefTrendData() != null && !reportData.getPefTrendData().isEmpty()) {
@@ -503,25 +511,29 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         int measuredWidth = width;
         int measuredHeight = height;
         
-        chartView.setBackgroundColor(Color.WHITE);
+        FrameLayout container = new FrameLayout(this);
+        container.setLayoutParams(new android.view.ViewGroup.LayoutParams(measuredWidth, measuredHeight));
+        container.setBackgroundColor(Color.WHITE);
+        container.addView(chartView);
         
-        chartView.measure(
+        container.measure(
                 View.MeasureSpec.makeMeasureSpec(measuredWidth, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(measuredHeight, View.MeasureSpec.EXACTLY)
         );
-        chartView.layout(0, 0, measuredWidth, measuredHeight);
+        container.layout(0, 0, measuredWidth, measuredHeight);
         
         if (chartView instanceof com.github.mikephil.charting.charts.Chart) {
             com.github.mikephil.charting.charts.Chart chart = (com.github.mikephil.charting.charts.Chart) chartView;
             chart.notifyDataSetChanged();
             chart.invalidate();
+            chart.requestLayout();
         }
         
         Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(Color.WHITE);
         
-        chartView.draw(canvas);
+        container.draw(canvas);
         
         return bitmap;
     }
@@ -628,9 +640,11 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                 y += lineHeight + 10;
                 paint.setFakeBoldText(false);
                 
-                BarChart barChart = createBarChartForPDF(pageWidth - (int)(margin * 2), 300);
+                int chartWidth = pageWidth - (int)(margin * 2);
+                int chartHeight = 400;
+                BarChart barChart = createBarChartForPDF(chartWidth, chartHeight);
                 if (barChart != null) {
-                    Bitmap zoneChartBitmap = getChartBitmap(barChart, pageWidth - (int)(margin * 2), 300);
+                    Bitmap zoneChartBitmap = getChartBitmap(barChart, chartWidth, chartHeight);
                     if (zoneChartBitmap != null) {
                         canvas.drawBitmap(zoneChartBitmap, margin, y, paint);
                         y += zoneChartBitmap.getHeight() + sectionSpacing;
@@ -653,9 +667,11 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                 y += lineHeight + 10;
                 paint.setFakeBoldText(false);
                 
-                LineChart lineChart = createLineChartForPDF(pageWidth - (int)(margin * 2), 300);
+                int chartWidth = pageWidth - (int)(margin * 2);
+                int chartHeight = 400;
+                LineChart lineChart = createLineChartForPDF(chartWidth, chartHeight);
                 if (lineChart != null) {
-                    Bitmap trendChartBitmap = getChartBitmap(lineChart, pageWidth - (int)(margin * 2), 300);
+                    Bitmap trendChartBitmap = getChartBitmap(lineChart, chartWidth, chartHeight);
                     if (trendChartBitmap != null) {
                         canvas.drawBitmap(trendChartBitmap, margin, y, paint);
                         y += trendChartBitmap.getHeight() + sectionSpacing;
