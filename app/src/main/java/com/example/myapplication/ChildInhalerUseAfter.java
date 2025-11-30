@@ -12,13 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.userdata.ChildAccount;
 
 public class ChildInhalerUseAfter extends AppCompatActivity {
-    ChildAccount currentUser;
-    ControllerLog controllerLog = new ControllerLog();
+    ControllerLog controllerLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
+        controllerLog = new ControllerLog();
         controllerLog.setFeelingB(intent.getStringExtra("feelrating"));
         controllerLog.setRatingB(intent.getIntExtra("breathrating", 1));
         controllerLog.setUsername(UserManager.currentUser.getID());
