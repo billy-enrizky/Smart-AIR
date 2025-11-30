@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -114,11 +115,19 @@ public class AccessPermissionActivity extends AppCompatActivity {
 
     public void ApplyChange(android.view.View view){
         if(currentChild == null){
+            Toast.makeText(this, "Please select a child first", Toast.LENGTH_SHORT).show();
             return;
         }else{
             Permission newPermission = getPermission();
             currentChild.setPermission(newPermission);
-            currentChild.WriteIntoDatabase(null);
+            currentChild.WriteIntoDatabase(new com.example.myapplication.CallBack() {
+                @Override
+                public void onComplete() {
+                    Toast.makeText(AccessPermissionActivity.this, 
+                            "Access permissions modified for " + currentChild.getName(), 
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

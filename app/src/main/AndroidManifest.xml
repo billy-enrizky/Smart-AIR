@@ -76,6 +76,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".safety.PEFEntryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.PEFHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.SetPersonalBestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.TriageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.IncidentHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.ProviderReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.ActionPlanActivity"
+            android:exported="false" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
 </manifest>

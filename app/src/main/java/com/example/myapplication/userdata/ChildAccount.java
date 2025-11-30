@@ -20,6 +20,10 @@ public class ChildAccount extends UserData {
     String notes;
     String age;
     Permission permission;
+    Integer personalBest;
+    String actionPlanGreen;
+    String actionPlanYellow;
+    String actionPlanRed;
 
     public ChildAccount(String ID) {
         super(ID);
@@ -88,6 +92,30 @@ public class ChildAccount extends UserData {
     public String getAge(){
         return age;
     }
+    public Integer getPersonalBest() {
+        return personalBest;
+    }
+    public void setPersonalBest(Integer personalBest) {
+        this.personalBest = personalBest;
+    }
+    public String getActionPlanGreen() {
+        return actionPlanGreen;
+    }
+    public void setActionPlanGreen(String actionPlanGreen) {
+        this.actionPlanGreen = actionPlanGreen;
+    }
+    public String getActionPlanYellow() {
+        return actionPlanYellow;
+    }
+    public void setActionPlanYellow(String actionPlanYellow) {
+        this.actionPlanYellow = actionPlanYellow;
+    }
+    public String getActionPlanRed() {
+        return actionPlanRed;
+    }
+    public void setActionPlanRed(String actionPlanRed) {
+        this.actionPlanRed = actionPlanRed;
+    }
     @Override
     public void WriteIntoDatabase(CallBack callback) {
         UserManager.mDatabase.child("users").child(Parent_id).child("children").child(ID).setValue(this).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -121,6 +149,10 @@ public class ChildAccount extends UserData {
                     ChildAccount.this.password = Data.password;
                     ChildAccount.this.name = Data.name;
                     ChildAccount.this.permission = Data.permission;
+                    ChildAccount.this.personalBest = Data.personalBest;
+                    ChildAccount.this.actionPlanGreen = Data.actionPlanGreen;
+                    ChildAccount.this.actionPlanYellow = Data.actionPlanYellow;
+                    ChildAccount.this.actionPlanRed = Data.actionPlanRed;
                     if(callback != null){
                         callback.onComplete();
                     }

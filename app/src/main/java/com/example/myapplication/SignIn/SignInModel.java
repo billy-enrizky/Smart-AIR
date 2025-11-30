@@ -89,8 +89,9 @@ public class SignInModel {
                     DataSnapshot Snapshot = task.getResult();
                     Boolean exists = false;
                     for(DataSnapshot userSnapshot: Snapshot.getChildren()){
-                        if(userSnapshot.child("account").getValue().equals("PARENT") && userSnapshot.child("children").hasChild(username)){
-                            if(callBack!=null){
+                        String accountType = userSnapshot.child("account").getValue(String.class);
+                        if("PARENT".equals(accountType) && userSnapshot.child("children").hasChild(username)){
+                            if(callBack != null){
                                 callBack.onComplete(userSnapshot.getKey());
                                 exists = true;
                                 break;
@@ -98,7 +99,9 @@ public class SignInModel {
                         }
                     }
                     if(!exists){
+                        if (callBack != null) {
                         callBack.onComplete("");
+                        }
                     }
                 }
             }
