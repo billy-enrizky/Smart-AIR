@@ -32,10 +32,12 @@ public class ChildInhalerUseAfter extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         Button happyButton = findViewById(R.id.happybutton);
@@ -87,8 +89,7 @@ public class ChildInhalerUseAfter extends AppCompatActivity {
                 if (controllerLog.getExtraInfo().isEmpty()) {
                     controllerLog.setExtraInfo("Low Inhaler Warning!");
                     lowButton.setBackgroundTintList(ColorStateList.valueOf(0xFFFF0000));
-                }
-                else {
+                } else {
                     controllerLog.setExtraInfo("");
                     lowButton.setBackgroundTintList(ColorStateList.valueOf(0xFFFF4646));
                 }
@@ -98,27 +99,49 @@ public class ChildInhalerUseAfter extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isRescue = true;
-                InhalerModel.ReadFromDatabase(UserManager.currentUser.getID(), isRescue, new ResultCallBack<Inhaler>() {
+                ControllerLogModel.writeIntoDB(controllerLog, new CallBack() {
                     @Override
-                    public void onComplete(Inhaler inhaler) {
-                        if (inhaler != null) {
-                            inhaler.oneDose();
-                            InhalerModel.writeIntoDB(inhaler, new CallBack() {
-                                @Override
-                                public void onComplete() {
-                                    startActivity(new Intent(ChildInhalerUseAfter.this, ChildInhalerMenu.class));
+                    public void onComplete() {
+                        InhalerModel.ReadFromDatabase(UserManager.currentUser.getID(), false, new ResultCallBack<Inhaler>() {
+                            @Override
+                            public void onComplete(Inhaler inhaler) {
+                                if (inhaler != null) {
+                                    inhaler.oneDose();
+                                    InhalerModel.writeIntoDB(inhaler, new CallBack() {
+                                        @Override
+                                        public void onComplete() {
+
+                                            AchievementsModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<Achievement>() {
+                                                @Override
+                                                public void onComplete(Achievement achievement) {
+
+                                                    if (achievement == null) {
+                                                        Toast.makeText(ChildInhalerUseAfter.this, "Warning: Achievement Error.", Toast.LENGTH_SHORT).show();
+                                                        startActivity(new Intent(ChildInhalerUseAfter.this, ChildInhalerMenu.class));
+                                                    } else {
+                                                        achievement.updateStreak();
+                                                        AchievementsModel.writeIntoDB(achievement, new CallBack() {
+                                                            @Override
+                                                            public void onComplete() {
+                                                                startActivity(new Intent(ChildInhalerUseAfter.this, ChildInhalerMenu.class));
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
+
+                                        }
+                                    });
+
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Can't find inhaler", Toast.LENGTH_SHORT).show();
                                 }
-                            });
-                        }
-                        else {
-                            Toast.makeText(getApplicationContext(), "Can't find inhaler", Toast.LENGTH_SHORT).show();
-                        }
+                            }
+                        });
                     }
                 });
+
             }
         });
-
-
     }
 }

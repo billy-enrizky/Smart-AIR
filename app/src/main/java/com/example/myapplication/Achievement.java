@@ -3,20 +3,18 @@ import java.util.Arrays;
 public class Achievement {
     String username;
     long timeOfLastDose;
+    long timeOfLastTechnique;
     int currentStreak;
     int videoswatched;
     long[] rescueTimes;
-    boolean[] badges;
+    public boolean[] badges;
 
-    int[] badgeRequirements; //(Days amount streak, Times video, Less than or equal x, within y days)
+    int[] badgeRequirements; //(Days amount streak, Times video, Days between times, Less than or equal x, within y days)
 
     final long DAYINMS = 86400000;
     public Achievement() {
         this.badges = new boolean[]{false, false, false};
-        this.currentStreak = 0;
-        this.videoswatched = 0;
-        this.timeOfLastDose = -1;
-        this.badgeRequirements = new int[]{7,10,4,30};
+        this.badgeRequirements = new int[]{7,10,1,4,30};
         this.rescueTimes = new long[4];
     }
 
@@ -24,10 +22,7 @@ public class Achievement {
         this.username = username;
         this.badges = new boolean[]{false, false, false};
         this.rescueTimes = new long[]{-1, -1, -1, -1};
-        this.currentStreak = 0;
-        this.videoswatched = 0;
-        this.timeOfLastDose = -1;
-        this.badgeRequirements = new int[]{7,10,4,30};
+        this.badgeRequirements = new int[]{7,10,1,4,30};
     }
 
     public String getUsername() {
@@ -50,6 +45,13 @@ public class Achievement {
         return currentStreak;
     }
 
+    public long getTimeOfLastTechnique(){
+        return timeOfLastTechnique;
+    }
+
+    public void setTimeOfLastTechnique(long timeOfLastTechnique){
+        this.timeOfLastTechnique = timeOfLastTechnique;
+    }
     public void setCurrentStreak(int currentStreak) {
         this.currentStreak = currentStreak;
     }
@@ -107,7 +109,7 @@ public class Achievement {
     public void updateStreak() {
         long currentMillis = System.currentTimeMillis();
 
-        if (this.timeOfLastDose < -1) {
+        if (this.timeOfLastDose == 0) {
             this.currentStreak = 1;
         } else {
             long daysSinceLastCheckin = (currentMillis - this.timeOfLastDose) / DAYINMS;
@@ -116,6 +118,20 @@ public class Achievement {
             else {this.currentStreak = 1;}
         }
         this.timeOfLastDose = currentMillis;
+    }
+
+    public void updateStreakTechnique() {
+        long currentMillis = System.currentTimeMillis();
+
+        if (this.timeOfLastDose == 0) {
+            this.videoswatched = 1;
+        } else {
+            long daysSinceLastTechnique = (currentMillis - this.timeOfLastTechnique) / DAYINMS;
+            if (daysSinceLastTechnique < this.badgeRequirements[2]){}
+            else if (daysSinceLastTechnique - this.badgeRequirements[2] == 1){this.videoswatched += 1;}
+            else {this.videoswatched = 1;}
+        }
+        this.timeOfLastTechnique = currentMillis;
     }
 
     public void usedRescue(){

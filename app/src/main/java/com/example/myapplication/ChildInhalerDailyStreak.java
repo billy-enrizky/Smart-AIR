@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ChildInhalerDailyStreak extends AppCompatActivity {
@@ -27,10 +29,24 @@ public class ChildInhalerDailyStreak extends AppCompatActivity {
         donebutton = findViewById(R.id.donebutton);
         badgeinfo = findViewById(R.id.badgeinfo);
 
-        // streak.setText(...)
-        // badge1.setImageResource(...)
-        // badge2.setImageResource(...)
-        // badge3.setImageResource(...)
+        AchievementsModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<Achievement>() {
+            @Override
+            public void onComplete(Achievement achievement) {
+
+                if (achievement == null) {
+                    Toast.makeText(ChildInhalerDailyStreak.this,"Somehow no achievement.",Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(ChildInhalerDailyStreak.this, ChildInhalerMenu.class));}
+                else {
+                    if (achievement.badges[0])
+                        badge1.setImageResource(R.drawable.badge1);
+                    if (achievement.badges[1])
+                        badge1.setImageResource(R.drawable.badge2);
+                    if (achievement.badges[2])
+                        badge1.setImageResource(R.drawable.badge3);
+                    streak.setText(achievement.getCurrentStreak());
+                }
+            }
+        });
 
         donebutton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.userdata.ChildAccount;
 
 public class ParentInhalerCreate extends AppCompatActivity {
-    ChildAccount currentUser;
     Inhaler inhaler;
 
     @Override
@@ -42,7 +41,7 @@ public class ParentInhalerCreate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isValidInhalerInput(maxcapacity.getText().toString().trim(),dosecount.getText().toString().trim(),datePurchased.getText().toString().trim(),dateExpiry.getText().toString().trim())){
-                    inhaler = new Inhaler(currentUser.getID(),dateToLong(datePurchased.getText().toString().trim()),dateToLong(dateExpiry.getText().toString().trim()),Integer.parseInt(maxcapacity.getText().toString().trim()),Integer.parseInt(dosecount.getText().toString().trim()),isrescue.isChecked());
+                    inhaler = new Inhaler(UserManager.currentUser.getID(),dateToLong(datePurchased.getText().toString().trim()),dateToLong(dateExpiry.getText().toString().trim()),Integer.parseInt(maxcapacity.getText().toString().trim()),Integer.parseInt(dosecount.getText().toString().trim()),isrescue.isChecked());
                     InhalerModel.writeIntoDB(inhaler, new CallBack() {
                         @Override
                         public void onComplete() {
