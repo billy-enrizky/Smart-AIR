@@ -65,6 +65,9 @@ public class NotificationActivity extends AppCompatActivity {
         recyclerViewNotifications = findViewById(R.id.recyclerViewNotifications);
         textViewEmpty = findViewById(R.id.textViewEmpty);
 
+        Button buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(v -> finish());
+
         notifications = new ArrayList<>();
         adapter = new NotificationAdapter(notifications);
         recyclerViewNotifications.setLayoutManager(new LinearLayoutManager(this));
