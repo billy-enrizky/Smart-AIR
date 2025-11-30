@@ -13,16 +13,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.userdata.ChildAccount;
 
 public class ChildInhalerUseRescue extends AppCompatActivity {
-    ChildAccount currentUser;
-    RescueLog rescueLog = new RescueLog();
+    RescueLog rescueLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        rescueLog = new RescueLog();
         rescueLog.setFeeling("Better");
         rescueLog.setRating(1);
         rescueLog.setUsername(UserManager.currentUser.getID());
-        setContentView(R.layout.activity_inhaler_use_after);
+        setContentView(R.layout.activity_inhaler_use_rescue);
 
         SeekBar seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

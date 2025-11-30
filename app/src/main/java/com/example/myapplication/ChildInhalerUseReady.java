@@ -12,9 +12,9 @@ public class ChildInhalerUseReady extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        Intent intentA = new Intent(ChildInhalerUseReady.this, ChildInhalerUseAfter.class);
-        intentA.putExtra("breathrating",intent.getIntExtra("breathrating",1));
-        intentA.putExtra("feelrating",intent.getStringExtra("feelrating"));
+        Intent intent2 = new Intent(ChildInhalerUseReady.this, ChildInhalerUseAfter.class);
+        intent2.putExtra("breathrating",intent.getIntExtra("breathrating",1));
+        intent2.putExtra("feelrating",intent.getStringExtra("feelrating"));
         setContentView(R.layout.activity_inhaler_use_ready);
         findViewById(R.id.backbutton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -25,7 +25,7 @@ public class ChildInhalerUseReady extends AppCompatActivity {
         findViewById(R.id.donebutton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(intentA);
+                startActivity(intent2);
             }
         });
     }
