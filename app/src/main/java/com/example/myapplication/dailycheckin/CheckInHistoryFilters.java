@@ -40,7 +40,7 @@ public final class CheckInHistoryFilters extends CheckInEntry {
         this.endDate = endDate;
     }
     public boolean getNightWakingInput() {
-        return this.nightWaking;
+        return this.nightWakingInput;
     }
     public void setNightWakingInput(boolean nightWakingInput) {
         this.nightWakingInput = nightWakingInput;
