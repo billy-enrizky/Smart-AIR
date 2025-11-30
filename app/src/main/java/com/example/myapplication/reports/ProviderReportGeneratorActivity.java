@@ -467,16 +467,62 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         });
     }
 
+    private BarChart createBarChartForPDF(int width, int height) {
+        BarChart barChart = new BarChart(this);
+        barChart.setLayoutParams(new android.view.ViewGroup.LayoutParams(width, height));
+        barChart.setBackgroundColor(Color.WHITE);
+        
+        if (reportData.getZoneDistribution() != null && !reportData.getZoneDistribution().isEmpty()) {
+            ChartComponent.setupBarChart(barChart, reportData.getZoneDistribution(), "Zone Distribution");
+        }
+        
+        return barChart;
+    }
+
+    private LineChart createLineChartForPDF(int width, int height) {
+        LineChart lineChart = new LineChart(this);
+        lineChart.setLayoutParams(new android.view.ViewGroup.LayoutParams(width, height));
+        lineChart.setBackgroundColor(Color.WHITE);
+        
+        if (reportData.getPefTrendData() != null && !reportData.getPefTrendData().isEmpty()) {
+            List<ChartComponent.PEFDataPoint> dataPoints = new ArrayList<>();
+            for (ProviderReportData.PEFDataPoint point : reportData.getPefTrendData()) {
+                dataPoints.add(new ChartComponent.PEFDataPoint(point.getTimestamp(), point.getPefValue()));
+            }
+            ChartComponent.setupLineChart(lineChart, dataPoints, "PEF Trend");
+        }
+        
+        return lineChart;
+    }
+
     private Bitmap getChartBitmap(View chartView, int width, int height) {
         if (chartView == null) {
             return null;
         }
-        chartView.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-        chartView.layout(0, 0, chartView.getMeasuredWidth(), chartView.getMeasuredHeight());
-        Bitmap bitmap = Bitmap.createBitmap(chartView.getMeasuredWidth(), chartView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        
+        int measuredWidth = width;
+        int measuredHeight = height;
+        
+        chartView.setBackgroundColor(Color.WHITE);
+        
+        chartView.measure(
+                View.MeasureSpec.makeMeasureSpec(measuredWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(measuredHeight, View.MeasureSpec.EXACTLY)
+        );
+        chartView.layout(0, 0, measuredWidth, measuredHeight);
+        
+        if (chartView instanceof com.github.mikephil.charting.charts.Chart) {
+            com.github.mikephil.charting.charts.Chart chart = (com.github.mikephil.charting.charts.Chart) chartView;
+            chart.notifyDataSetChanged();
+            chart.invalidate();
+        }
+        
+        Bitmap bitmap = Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.WHITE);
+        
         chartView.draw(canvas);
+        
         return bitmap;
     }
 
@@ -576,22 +622,19 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                 y = margin;
             }
 
-            if (frameLayoutZoneChart.getChildCount() > 0) {
-                View zoneChartContainer = frameLayoutZoneChart.getChildAt(0);
-                if (zoneChartContainer != null) {
-                    BarChart barChart = zoneChartContainer.findViewById(R.id.barChart);
-                    if (barChart != null && barChart.getVisibility() == View.VISIBLE) {
-                        paint.setFakeBoldText(true);
-                        canvas.drawText("Zone Distribution Chart", margin, y, paint);
-                        y += lineHeight + 10;
-                        paint.setFakeBoldText(false);
-                        
-                        Bitmap zoneChartBitmap = getChartBitmap(barChart, pageWidth - (int)(margin * 2), 300);
-                        if (zoneChartBitmap != null) {
-                            canvas.drawBitmap(zoneChartBitmap, margin, y, paint);
-                            y += zoneChartBitmap.getHeight() + sectionSpacing;
-                            zoneChartBitmap.recycle();
-                        }
+            if (reportData.getZoneDistribution() != null && !reportData.getZoneDistribution().isEmpty()) {
+                paint.setFakeBoldText(true);
+                canvas.drawText("Zone Distribution Chart", margin, y, paint);
+                y += lineHeight + 10;
+                paint.setFakeBoldText(false);
+                
+                BarChart barChart = createBarChartForPDF(pageWidth - (int)(margin * 2), 300);
+                if (barChart != null) {
+                    Bitmap zoneChartBitmap = getChartBitmap(barChart, pageWidth - (int)(margin * 2), 300);
+                    if (zoneChartBitmap != null) {
+                        canvas.drawBitmap(zoneChartBitmap, margin, y, paint);
+                        y += zoneChartBitmap.getHeight() + sectionSpacing;
+                        zoneChartBitmap.recycle();
                     }
                 }
             }
@@ -604,22 +647,19 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                 y = margin;
             }
 
-            if (frameLayoutTrendChart.getChildCount() > 0) {
-                View trendChartContainer = frameLayoutTrendChart.getChildAt(0);
-                if (trendChartContainer != null) {
-                    LineChart lineChart = trendChartContainer.findViewById(R.id.lineChart);
-                    if (lineChart != null && lineChart.getVisibility() == View.VISIBLE) {
-                        paint.setFakeBoldText(true);
-                        canvas.drawText("PEF Trend Chart", margin, y, paint);
-                        y += lineHeight + 10;
-                        paint.setFakeBoldText(false);
-                        
-                        Bitmap trendChartBitmap = getChartBitmap(lineChart, pageWidth - (int)(margin * 2), 300);
-                        if (trendChartBitmap != null) {
-                            canvas.drawBitmap(trendChartBitmap, margin, y, paint);
-                            y += trendChartBitmap.getHeight() + sectionSpacing;
-                            trendChartBitmap.recycle();
-                        }
+            if (reportData.getPefTrendData() != null && !reportData.getPefTrendData().isEmpty()) {
+                paint.setFakeBoldText(true);
+                canvas.drawText("PEF Trend Chart", margin, y, paint);
+                y += lineHeight + 10;
+                paint.setFakeBoldText(false);
+                
+                LineChart lineChart = createLineChartForPDF(pageWidth - (int)(margin * 2), 300);
+                if (lineChart != null) {
+                    Bitmap trendChartBitmap = getChartBitmap(lineChart, pageWidth - (int)(margin * 2), 300);
+                    if (trendChartBitmap != null) {
+                        canvas.drawBitmap(trendChartBitmap, margin, y, paint);
+                        y += trendChartBitmap.getHeight() + sectionSpacing;
+                        trendChartBitmap.recycle();
                     }
                 }
             }
