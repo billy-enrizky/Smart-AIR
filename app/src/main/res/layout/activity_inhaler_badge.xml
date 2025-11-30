@@ -60,7 +60,7 @@
         android:layout_height="109dp"
         android:layout_marginTop="56dp"
         android:fontFamily="@font/happy_monkey"
-        android:text="Gain this badge by <4 rescues in 30 days."
+        android:text="Gain this badge by 4 or less rescues in 30 days."
         android:textAlignment="center"
         android:textColor="#90020B"
         android:textSize="30dp"
@@ -91,7 +91,7 @@
         app:layout_constraintVertical_bias="0.239" />
 
     <ImageView
-        android:id="@+id/badge1"
+        android:id="@+id/badgei1"
         android:layout_width="137dp"
         android:layout_height="129dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -102,7 +102,7 @@
         app:srcCompat="@drawable/badge1" />
 
     <ImageView
-        android:id="@+id/badge2"
+        android:id="@+id/badgei2"
         android:layout_width="139dp"
         android:layout_height="130dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -114,7 +114,7 @@
         app:srcCompat="@drawable/badge2" />
 
     <ImageView
-        android:id="@+id/badge3"
+        android:id="@+id/badgei3"
         android:layout_width="132dp"
         android:layout_height="137dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -41,6 +41,36 @@
             android:name=".ParentActivity"
             android:exported="false" />
         <activity
+            android:name=".ChildInhalerInstructions"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerMenu"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerLogs"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerBadge"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerDailyStreak"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUse"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseReady"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseRescue"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseController"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerVideo"
+            android:exported="false" />
+        <activity
             android:name=".childmanaging.CreateChildActivity"
             android:exported="false" />
         <activity

@@ -37,11 +37,11 @@ public class ChildInhalerDailyStreak extends AppCompatActivity {
                     Toast.makeText(ChildInhalerDailyStreak.this,"Somehow no achievement.",Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(ChildInhalerDailyStreak.this, ChildInhalerMenu.class));}
                 else {
-                    if (achievement.badges[0])
+                    if (achievement.badges.get(0))
                         badge1.setImageResource(R.drawable.badge1);
-                    if (achievement.badges[1])
+                    if (achievement.badges.get(1))
                         badge1.setImageResource(R.drawable.badge2);
-                    if (achievement.badges[2])
+                    if (achievement.badges.get(2))
                         badge1.setImageResource(R.drawable.badge3);
                     streak.setText(achievement.getCurrentStreak());
                 }
