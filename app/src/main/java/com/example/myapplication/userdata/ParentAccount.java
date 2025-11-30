@@ -59,8 +59,8 @@ public class ParentAccount extends UserData implements Cloneable {
     }
 
 
-    public void setInviteCode(InviteCode InviteCode){
-        this.InviteCode = InviteCode;
+    public void setInviteCode(InviteCode inviteCode){
+        this.InviteCode = inviteCode;
     }
     public InviteCode getInviteCode(){
         return InviteCode;

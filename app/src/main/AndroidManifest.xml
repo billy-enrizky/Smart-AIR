@@ -56,6 +56,18 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
+            android:name=".dailycheckin.CheckInView"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.FilterCheckInByDate"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.FilterCheckInBySymptoms"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.ViewCheckInHistory"
+            android:exported="false" />
+        <activity
             android:name=".SignIn.SignInView"
             android:exported="true">
             <intent-filter>
