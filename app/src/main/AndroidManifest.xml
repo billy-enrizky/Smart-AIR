@@ -70,26 +70,23 @@
             android:exported="false" />
         <activity
             android:name=".SignIn.SignInView"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="true" />
+        <activity
             android:name=".SignInActivity"
             android:exported="true" />
-
         <activity
             android:name=".ChildInhalerInstructions"
-            android:exported="true"
-        />
+            android:exported="true" />
         <activity
             android:name=".ChildInhalerMenu"
             android:exported="true" />
         <activity
             android:name=".ChildInhalerLogs"
             android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ChildInhalerDailyStreak"
@@ -105,6 +102,15 @@
             android:exported="true" />
         <activity
             android:name=".ChildInhalerVideo"
+            android:exported="true" />
+        <activity
+            android:name=".notifications.NotificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".medication.ControllerScheduleActivity"
+            android:exported="true" />
+        <activity
+            android:name=".reports.ProviderReportGeneratorActivity"
             android:exported="true" />
         <meta-data
             android:name="preloaded_fonts"

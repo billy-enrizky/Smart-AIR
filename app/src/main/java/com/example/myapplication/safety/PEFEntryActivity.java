@@ -20,6 +20,7 @@ import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.safety.ZoneChangeEvent;
+import com.example.myapplication.notifications.AlertDetector;
 import com.google.firebase.database.DatabaseReference;
 import android.content.Intent;
 
@@ -39,6 +40,7 @@ public class PEFEntryActivity extends AppCompatActivity {
     
     private String childId;
     private String parentId;
+    private ChildAccount childAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +57,9 @@ public class PEFEntryActivity extends AppCompatActivity {
         if (intent != null && intent.hasExtra("childId") && intent.hasExtra("parentId")) {
             childId = intent.getStringExtra("childId");
             parentId = intent.getStringExtra("parentId");
+            loadChildAccount();
         } else if (UserManager.currentUser instanceof ChildAccount) {
-            ChildAccount childAccount = (ChildAccount) UserManager.currentUser;
+            childAccount = (ChildAccount) UserManager.currentUser;
             childId = childAccount.getID();
             parentId = childAccount.getParent_id();
         } else {
@@ -151,18 +154,19 @@ public class PEFEntryActivity extends AppCompatActivity {
                 return;
             }
             
-            Integer personalBest = null;
+            Integer personalBestTemp = null;
             Object pbValue = task.getResult().getValue();
             if (pbValue instanceof Long) {
-                personalBest = ((Long) pbValue).intValue();
+                personalBestTemp = ((Long) pbValue).intValue();
             } else if (pbValue instanceof Integer) {
-                personalBest = (Integer) pbValue;
+                personalBestTemp = (Integer) pbValue;
             }
             
-            if (personalBest == null || personalBest <= 0) {
+            if (personalBestTemp == null || personalBestTemp <= 0) {
                 return;
             }
 
+            final Integer personalBest = personalBestTemp;
             Zone newZone = ZoneCalculator.calculateZone(pefValue, personalBest);
             double percentage = ZoneCalculator.calculatePercentage(pefValue, personalBest);
 
@@ -192,7 +196,28 @@ public class PEFEntryActivity extends AppCompatActivity {
                         percentage
                 );
                 historyRef.child(String.valueOf(zoneChange.getTimestamp())).setValue(zoneChange);
+
+                String childName = childAccount != null ? childAccount.getName() : "Your child";
+                AlertDetector.checkRedZoneDay(parentId, childId, childName, pefValue, personalBest);
+                AlertDetector.checkWorseAfterDose(parentId, childId, childName, pefValue, personalBest);
             });
+        });
+    }
+
+    private void loadChildAccount() {
+        if (childId == null || parentId == null) {
+            return;
+        }
+        DatabaseReference childRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId);
+        
+        childRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                childAccount = task.getResult().getValue(ChildAccount.class);
+            }
         });
     }
 }
