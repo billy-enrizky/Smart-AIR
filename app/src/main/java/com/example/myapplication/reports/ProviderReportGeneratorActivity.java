@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -73,6 +74,8 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     private long startDate;
     private long endDate;
     private ProviderReportData reportData;
+    private Integer personalBest;
+    private List<TriageIncident> triageIncidents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +191,8 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         loadSymptomBurden();
         loadZoneDistribution();
         loadPEFTrend();
+        loadPersonalBest();
+        loadTriageIncidents();
     }
 
     private void loadRescueFrequency() {
@@ -411,6 +416,70 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         ChartComponent.setupLineChart(lineChart, dataPoints, "PEF Trend");
     }
 
+    private void loadPersonalBest() {
+        DatabaseReference childRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId);
+
+        childRef.child("personalBest").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().getValue() != null) {
+                Object pbValue = task.getResult().getValue();
+                if (pbValue instanceof Long) {
+                    personalBest = ((Long) pbValue).intValue();
+                } else if (pbValue instanceof Integer) {
+                    personalBest = (Integer) pbValue;
+                }
+            }
+        });
+    }
+
+    private void loadTriageIncidents() {
+        DatabaseReference incidentRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId)
+                .child("incidents");
+
+        Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                triageIncidents = new ArrayList<>();
+                if (snapshot.exists()) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        TriageIncident incident = child.getValue(TriageIncident.class);
+                        if (incident != null) {
+                            triageIncidents.add(incident);
+                        }
+                    }
+                }
+                reportData.setNotableIncidents(triageIncidents);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, "Error loading triage incidents", error.toException());
+                triageIncidents = new ArrayList<>();
+            }
+        });
+    }
+
+    private Bitmap getChartBitmap(View chartView, int width, int height) {
+        if (chartView == null) {
+            return null;
+        }
+        chartView.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        chartView.layout(0, 0, chartView.getMeasuredWidth(), chartView.getMeasuredHeight());
+        Bitmap bitmap = Bitmap.createBitmap(chartView.getMeasuredWidth(), chartView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        chartView.draw(canvas);
+        return bitmap;
+    }
+
     private void generatePDF() {
         try {
             File documentsDir = this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -424,35 +493,180 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
             File outputFile = new File(documentsDir, filename);
 
             PdfDocument document = new PdfDocument();
-            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+            int pageWidth = 595;
+            int pageHeight = 842;
+            float margin = 50f;
+            float y = margin;
+            float lineHeight = 20f;
+            float sectionSpacing = 30f;
+
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
             PdfDocument.Page page = document.startPage(pageInfo);
             Canvas canvas = page.getCanvas();
             Paint paint = new Paint();
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(20f);
+            Paint titlePaint = new Paint();
+            titlePaint.setColor(Color.BLACK);
+            titlePaint.setTextSize(24f);
+            titlePaint.setFakeBoldText(true);
 
-            float y = 30f;
-            canvas.drawText("Provider Report: " + childName, 50, y, paint);
+            paint.setColor(Color.BLACK);
+            paint.setTextSize(12f);
+
+            canvas.drawText("Provider Report: " + childName, margin, y, titlePaint);
             y += 30;
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
-            canvas.drawText("Period: " + dateFormat.format(new Date(startDate)) + " to " + dateFormat.format(new Date(endDate)), 50, y, paint);
-            y += 40;
-
             paint.setTextSize(14f);
-            canvas.drawText("Rescue Frequency: " + reportData.getRescueFrequency() + " uses", 50, y, paint);
-            y += 20;
-            canvas.drawText("Controller Adherence: " + String.format(Locale.getDefault(), "%.1f%%", reportData.getControllerAdherence()), 50, y, paint);
-            y += 20;
-            canvas.drawText("Symptom Burden: " + reportData.getSymptomBurdenDays() + " problem days", 50, y, paint);
-            y += 30;
+            canvas.drawText("Period: " + dateFormat.format(new Date(startDate)) + " to " + dateFormat.format(new Date(endDate)), margin, y, paint);
+            y += sectionSpacing;
+
+            paint.setTextSize(12f);
+            paint.setFakeBoldText(true);
+            canvas.drawText("Summary Statistics", margin, y, paint);
+            y += lineHeight;
+            paint.setFakeBoldText(false);
+
+            if (personalBest != null && personalBest > 0) {
+                canvas.drawText("Personal Best PEF: " + personalBest + " L/min", margin, y, paint);
+                y += lineHeight;
+            }
+
+            double avgPEF = calculateAveragePEF();
+            if (avgPEF > 0) {
+                canvas.drawText("Average PEF: " + String.format(Locale.getDefault(), "%.1f", avgPEF) + " L/min", margin, y, paint);
+                y += lineHeight;
+                if (personalBest != null && personalBest > 0) {
+                    double avgPercentage = (avgPEF / personalBest) * 100;
+                    canvas.drawText("Average % of Personal Best: " + String.format(Locale.getDefault(), "%.1f%%", avgPercentage), margin, y, paint);
+                    y += lineHeight;
+                }
+            }
+
+            canvas.drawText("Rescue Frequency: " + reportData.getRescueFrequency() + " uses", margin, y, paint);
+            y += lineHeight;
+            canvas.drawText("Controller Adherence: " + String.format(Locale.getDefault(), "%.1f%%", reportData.getControllerAdherence()), margin, y, paint);
+            y += lineHeight;
+            canvas.drawText("Symptom Burden: " + reportData.getSymptomBurdenDays() + " problem days", margin, y, paint);
+            y += sectionSpacing;
 
             if (reportData.getZoneDistribution() != null) {
-                canvas.drawText("Zone Distribution:", 50, y, paint);
-                y += 20;
+                paint.setFakeBoldText(true);
+                canvas.drawText("Zone Distribution", margin, y, paint);
+                y += lineHeight;
+                paint.setFakeBoldText(false);
+                int totalReadings = 0;
+                for (Integer count : reportData.getZoneDistribution().values()) {
+                    totalReadings += count;
+                }
                 for (Map.Entry<String, Integer> entry : reportData.getZoneDistribution().entrySet()) {
-                    canvas.drawText(entry.getKey() + ": " + entry.getValue(), 70, y, paint);
-                    y += 20;
+                    String zoneName = entry.getKey();
+                    int count = entry.getValue();
+                    double percentage = totalReadings > 0 ? (count * 100.0 / totalReadings) : 0;
+                    canvas.drawText(zoneName + ": " + count + " (" + String.format(Locale.getDefault(), "%.1f%%", percentage) + ")", margin + 20, y, paint);
+                    y += lineHeight;
+                }
+                y += sectionSpacing;
+            }
+
+            if (y > pageHeight - 200) {
+                document.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                page = document.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = margin;
+            }
+
+            if (frameLayoutZoneChart.getChildCount() > 0) {
+                View zoneChartContainer = frameLayoutZoneChart.getChildAt(0);
+                if (zoneChartContainer != null) {
+                    BarChart barChart = zoneChartContainer.findViewById(R.id.barChart);
+                    if (barChart != null && barChart.getVisibility() == View.VISIBLE) {
+                        paint.setFakeBoldText(true);
+                        canvas.drawText("Zone Distribution Chart", margin, y, paint);
+                        y += lineHeight + 10;
+                        paint.setFakeBoldText(false);
+                        
+                        Bitmap zoneChartBitmap = getChartBitmap(barChart, pageWidth - (int)(margin * 2), 300);
+                        if (zoneChartBitmap != null) {
+                            canvas.drawBitmap(zoneChartBitmap, margin, y, paint);
+                            y += zoneChartBitmap.getHeight() + sectionSpacing;
+                            zoneChartBitmap.recycle();
+                        }
+                    }
+                }
+            }
+
+            if (y > pageHeight - 200) {
+                document.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                page = document.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = margin;
+            }
+
+            if (frameLayoutTrendChart.getChildCount() > 0) {
+                View trendChartContainer = frameLayoutTrendChart.getChildAt(0);
+                if (trendChartContainer != null) {
+                    LineChart lineChart = trendChartContainer.findViewById(R.id.lineChart);
+                    if (lineChart != null && lineChart.getVisibility() == View.VISIBLE) {
+                        paint.setFakeBoldText(true);
+                        canvas.drawText("PEF Trend Chart", margin, y, paint);
+                        y += lineHeight + 10;
+                        paint.setFakeBoldText(false);
+                        
+                        Bitmap trendChartBitmap = getChartBitmap(lineChart, pageWidth - (int)(margin * 2), 300);
+                        if (trendChartBitmap != null) {
+                            canvas.drawBitmap(trendChartBitmap, margin, y, paint);
+                            y += trendChartBitmap.getHeight() + sectionSpacing;
+                            trendChartBitmap.recycle();
+                        }
+                    }
+                }
+            }
+
+            if (triageIncidents != null && !triageIncidents.isEmpty()) {
+                if (y > pageHeight - 300) {
+                    document.finishPage(page);
+                    pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                    page = document.startPage(pageInfo);
+                    canvas = page.getCanvas();
+                    y = margin;
+                }
+
+                paint.setFakeBoldText(true);
+                canvas.drawText("Triage Incidents (" + triageIncidents.size() + ")", margin, y, paint);
+                y += lineHeight;
+                paint.setFakeBoldText(false);
+
+                int incidentsToShow = Math.min(triageIncidents.size(), 10);
+                for (int i = 0; i < incidentsToShow; i++) {
+                    TriageIncident incident = triageIncidents.get(i);
+                    if (y > pageHeight - 100) {
+                        document.finishPage(page);
+                        pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                        page = document.startPage(pageInfo);
+                        canvas = page.getCanvas();
+                        y = margin;
+                    }
+
+                    SimpleDateFormat incidentDateFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
+                    String incidentDate = incidentDateFormat.format(new Date(incident.getTimestamp()));
+                    canvas.drawText((i + 1) + ". " + incidentDate, margin + 20, y, paint);
+                    y += lineHeight;
+                    canvas.drawText("   Decision: " + (incident.getDecisionShown() != null ? incident.getDecisionShown() : "N/A"), margin + 20, y, paint);
+                    y += lineHeight;
+                    if (incident.getZone() != null) {
+                        canvas.drawText("   Zone: " + incident.getZone().getDisplayName(), margin + 20, y, paint);
+                        y += lineHeight;
+                    }
+                    if (incident.getPefValue() != null && incident.getPefValue() > 0) {
+                        canvas.drawText("   PEF: " + incident.getPefValue() + " L/min", margin + 20, y, paint);
+                        y += lineHeight;
+                    }
+                    y += 5;
+                }
+                if (triageIncidents.size() > 10) {
+                    canvas.drawText("... and " + (triageIncidents.size() - 10) + " more incidents", margin + 20, y, paint);
                 }
             }
 
@@ -462,15 +676,33 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
 
             Toast.makeText(this, "PDF generated: " + filename, Toast.LENGTH_LONG).show();
 
+            android.net.Uri fileUri = FileProvider.getUriForFile(
+                    this,
+                    getPackageName() + ".fileprovider",
+                    outputFile
+            );
+
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("application/pdf");
-            shareIntent.putExtra(Intent.EXTRA_STREAM, android.net.Uri.fromFile(outputFile));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(Intent.createChooser(shareIntent, "Share PDF Report"));
 
         } catch (IOException e) {
             Log.e(TAG, "Error generating PDF", e);
             Toast.makeText(this, "Error generating PDF", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private double calculateAveragePEF() {
+        if (reportData.getPefTrendData() == null || reportData.getPefTrendData().isEmpty()) {
+            return 0;
+        }
+        double sum = 0;
+        for (ProviderReportData.PEFDataPoint point : reportData.getPefTrendData()) {
+            sum += point.getPefValue();
+        }
+        return sum / reportData.getPefTrendData().size();
     }
 }
 

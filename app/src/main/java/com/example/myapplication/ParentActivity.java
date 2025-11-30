@@ -28,6 +28,7 @@ import com.example.myapplication.safety.ActionPlanActivity;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.reports.DashboardStats;
+import com.example.myapplication.reports.ProviderReportGeneratorActivity;
 import com.example.myapplication.charts.ChartComponent;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -572,6 +573,14 @@ public class ParentActivity extends AppCompatActivity {
                 return true;
             });
             
+            holder.buttonGenerateReport.setOnClickListener(v -> {
+                Intent intent = new Intent(ParentActivity.this, ProviderReportGeneratorActivity.class);
+                intent.putExtra("parentId", info.child.getParent_id());
+                intent.putExtra("childId", info.child.getID());
+                intent.putExtra("childName", info.child.getName());
+                startActivity(intent);
+            });
+            
             holder.buttonDeleteChild.setOnClickListener(v -> {
                 deleteChild(info.child, position);
             });
@@ -587,6 +596,7 @@ public class ParentActivity extends AppCompatActivity {
             TextView textViewZoneName;
             TextView textViewZonePercentage;
             TextView textViewLastPEF;
+            Button buttonGenerateReport;
             Button buttonDeleteChild;
 
             ViewHolder(View itemView) {
@@ -595,6 +605,7 @@ public class ParentActivity extends AppCompatActivity {
                 textViewZoneName = itemView.findViewById(R.id.textViewZoneName);
                 textViewZonePercentage = itemView.findViewById(R.id.textViewZonePercentage);
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
+                buttonGenerateReport = itemView.findViewById(R.id.buttonGenerateReport);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
     }
         }
