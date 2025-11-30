@@ -68,13 +68,21 @@
         android:onClick="CreateInvitation"
                 android:text="Link to new Provider" />
 
-    <Button
-        android:id="@+id/button19"
+            <Button
+                android:id="@+id/button19"
                 android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-        android:onClick="AccessPermission"
+                android:onClick="AccessPermission"
                 android:text="Access Permission" />
+
+            <Button
+                android:id="@+id/buttonActionPlan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="OpenActionPlan"
+                android:text="Action Plan" />
         </LinearLayout>
     </ScrollView>
 

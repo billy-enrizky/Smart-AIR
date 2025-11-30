@@ -354,6 +354,12 @@ public class ParentActivity extends AppCompatActivity {
         this.finish();
     }
 
+    public void OpenActionPlan(android.view.View view) {
+        Intent intent = new Intent(this, ActionPlanActivity.class);
+        intent.putExtra("parentId", parentAccount.getID());
+        startActivity(intent);
+    }
+
     private static class ChildZoneInfo {
         ChildAccount child;
         Zone zone;
@@ -427,13 +433,6 @@ public class ParentActivity extends AppCompatActivity {
             holder.buttonDeleteChild.setOnClickListener(v -> {
                 deleteChild(info.child, position);
             });
-
-            holder.buttonActionPlan.setOnClickListener(v -> {
-                Intent intent = new Intent(ParentActivity.this, ActionPlanActivity.class);
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("parentId", info.child.getParent_id());
-                startActivity(intent);
-            });
         }
 
     @Override
@@ -447,7 +446,6 @@ public class ParentActivity extends AppCompatActivity {
             TextView textViewZonePercentage;
             TextView textViewLastPEF;
             Button buttonDeleteChild;
-            Button buttonActionPlan;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -456,7 +454,6 @@ public class ParentActivity extends AppCompatActivity {
                 textViewZonePercentage = itemView.findViewById(R.id.textViewZonePercentage);
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
-                buttonActionPlan = itemView.findViewById(R.id.buttonActionPlan);
     }
         }
     }
