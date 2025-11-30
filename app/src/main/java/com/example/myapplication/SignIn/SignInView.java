@@ -14,8 +14,7 @@ import com.example.myapplication.ResetPasswordActivity;
 import com.example.myapplication.SignUpActivity;
 
 
-public class SignInView extends AppCompatActivity {
-
+public class SignInView extends AppCompatActivity implements ISignInView {
 
     private EditText emailEditText;
     private EditText passwordEditText;
@@ -33,34 +32,38 @@ public class SignInView extends AppCompatActivity {
         SigninPresenter.initialize();
     }
 
-    public void GoToSignInActivity(android.view.View view){
+    public void GoToSignInActivity(android.view.View view) {
         SigninPresenter.signin(emailEditText.getText().toString(), passwordEditText.getText().toString());
     }
 
-    public void GoToResetPasswordActivity(android.view.View view){
+    public void GoToResetPasswordActivity(android.view.View view) {
         Intent intent = new Intent(this, ResetPasswordActivity.class);
         startActivity(intent);
         finish();
     }
 
-    public void GoToSignUpActivity(android.view.View view){
+    public void GoToSignUpActivity(android.view.View view) {
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
         finish();
     }
-    public void GoToMainActivity(){
+
+    @Override
+    public void GoToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
-    public void GoToOnBoardingActivity(){
+    @Override
+    public void GoToOnBoardingActivity() {
         Intent intent = new Intent(this, OnBoardingActivity.class);
         startActivity(intent);
         finish();
     }
 
-    public void showShortMessage(String message){
+    @Override
+    public void showShortMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
