@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -85,16 +84,16 @@ public class AccessInfoActivity extends AppCompatActivity {
                 public void onComplete() {
                     LinkedChildren.addAll(parent.getChildren().values());
                     for(ChildAccount child: parent.getChildren().values()){
-                        addChildToUI(child);
+                         addChildToUI(child);
                     }
                 }
             });
             AccessInfoModel.addListener(LinkedParentsId.get(i), new CallBack(){
                 @Override
                 public void onComplete() {
-                    Toast.makeText(AccessInfoActivity.this, "Access Info Updated", Toast.LENGTH_SHORT).show();
                     AccessInfoModel.removeAllListeners();
                     container.removeAllViews();
+                    currentChild = null;
                     initialization();
                     SetButtonVisibility();
                 }
@@ -126,6 +125,13 @@ public class AccessInfoActivity extends AppCompatActivity {
     }
     public void SetButtonVisibility(){
         if(currentChild == null){
+            rescueLogs.setVisibility(Button.GONE);
+            controllerAdherenceSummary.setVisibility(Button.GONE);
+            symptoms.setVisibility(Button.GONE);
+            triggers.setVisibility(Button.GONE);
+            peakFlow.setVisibility(Button.GONE);
+            triageIncidents.setVisibility(Button.GONE);
+            summaryCharts.setVisibility(Button.GONE);
             return;
         }
         if(!currentChild.getPermission().getPeakFlow()){//PEF
