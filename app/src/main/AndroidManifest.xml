@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+
         <activity
             android:name=".providers.AccessInfoActivity"
             android:exported="false" />
@@ -57,7 +58,12 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".dailycheckin.CheckInView"
             android:exported="false" />
@@ -72,13 +78,43 @@
             android:exported="false" />
         <activity
             android:name=".SignIn.SignInView"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="true" />
+        <activity
+            android:name=".SignInActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ChildInhalerInstructions"
+            android:exported="true" />
+        <activity
+            android:name=".ChildInhalerMenu"
+            android:exported="true" />
+        <activity
+            android:name=".ChildInhalerLogs"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerDailyStreak"
+            android:exported="true" />
+        <activity
+            android:name=".ChildInhalerUse"
+            android:exported="true" />
+        <activity
+            android:name=".ChildInhalerUseRescue"
+            android:exported="true" />
+        <activity
+            android:name=".ChildInhalerUseController"
+            android:exported="true" />
+        <activity
+            android:name=".ChildInhalerVideo"
+            android:exported="true" />
+        <activity
+            android:name=".notifications.NotificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".medication.ControllerScheduleActivity"
+            android:exported="true" />
+        <activity
+            android:name=".reports.ProviderReportGeneratorActivity"
+            android:exported="true" />
         <activity
             android:name=".safety.PEFEntryActivity"
             android:exported="false" />
@@ -100,6 +136,20 @@
         <activity
             android:name=".safety.ActionPlanActivity"
             android:exported="false" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
