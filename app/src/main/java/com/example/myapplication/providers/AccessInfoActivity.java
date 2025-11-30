@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.CallBack;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.dailycheckin.CheckInHistoryFilters;
 import com.example.myapplication.dailycheckin.FilterCheckInByDate;
 import com.example.myapplication.providermanaging.Permission;
 import com.example.myapplication.safety.IncidentHistoryActivity;
@@ -183,17 +184,19 @@ public class AccessInfoActivity extends AppCompatActivity {
     public void ControllerAdherenceSummary(android.view.View view){
     }
     public void Symptoms(android.view.View view){
+        CheckInHistoryFilters.getInstance().setUsername(currentChild.getID());
         Intent intent = new Intent(this, FilterCheckInByDate.class);
-        intent.putExtra("childId", currentChild.getID());
-        intent.putExtra("parentId", currentChild.getParent_id());
+        intent.putExtra("childName", currentChild.getName());
         intent.putExtra("isProvider", "true");
+        intent.putExtra("permissionToSymptoms", "true");
         startActivity(intent);
     }
     public void Triggers(android.view.View view){
+        CheckInHistoryFilters.getInstance().setUsername(currentChild.getID());
         Intent intent = new Intent(this, FilterCheckInByDate.class);
-        intent.putExtra("childId", currentChild.getID());
-        intent.putExtra("parentId", currentChild.getParent_id());
+        intent.putExtra("childName", currentChild.getName());
         intent.putExtra("isProvider", "true");
+        intent.putExtra("permissionToTriggers", "true");
         startActivity(intent);
     }
     public void PeakFlow(android.view.View view){

@@ -7,16 +7,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.applandeo.materialcalendarview.CalendarView;
 import com.example.myapplication.R;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
+import com.example.myapplication.providers.AccessInfoActivity;
 
 import java.math.BigInteger;
 import java.util.Calendar;
@@ -26,6 +23,9 @@ public class FilterCheckInByDate extends AppCompatActivity {
 
     CalendarView range;
     Button goToSymptoms;
+    Button goBackChild;
+
+    Button goBackProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,8 @@ public class FilterCheckInByDate extends AppCompatActivity {
         setContentView(R.layout.filter_check_in_history_date);
         this.range = (CalendarView)findViewById(R.id.selectDateRange);
         this.goToSymptoms = (Button)findViewById(R.id.go_to_filter_by_symptoms);
+        goBackChild = (Button)findViewById(R.id.back_to_sign_in_child);
+        goBackProvider = (Button)findViewById(R.id.providerback);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -56,11 +58,33 @@ public class FilterCheckInByDate extends AppCompatActivity {
         filters.setEndDate(String.format("%tF", end.getTimeInMillis()));
         Toast.makeText(this, filters.getStartDate() + " to " + filters.getEndDate(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(FilterCheckInByDate.this, FilterCheckInBySymptoms.class);
+        Intent thisintent = getIntent();
+        if(thisintent.hasExtra("permissionToTriggers")){
+            intent.putExtra("permissionToTriggers", thisintent.getStringExtra("permissionToTriggers"));
+        }
+        if(thisintent.hasExtra("permissionToSymptoms")){
+            intent.putExtra("permissionToSymptoms", thisintent.getStringExtra("permissionToSymptoms"));
+        }
+        if(thisintent.hasExtra("isProvider")){
+            goBackChild.setVisibility(View.GONE);
+            goBackProvider.setVisibility(View.VISIBLE);
+            intent.putExtra("isProvider", thisintent.getStringExtra("isProvider"));
+            intent.putExtra("childName", thisintent.getStringExtra("childName"));
+          }else{
+            goBackChild.setVisibility(View.VISIBLE);
+            goBackProvider.setVisibility(View.GONE);
+        }
         startActivity(intent);
     }
 
     public void backToChildSignIn (View view) {
         Intent intent = new Intent(FilterCheckInByDate.this, SignInChildProfileActivity.class);
         startActivity(intent);
+        finish();
+    }
+    public void backToProviderSignIn (View view) {
+        Intent intent = new Intent(FilterCheckInByDate.this, AccessInfoActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
