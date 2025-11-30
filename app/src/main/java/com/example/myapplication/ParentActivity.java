@@ -117,21 +117,23 @@ public class ParentActivity extends AppCompatActivity {
         
         button7Days.setOnClickListener(v -> {
             trendDays = 7;
-            button7Days.setEnabled(false);
-            button30Days.setEnabled(true);
+            button7Days.setBackgroundColor(android.graphics.Color.parseColor("#FFC107")); // Yellow
+            button30Days.setBackgroundColor(android.graphics.Color.GRAY);
             loadTrendChart();
         });
         
         button30Days.setOnClickListener(v -> {
             trendDays = 30;
-            button7Days.setEnabled(true);
-            button30Days.setEnabled(false);
+            button7Days.setBackgroundColor(android.graphics.Color.GRAY);
+            button30Days.setBackgroundColor(android.graphics.Color.parseColor("#FFC107")); // Yellow
             loadTrendChart();
         });
         
-        button7Days.setEnabled(false);
+        // Set initial state: 7 days selected (yellow), 30 days unselected (gray)
+        button7Days.setBackgroundColor(android.graphics.Color.parseColor("#FFC107")); // Yellow
+        button30Days.setBackgroundColor(android.graphics.Color.GRAY);
         
-        View notificationButton = findViewById(R.id.buttonNotifications);
+        Button notificationButton = findViewById(R.id.buttonNotificationButton);
         if (notificationButton != null) {
             notificationButton.setOnClickListener(v -> {
                 Intent intent = new Intent(ParentActivity.this, com.example.myapplication.notifications.NotificationActivity.class);
