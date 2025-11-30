@@ -19,6 +19,8 @@ import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
 import com.google.firebase.database.DatabaseReference;
+import java.util.Map;
+import java.util.HashMap;
 
 public class ActionPlanActivity extends AppCompatActivity {
 
@@ -28,7 +30,6 @@ public class ActionPlanActivity extends AppCompatActivity {
     private EditText editTextYellow;
     private EditText editTextRed;
 
-    private String childId;
     private String parentId;
 
     @Override
@@ -43,15 +44,16 @@ public class ActionPlanActivity extends AppCompatActivity {
         });
 
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("childId") && intent.hasExtra("parentId")) {
-            childId = intent.getStringExtra("childId");
+        if (intent != null && intent.hasExtra("parentId")) {
             parentId = intent.getStringExtra("parentId");
+        } else if (UserManager.currentUser instanceof com.example.myapplication.userdata.ParentAccount) {
+            com.example.myapplication.userdata.ParentAccount parentAccount = (com.example.myapplication.userdata.ParentAccount) UserManager.currentUser;
+            parentId = parentAccount.getID();
         } else if (UserManager.currentUser instanceof ChildAccount) {
             ChildAccount childAccount = (ChildAccount) UserManager.currentUser;
-            childId = childAccount.getID();
             parentId = childAccount.getParent_id();
         } else {
-            Log.e(TAG, "No childId/parentId provided and current user is not a ChildAccount");
+            Log.e(TAG, "No parentId provided and current user is not a ParentAccount or ChildAccount");
             finish();
             return;
         }
@@ -70,25 +72,26 @@ public class ActionPlanActivity extends AppCompatActivity {
     }
 
     private void loadExistingPlans() {
-        DatabaseReference childRef = UserManager.mDatabase
+        DatabaseReference actionPlansRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
-                .child("children")
-                .child(childId);
+                .child("actionPlans");
 
-        childRef.get().addOnCompleteListener(task -> {
+        actionPlansRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().getValue() != null) {
-                ChildAccount account = task.getResult().getValue(ChildAccount.class);
-                if (account != null) {
-                    if (!TextUtils.isEmpty(account.getActionPlanGreen())) {
-                        editTextGreen.setText(account.getActionPlanGreen());
-                    }
-                    if (!TextUtils.isEmpty(account.getActionPlanYellow())) {
-                        editTextYellow.setText(account.getActionPlanYellow());
-                    }
-                    if (!TextUtils.isEmpty(account.getActionPlanRed())) {
-                        editTextRed.setText(account.getActionPlanRed());
-                    }
+                com.google.firebase.database.DataSnapshot snapshot = task.getResult();
+                String greenPlan = snapshot.child("green").getValue(String.class);
+                String yellowPlan = snapshot.child("yellow").getValue(String.class);
+                String redPlan = snapshot.child("red").getValue(String.class);
+                
+                if (!TextUtils.isEmpty(greenPlan)) {
+                    editTextGreen.setText(greenPlan);
+                }
+                if (!TextUtils.isEmpty(yellowPlan)) {
+                    editTextYellow.setText(yellowPlan);
+                }
+                if (!TextUtils.isEmpty(redPlan)) {
+                    editTextRed.setText(redPlan);
                 }
             }
 
@@ -138,18 +141,20 @@ public class ActionPlanActivity extends AppCompatActivity {
         String yellowPlan = editTextYellow.getText().toString().trim();
         String redPlan = editTextRed.getText().toString().trim();
 
-        DatabaseReference childRef = UserManager.mDatabase
+        DatabaseReference actionPlansRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
-                .child("children")
-                .child(childId);
+                .child("actionPlans");
 
-        childRef.child("actionPlanGreen").setValue(greenPlan);
-        childRef.child("actionPlanYellow").setValue(yellowPlan);
-        childRef.child("actionPlanRed").setValue(redPlan)
+        java.util.Map<String, Object> updates = new java.util.HashMap<>();
+        updates.put("green", greenPlan);
+        updates.put("yellow", yellowPlan);
+        updates.put("red", redPlan);
+
+        actionPlansRef.updateChildren(updates)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "Action plan updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Action plan updated for all children", Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
                         Log.e(TAG, "Failed to update action plan", task.getException());

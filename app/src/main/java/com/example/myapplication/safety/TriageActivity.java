@@ -48,6 +48,8 @@ public class TriageActivity extends AppCompatActivity {
     private int rescueCount;
     private Integer pefValue;
     private boolean isRecheck;
+    
+    private Map<Zone, String> cachedActionPlans;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,7 @@ public class TriageActivity extends AppCompatActivity {
         currentStep = STEP_RED_FLAGS;
         redFlags = new HashMap<>();
         isRecheck = false;
+        cachedActionPlans = new HashMap<>();
         
         frameLayoutSteps = findViewById(R.id.frameLayoutSteps);
         Button buttonBack = findViewById(R.id.buttonBack);
@@ -123,6 +126,9 @@ public class TriageActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        // Load action plans from parent account
+        loadActionPlans();
 
         // Write triage session flag for parent real-time alert
         String parentId = childAccount.getParent_id();
@@ -139,6 +145,37 @@ public class TriageActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Breathing assessment started", Toast.LENGTH_SHORT).show();
         showRedFlagsStep();
+    }
+    
+    private void loadActionPlans() {
+        if (childAccount == null) {
+            return;
+        }
+        
+        String parentId = childAccount.getParent_id();
+        DatabaseReference actionPlansRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("actionPlans");
+        
+        actionPlansRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().getValue() != null) {
+                com.google.firebase.database.DataSnapshot snapshot = task.getResult();
+                String greenPlan = snapshot.child("green").getValue(String.class);
+                String yellowPlan = snapshot.child("yellow").getValue(String.class);
+                String redPlan = snapshot.child("red").getValue(String.class);
+                
+                if (greenPlan != null && !greenPlan.isEmpty()) {
+                    cachedActionPlans.put(Zone.GREEN, greenPlan);
+                }
+                if (yellowPlan != null && !yellowPlan.isEmpty()) {
+                    cachedActionPlans.put(Zone.YELLOW, yellowPlan);
+                }
+                if (redPlan != null && !redPlan.isEmpty()) {
+                    cachedActionPlans.put(Zone.RED, redPlan);
+                }
+            }
+        });
     }
 
     private void showRedFlagsStep() {
@@ -497,30 +534,12 @@ public class TriageActivity extends AppCompatActivity {
     }
 
     private String getActionPlanSteps(Zone zone) {
-        // Prefer child-specific action plan from ChildAccount if available
-        if (childAccount != null) {
-            switch (zone) {
-                case GREEN:
-                    if (childAccount.getActionPlanGreen() != null && !childAccount.getActionPlanGreen().isEmpty()) {
-                        return childAccount.getActionPlanGreen();
-                    }
-                    break;
-                case YELLOW:
-                    if (childAccount.getActionPlanYellow() != null && !childAccount.getActionPlanYellow().isEmpty()) {
-                        return childAccount.getActionPlanYellow();
-                    }
-                    break;
-                case RED:
-                    if (childAccount.getActionPlanRed() != null && !childAccount.getActionPlanRed().isEmpty()) {
-                        return childAccount.getActionPlanRed();
-                    }
-                    break;
-                default:
-                    break;
-            }
+        // Use cached action plan if available
+        if (cachedActionPlans != null && cachedActionPlans.containsKey(zone)) {
+            return cachedActionPlans.get(zone);
         }
 
-        // Fallback default steps if no custom plan exists
+        // Fallback to default steps if no custom plan exists
         switch (zone) {
             case GREEN:
                 return "1. Continue current medication as prescribed\n2. Monitor symptoms regularly\n3. Follow your regular routine\n4. Keep rescue medication available\n5. Contact healthcare provider if symptoms change";

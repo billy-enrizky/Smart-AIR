@@ -53,14 +53,6 @@
                 android:text="Children Manager" />
 
     <Button
-        android:id="@+id/button17"
-                android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-        android:onClick="Signout"
-                android:text="Sign out" />
-
-    <Button
         android:id="@+id/button18"
                 android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,14 +60,33 @@
         android:onClick="CreateInvitation"
                 android:text="Link to new Provider" />
 
-    <Button
-        android:id="@+id/button19"
+            <Button
+                android:id="@+id/button19"
                 android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-        android:onClick="AccessPermission"
+                android:onClick="AccessPermission"
                 android:text="Access Permission" />
+
+            <Button
+                android:id="@+id/buttonActionPlan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="OpenActionPlan"
+                android:text="Action Plan" />
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/button17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="Signout"
+        android:text="Sign out"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

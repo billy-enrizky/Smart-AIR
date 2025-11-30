@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,6 +58,8 @@ public class ParentActivity extends AppCompatActivity {
     private com.google.firebase.database.ChildEventListener triageListener;
     private java.util.Map<String, String> lastSeenSessions = new java.util.HashMap<>();
     private java.util.Map<String, String> lastSeenWorseningIds = new java.util.HashMap<>();
+    private SharedPreferences dismissedAlertsPrefs;
+    private static final String PREFS_NAME = "ParentActivityDismissedAlerts";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,8 @@ public class ParentActivity extends AppCompatActivity {
         }
         
         parentAccount = (ParentAccount) UserManager.currentUser;
+        
+        dismissedAlertsPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         
         recyclerViewChildren = findViewById(R.id.recyclerViewChildren);
         createChildButton = findViewById(R.id.createChildPageButton);
@@ -258,20 +263,29 @@ public class ParentActivity extends AppCompatActivity {
             String lastSeen = lastSeenSessions.get(childId);
             if (!sessionId.equals(lastSeen)) {
                 lastSeenSessions.put(childId, sessionId);
+                
+                // Check if this alert has already been dismissed
+                String alertKey = "triage_start_" + childId + "_" + sessionId;
+                boolean isDismissed = dismissedAlertsPrefs.getBoolean(alertKey, false);
+                
+                if (!isDismissed) {
+                    runOnUiThread(() -> {
+                        new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
+                                .setTitle("Breathing Assessment Started")
+                                .setMessage(finalChildName + " started a breathing assessment.")
+                                .setPositiveButton("OK", (dialog, which) -> {
+                                    // Mark this alert as dismissed
+                                    dismissedAlertsPrefs.edit().putBoolean(alertKey, true).apply();
+                                })
+                                .show();
 
-                runOnUiThread(() -> {
-                    new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
-                            .setTitle("Breathing Assessment Started")
-                            .setMessage(finalChildName + " started a breathing assessment.")
-                            .setPositiveButton("OK", null)
-                            .show();
-
-                    android.widget.Toast.makeText(
-                            ParentActivity.this,
-                            finalChildName + " started a breathing assessment.",
-                            android.widget.Toast.LENGTH_SHORT
-                    ).show();
-                });
+                        android.widget.Toast.makeText(
+                                ParentActivity.this,
+                                finalChildName + " started a breathing assessment.",
+                                android.widget.Toast.LENGTH_SHORT
+                        ).show();
+                    });
+                }
             }
         }
 
@@ -283,20 +297,29 @@ public class ParentActivity extends AppCompatActivity {
             String lastWorsening = lastSeenWorseningIds.get(childId);
             if (!worseningId.equals(lastWorsening)) {
                 lastSeenWorseningIds.put(childId, worseningId);
+                
+                // Check if this alert has already been dismissed
+                String alertKey = "worsening_" + childId + "_" + worseningId;
+                boolean isDismissed = dismissedAlertsPrefs.getBoolean(alertKey, false);
+                
+                if (!isDismissed) {
+                    runOnUiThread(() -> {
+                        new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
+                                .setTitle("Breathing Symptoms Still Present")
+                                .setMessage(finalChildName + " still has breathing symptoms after the 10-minute re-check.")
+                                .setPositiveButton("OK", (dialog, which) -> {
+                                    // Mark this alert as dismissed
+                                    dismissedAlertsPrefs.edit().putBoolean(alertKey, true).apply();
+                                })
+                                .show();
 
-                runOnUiThread(() -> {
-                    new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
-                            .setTitle("Breathing Symptoms Still Present")
-                            .setMessage(finalChildName + " still has breathing symptoms after the 10-minute re-check.")
-                            .setPositiveButton("OK", null)
-                            .show();
-
-                    android.widget.Toast.makeText(
-                            ParentActivity.this,
-                            finalChildName + " still has breathing symptoms after the 10-minute re-check.",
-                            android.widget.Toast.LENGTH_LONG
-                    ).show();
-                });
+                        android.widget.Toast.makeText(
+                                ParentActivity.this,
+                                finalChildName + " still has breathing symptoms after the 10-minute re-check.",
+                                android.widget.Toast.LENGTH_LONG
+                        ).show();
+                    });
+                }
             }
         }
     }
@@ -352,6 +375,12 @@ public class ParentActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AccessPermissionActivity.class);
         startActivity(intent);
         this.finish();
+    }
+
+    public void OpenActionPlan(android.view.View view) {
+        Intent intent = new Intent(this, ActionPlanActivity.class);
+        intent.putExtra("parentId", parentAccount.getID());
+        startActivity(intent);
     }
 
     private static class ChildZoneInfo {
@@ -427,13 +456,6 @@ public class ParentActivity extends AppCompatActivity {
             holder.buttonDeleteChild.setOnClickListener(v -> {
                 deleteChild(info.child, position);
             });
-
-            holder.buttonActionPlan.setOnClickListener(v -> {
-                Intent intent = new Intent(ParentActivity.this, ActionPlanActivity.class);
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("parentId", info.child.getParent_id());
-                startActivity(intent);
-            });
         }
 
     @Override
@@ -447,7 +469,6 @@ public class ParentActivity extends AppCompatActivity {
             TextView textViewZonePercentage;
             TextView textViewLastPEF;
             Button buttonDeleteChild;
-            Button buttonActionPlan;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -456,7 +477,6 @@ public class ParentActivity extends AppCompatActivity {
                 textViewZonePercentage = itemView.findViewById(R.id.textViewZonePercentage);
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
-                buttonActionPlan = itemView.findViewById(R.id.buttonActionPlan);
     }
         }
     }
