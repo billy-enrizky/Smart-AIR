@@ -60,7 +60,7 @@
         android:layout_height="109dp"
         android:layout_marginTop="56dp"
         android:fontFamily="@font/happy_monkey"
-        android:text="Gain this badge by <4 rescues in 30 days."
+        android:text="Gain this badge by &lt;4 rescues in 30 days."
         android:textAlignment="center"
         android:textColor="#90020B"
         android:textSize="30dp"

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.example.myapplication.CallBack;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.medication.ControllerSchedule;
 import com.example.myapplication.providermanaging.Permission;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +25,7 @@ public class ChildAccount extends UserData {
     String actionPlanGreen;
     String actionPlanYellow;
     String actionPlanRed;
+    ControllerSchedule controllerSchedule;
 
     public ChildAccount(String ID) {
         super(ID);
@@ -116,6 +118,15 @@ public class ChildAccount extends UserData {
     public void setActionPlanRed(String actionPlanRed) {
         this.actionPlanRed = actionPlanRed;
     }
+    public ControllerSchedule getControllerSchedule() {
+        if (controllerSchedule == null) {
+            controllerSchedule = new ControllerSchedule();
+        }
+        return controllerSchedule;
+    }
+    public void setControllerSchedule(ControllerSchedule controllerSchedule) {
+        this.controllerSchedule = controllerSchedule;
+    }
     @Override
     public void WriteIntoDatabase(CallBack callback) {
         UserManager.mDatabase.child("users").child(Parent_id).child("children").child(ID).setValue(this).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -153,6 +164,7 @@ public class ChildAccount extends UserData {
                     ChildAccount.this.actionPlanGreen = Data.actionPlanGreen;
                     ChildAccount.this.actionPlanYellow = Data.actionPlanYellow;
                     ChildAccount.this.actionPlanRed = Data.actionPlanRed;
+                    ChildAccount.this.controllerSchedule = Data.controllerSchedule;
                     if(callback != null){
                         callback.onComplete();
                     }
