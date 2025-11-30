@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
-import com.example.myapplication.userdata.ParentAccount;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,6 +42,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
     private List<HistoryItem> historyItems;
     private String parentId;
     private String childId;
+    private boolean isProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,13 @@ public class PEFHistoryActivity extends AppCompatActivity {
         Button buttonBack = findViewById(R.id.buttonBack);
         Button buttonEnterPEF = findViewById(R.id.buttonEnterPEF);
         Button buttonRemoveAll = findViewById(R.id.buttonRemoveAll);
-        
+
+        if(intent.hasExtra("isProvider")){
+            isProvider = true;
+            buttonEnterPEF.setVisibility(View.GONE);
+            buttonRemoveAll.setVisibility(View.GONE);
+        }
+
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -371,7 +377,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
         }
     }
 
-    private static class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private static final int TYPE_PEF = 0;
         private static final int TYPE_ZONE_CHANGE = 1;
         
@@ -454,7 +460,10 @@ public class PEFHistoryActivity extends AppCompatActivity {
                 } else {
                     pefHolder.textViewNotes.setVisibility(View.GONE);
                 }
-                
+
+                if(PEFHistoryActivity.this.isProvider){
+                    pefHolder.buttonDelete.setVisibility(View.GONE);
+                }
                 pefHolder.buttonDelete.setOnClickListener(v -> {
                     activity.deleteHistoryItem(item, position);
                 });
@@ -481,7 +490,10 @@ public class PEFHistoryActivity extends AppCompatActivity {
                 } else {
                     zoneHolder.textViewPEFValue.setVisibility(View.GONE);
                 }
-                
+
+                if(PEFHistoryActivity.this.isProvider){
+                    zoneHolder.buttonDelete.setVisibility(View.GONE);
+                }
                 zoneHolder.buttonDelete.setOnClickListener(v -> {
                     activity.deleteHistoryItem(item, position);
                 });
@@ -493,7 +505,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
             return items.size();
         }
 
-        static class PEFViewHolder extends RecyclerView.ViewHolder {
+        class PEFViewHolder extends RecyclerView.ViewHolder {
             TextView textViewDate;
             TextView textViewPEFValue;
             TextView textViewZoneInfo;
@@ -516,7 +528,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
             }
         }
 
-        static class ZoneChangeViewHolder extends RecyclerView.ViewHolder {
+        class ZoneChangeViewHolder extends RecyclerView.ViewHolder {
             TextView textViewDate;
             TextView textViewZoneChange;
             TextView textViewZoneDetails;

@@ -78,7 +78,10 @@ public class IncidentHistoryActivity extends AppCompatActivity {
         recyclerViewIncidents.setAdapter(adapter);
 
         loadIncidents(parentId, childId);
+
+
     }
+
 
     private void loadIncidents(String parentId, String childId) {
         DatabaseReference incidentRef = UserManager.mDatabase

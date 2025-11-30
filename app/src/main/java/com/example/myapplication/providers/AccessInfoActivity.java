@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.CallBack;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.dailycheckin.FilterCheckInByDate;
 import com.example.myapplication.providermanaging.Permission;
 import com.example.myapplication.safety.IncidentHistoryActivity;
 import com.example.myapplication.safety.PEFHistoryActivity;
@@ -182,19 +183,31 @@ public class AccessInfoActivity extends AppCompatActivity {
     public void ControllerAdherenceSummary(android.view.View view){
     }
     public void Symptoms(android.view.View view){
+        Intent intent = new Intent(this, FilterCheckInByDate.class);
+        intent.putExtra("childId", currentChild.getID());
+        intent.putExtra("parentId", currentChild.getParent_id());
+        intent.putExtra("isProvider", "true");
+        startActivity(intent);
     }
     public void Triggers(android.view.View view){
+        Intent intent = new Intent(this, FilterCheckInByDate.class);
+        intent.putExtra("childId", currentChild.getID());
+        intent.putExtra("parentId", currentChild.getParent_id());
+        intent.putExtra("isProvider", "true");
+        startActivity(intent);
     }
     public void PeakFlow(android.view.View view){
         Intent intent = new Intent(this, PEFHistoryActivity.class);
         intent.putExtra("childId", currentChild.getID());
         intent.putExtra("parentId", currentChild.getParent_id());
+        intent.putExtra("isProvider", "true");
         startActivity(intent);
     }
     public void TriageIncidents(android.view.View view){
         Intent intent = new Intent(this, IncidentHistoryActivity.class);
         intent.putExtra("childId", currentChild.getID());
         intent.putExtra("parentId", currentChild.getParent_id());
+        intent.putExtra("isProvider", "true");
         startActivity(intent);
     }
     public void SummaryCharts(android.view.View view){
