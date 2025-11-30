@@ -4,11 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GoToDailyCheckinFragment">
+
     <Button
         android:id="@+id/goToDailyCheckIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Log Entry"
-        />
+        android:onClick="GoToDailyCheckIn"
+        android:text="Log Entry" />
 
 </FrameLayout>

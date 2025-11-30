@@ -6,11 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.dailycheckin.CheckInView;
 import com.example.myapplication.userdata.AccountType;
 import com.example.myapplication.userdata.ChildAccount;
