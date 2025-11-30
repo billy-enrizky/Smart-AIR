@@ -1,82 +1,153 @@
 package com.example.myapplication;
-
+import java.util.Arrays;
 public class Achievement {
-    String ChildID ;
-    Long TimeSinceLastDose;
-    int NumberOfConsecutiveDay;
-    Badge Badge1;
-    Badge Badge2;
-    Badge Badge3;
-    Badge Badge4;
-    Badge Badge5;
-    //To have setValue getValue work, empty constructor, getter and setter are required
-    //below are empty constructor
-    public Achievement(){
+    String username;
+    long timeOfLastDose;
+    int currentStreak;
+    int videoswatched;
+    long[] rescueTimes;
+    boolean[] badges;
 
-    }
-    // Below are getter/setter
-    public String getChildID() {
-        return ChildID;
-    }
+    int[] badgeRequirements; //(Days amount streak, Times video, Less than or equal x, within y days)
 
-    public void setChildID(String childID) {
-        this.ChildID = childID;
+    final long DAYINMS = 86400000;
+    public Achievement() {
+        this.badges = new boolean[]{false, false, false};
+        this.currentStreak = 0;
+        this.videoswatched = 0;
+        this.timeOfLastDose = -1;
+        this.badgeRequirements = new int[]{7,10,4,30};
+        this.rescueTimes = new long[4];
     }
 
-    public Long getTimeSinceLastDose() {
-        return TimeSinceLastDose;
+    public Achievement(String username) {
+        this.username = username;
+        this.badges = new boolean[]{false, false, false};
+        this.rescueTimes = new long[]{-1, -1, -1, -1};
+        this.currentStreak = 0;
+        this.videoswatched = 0;
+        this.timeOfLastDose = -1;
+        this.badgeRequirements = new int[]{7,10,4,30};
     }
 
-    public void setTimeSinceLastDose(Long timeSinceLastDose) {
-        this.TimeSinceLastDose = timeSinceLastDose;
+    public String getUsername() {
+        return username;
     }
 
-    public int getNumberOfConsecutiveDay() {
-        return NumberOfConsecutiveDay;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setNumberOfConsecutiveDay(int numberOfConsecutiveDay) {
-        this.NumberOfConsecutiveDay = numberOfConsecutiveDay;
+    public long getTimeOfLastDose() {
+        return timeOfLastDose;
     }
 
-    public Badge getBadge1() {
-        return Badge1;
+    public void setTimeOfLastDose(long timeOfLastDose) {
+        this.timeOfLastDose = timeOfLastDose;
     }
 
-    public void setBadge1(Badge badge1) {
-        this.Badge1 = badge1;
+    public int getCurrentStreak() {
+        return currentStreak;
     }
 
-    public Badge getBadge2() {
-        return Badge2;
+    public void setCurrentStreak(int currentStreak) {
+        this.currentStreak = currentStreak;
     }
 
-    public void setBadge2(Badge badge2) {
-        this.Badge2 = badge2;
+    public int getVideoswatched() {
+        return videoswatched;
     }
 
-    public Badge getBadge3() {
-        return Badge3;
+    public void setVideoswatched(int videoswatched) {
+        this.videoswatched = videoswatched;
     }
 
-    public void setBadge3(Badge badge3) {
-        this.Badge3 = badge3;
+    public long[] getRescueTimes() {
+        return rescueTimes;
     }
 
-    public Badge getBadge4() {
-        return Badge4;
+    public void setRescueTimes(long[] rescueTimes) {
+        this.rescueTimes = rescueTimes;
     }
 
-    public void setBadge4(Badge badge4) {
-        this.Badge4 = badge4;
+    public long getRescueTimeAt(int index) {
+        return rescueTimes[index];
     }
 
-    public Badge getBadge5() {
-        return Badge5;
+    public void setRescueTimeAt(int index, long value) {
+        rescueTimes[index] = value;
     }
 
-    public void setBadge5(Badge badge5) {
-        this.Badge5 = badge5;
+    public boolean[] getBadges() {
+        return badges;
     }
 
+    public void setBadges(boolean[] badges) {
+        this.badges = badges;
+    }
+
+    public boolean getBadgeAt(int index) {
+        return badges[index];
+    }
+
+    public void setBadgeAt(int index, boolean value) {
+        badges[index] = value;
+    }
+    public int[] getBadgeRequirements() {
+        return badgeRequirements;
+    }
+
+    public void setBadgeRequirements(int[] badgeRequirements) {
+        this.badgeRequirements = badgeRequirements;
+    }
+    public void changeDayRequirement(int a){
+        this.badgeRequirements[2] = a;
+        this.rescueTimes = Arrays.copyOf(this.rescueTimes,a);
+    }
+    public void updateStreak() {
+        long currentMillis = System.currentTimeMillis();
+
+        if (this.timeOfLastDose < -1) {
+            this.currentStreak = 1;
+        } else {
+            long daysSinceLastCheckin = (currentMillis - this.timeOfLastDose) / DAYINMS;
+            if (daysSinceLastCheckin == 0){}
+            else if (daysSinceLastCheckin == 1){this.currentStreak += 1;}
+            else {this.currentStreak = 1;}
+        }
+        this.timeOfLastDose = currentMillis;
+    }
+
+    public void usedRescue(){
+        long currentTime = System.currentTimeMillis();
+        boolean isEmpty = false;
+        for (int i = 0; i < rescueTimes.length; i++) {
+            if (rescueTimes[i] == 0) {
+                rescueTimes[i] = currentTime;
+                isEmpty = true;
+                break;
+            }
+        }
+        if (!isEmpty) {
+            for (int i = 0; i < rescueTimes.length - 1; i++) {
+                rescueTimes[i] = rescueTimes[i + 1];
+            }
+            rescueTimes[rescueTimes.length - 1] = currentTime;
+        }
+    }
+
+    public boolean checkBadge1() {
+        return (this.currentStreak >= this.badgeRequirements[0]);
+    }
+
+    public boolean checkBadge2() {
+        return (this.videoswatched >= this.badgeRequirements[1]);
+    }
+    public boolean checkBadge3() {
+        if (this.rescueTimes[0] == 0){
+            return false;
+        }
+        long currentTime = System.currentTimeMillis();
+        return (currentTime - rescueTimes[0] >= DAYINMS * this.badgeRequirements[3]);
+    }
 }

@@ -126,22 +126,6 @@
         app:layout_constraintTop_toTopOf="@+id/button6"
         app:srcCompat="@drawable/star" />
 
-    <TextView
-        android:id="@+id/dailyStreak"
-        android:layout_width="85dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/happy_monkey"
-        android:text="0"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView5"
-        app:layout_constraintEnd_toEndOf="@+id/imageView5"
-        app:layout_constraintStart_toStartOf="@+id/imageView5"
-        app:layout_constraintTop_toTopOf="@+id/button10" />
-
     <ImageView
         android:id="@+id/imageView14"
         android:layout_width="115dp"

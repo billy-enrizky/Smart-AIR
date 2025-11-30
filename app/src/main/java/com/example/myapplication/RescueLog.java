@@ -7,17 +7,21 @@ public class RescueLog {
     String username;
     long timestamp;
     String feeling;
+
+    String extraInfo;
     int rating;
 
     public RescueLog(){
         this.feeling = "Better";
         this.rating = 1;
+        this.extraInfo = "";
         this.timestamp = System.currentTimeMillis();
     }
-    public RescueLog(String username, String feeling, int rating){
+    public RescueLog(String username, String feeling, int rating, String extraInfo){
         this.username = username;
         this.feeling = feeling;
         this.rating = rating;
+        this.extraInfo = extraInfo;
         this.timestamp = System.currentTimeMillis();
     }
     public String getDate(){
@@ -34,4 +38,9 @@ public class RescueLog {
     public void setFeeling(String feeling) {this.feeling = feeling;}
     public int getRating() {return rating;}
     public void setRating(int rating) {this.rating = rating;}
+    public void setExtraInfo(String extraInfo){this.extraInfo = extraInfo;}
+    public String getExtraInfo(){return this.extraInfo;}
+    public String getInfo(){
+        return "After: \n\tBreath Rating: "+this.getRating()+"\n\tFeeling: "+this.getFeeling()+"\n"+this.getExtraInfo();
+    }
 }

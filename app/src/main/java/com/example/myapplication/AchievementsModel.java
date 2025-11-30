@@ -12,8 +12,8 @@ import com.google.firebase.database.ValueEventListener;
 public class AchievementsModel {
 
     public static void writeIntoDB(Achievement achievement, CallBack callback){
-        String ChildId = achievement.ChildID;
-        UserManager.mDatabase.child("AchievementsManager").child(ChildId).setValue(achievement).addOnCompleteListener(new OnCompleteListener<Void>() {
+        String username = achievement.getUsername();
+        UserManager.mDatabase.child("AchievementsManager").child(username).setValue(achievement).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (callback != null) {

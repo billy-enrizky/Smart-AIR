@@ -32,7 +32,7 @@ public class InhalerModel {
     }
 
     public static void ReadFromDatabase(String username,boolean isRescue, ResultCallBack<Inhaler> callback) {
-        UserManager.mDatabase.child("InhalerManager").child(username +(isRescue?"_1":"_0"))
+        UserManager.mDatabase.child("InhalerManager").child(username +(isRescue?"1":"0"))
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -49,4 +49,41 @@ public class InhalerModel {
                     public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
+
+    public static void existsInDatabase(String username, boolean isRescue, ResultCallBack<Boolean> callback) {
+        UserManager.mDatabase.child("InhalerManager").child(username + (isRescue ? "1" : "0"))
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        callback.onComplete(snapshot.exists());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onComplete(false);
+                    }
+                });
+    }
+
+    public static void ListenToDatabase(String username, boolean isRescue, ResultCallBack<Inhaler> callback) {
+        UserManager.mDatabase.child("InhalerManager").child(username + (isRescue ? "1" : "0"))
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.exists()) {
+                            callback.onComplete(null);
+                        } else {
+                            Inhaler inhaler = snapshot.getValue(Inhaler.class);
+                            if (callback != null) {
+                                callback.onComplete(inhaler);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
+    }
+
+
 }

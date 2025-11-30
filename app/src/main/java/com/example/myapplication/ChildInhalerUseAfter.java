@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.userdata.ChildAccount;
@@ -41,6 +42,7 @@ public class ChildInhalerUseAfter extends AppCompatActivity {
         Button neutralButton = findViewById(R.id.neutralbutton);
         Button sadButton = findViewById(R.id.sadbutton);
         Button confirmButton = findViewById(R.id.confirmbutton);
+        Button lowButton = findViewById(R.id.lowbutton);
 
         happyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,16 +81,44 @@ public class ChildInhalerUseAfter extends AppCompatActivity {
             }
         });
 
+        lowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (controllerLog.getExtraInfo().isEmpty()) {
+                    controllerLog.setExtraInfo("Low Inhaler Warning!");
+                    lowButton.setBackgroundTintList(ColorStateList.valueOf(0xFFFF0000));
+                }
+                else {
+                    controllerLog.setExtraInfo("");
+                    lowButton.setBackgroundTintList(ColorStateList.valueOf(0xFFFF4646));
+                }
+            }
+        });
+
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ControllerLogModel.writeIntoDB(controllerLog, new CallBack() {
+                boolean isRescue = true;
+                InhalerModel.ReadFromDatabase(UserManager.currentUser.getID(), isRescue, new ResultCallBack<Inhaler>() {
                     @Override
-                    public void onComplete() {
-                        startActivity(new Intent(ChildInhalerUseAfter.this, ChildInhalerMenu.class));
+                    public void onComplete(Inhaler inhaler) {
+                        if (inhaler != null) {
+                            inhaler.oneDose();
+                            InhalerModel.writeIntoDB(inhaler, new CallBack() {
+                                @Override
+                                public void onComplete() {
+                                    startActivity(new Intent(ChildInhalerUseAfter.this, ChildInhalerMenu.class));
+                                }
+                            });
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "Can't find inhaler", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
         });
+
+
     }
 }

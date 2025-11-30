@@ -10,20 +10,23 @@ public class ControllerLog {
     String feelingA;
     int ratingB;
     int ratingA;
+    String extraInfo;
 
     public ControllerLog(){
         this.feelingA = "Better";
         this.feelingB = "Better";
         this.ratingA = 1;
         this.ratingB = 1;
+        this.extraInfo = "";
         this.timestamp = System.currentTimeMillis();
     }
-    public ControllerLog(String username, String feelingB, String feelingA, int ratingB, int ratingA){
+    public ControllerLog(String username, String feelingB, String feelingA, int ratingB, int ratingA, String extraInfo){
         this.username = username;
         this.feelingB = feelingB;
         this.ratingB = ratingB;
         this.feelingA = feelingA;
         this.ratingA = ratingA;
+        this.extraInfo = extraInfo;
         this.timestamp = System.currentTimeMillis();
     }
     public String getDate(){
@@ -44,4 +47,9 @@ public class ControllerLog {
     public void setRatingB(int ratingB) {this.ratingB = ratingB;}
     public int getRatingA() {return ratingA;}
     public void setRatingA(int ratingA) {this.ratingA = ratingA;}
+    public void setExtraInfo(String extraInfo){this.extraInfo = extraInfo;}
+    public String getExtraInfo(){return this.extraInfo;}
+    public String getInfo(){
+        return "Before: \n\tBreath Rating: "+this.getRatingB()+"\n\tFeeling: "+this.getFeelingB()+"\nAfter: \n\tBreath Rating: "+this.getRatingA()+"\n\tFeeling: "+this.getFeelingA()+"\n"+this.getExtraInfo();
+    }
 }

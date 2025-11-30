@@ -40,6 +40,7 @@ public class ChildInhalerUseRescue extends AppCompatActivity {
         Button neutralButton = findViewById(R.id.neutralbutton);
         Button sadButton = findViewById(R.id.sadbutton);
         Button confirmButton = findViewById(R.id.confirmbutton);
+        Button lowButton = findViewById(R.id.lowbutton);
 
         happyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +76,20 @@ public class ChildInhalerUseRescue extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ChildInhalerUseRescue.this, ChildInhalerUse.class));
+            }
+        });
+
+        lowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rescueLog.getExtraInfo().isEmpty()) {
+                    rescueLog.setExtraInfo("Low Inhaler Warning!");
+                    lowButton.setBackgroundTintList(ColorStateList.valueOf(0xFFFF0000));
+                }
+                else {
+                    rescueLog.setExtraInfo("");
+                    lowButton.setBackgroundTintList(ColorStateList.valueOf(0xFFFF4646));
+                }
             }
         });
 
