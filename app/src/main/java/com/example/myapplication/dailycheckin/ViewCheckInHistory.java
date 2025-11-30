@@ -75,10 +75,13 @@ public class ViewCheckInHistory extends AppCompatActivity {
                         datesProcessed++;
                         String message = "" + date + "\n";
                         message = message + "Logged by: " + entry.getLoggedBy() + "\n";
-                        message = message + "Night waking: " + entry.getNightWaking() + "\n";
-                        message = message + entry.getActivityLimits() + "\n";
-                        message = message + "Cough/Wheeze level: " + entry.getCoughWheezeLevel() + "\n";
-                        if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) || SignInChildProfileActivity.getCurrentChild().getPermission().getTriggers()) {
+                        if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*|| provider has permission to see symptoms*/) {
+                            message = message + "Night waking: " + entry.getNightWaking() + "\n";
+                            message = message + entry.getActivityLimits() + "\n";
+                            message = message + "Cough/Wheeze level: " + entry.getCoughWheezeLevel() + "\n";
+                        }
+
+                        if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*|| provider has permission to see triggers*/) {
                             message = message + "Triggers: ";
                             for (String trigger : entry.getTriggers()) {
                                 message = message + trigger + ", ";
