@@ -30,6 +30,8 @@ public class FilterCheckInBySymptoms extends AppCompatActivity {
     private CheckBox coughWheezeLevelFilterInput;
     private Slider coughWheezeLevelSliderFilter;
     private TextView triggersChipsFilterTitle;
+    private TextView nightWakingChipsFilterTitle;
+    private TextView activityLimitsFilterTitle;
     private ChipGroup triggersChipsFilter;
 
     @Override
@@ -37,13 +39,35 @@ public class FilterCheckInBySymptoms extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filter_check_in_history_symptoms);
 
+        // symptoms
+        nightWakingChipsFilterTitle = (TextView)findViewById(R.id.night_waking_filter_title);
         nightWakingChipsFilter = (ChipGroup)findViewById(R.id.night_waking_filter);
+        activityLimitsFilterTitle = (TextView)findViewById(R.id.activity_limits_filter_title);
         activityLimitsChipsFilter = (ChipGroup)findViewById(R.id.activity_limits_filter);
         coughWheezeLevelFilterInput = (CheckBox)findViewById(R.id.cough_wheeze_filter_check);
         coughWheezeLevelSliderFilter = (Slider)findViewById(R.id.cough_wheeze_slider_filter);
+
+        // triggers
         triggersChipsFilterTitle = (TextView)findViewById(R.id.select_triggers_title);
         triggersChipsFilter = (ChipGroup)findViewById(R.id.triggers_filter);
-        if (UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) && !SignInChildProfileActivity.getCurrentChild().getPermission().getTriggers()) {
+
+        if (UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*&& provider doesn't have permission to see symptoms*/) {
+            nightWakingChipsFilterTitle.setVisibility(View.INVISIBLE);
+            nightWakingChipsFilter.setVisibility(View.INVISIBLE);
+            activityLimitsFilterTitle.setVisibility(View.INVISIBLE);
+            activityLimitsChipsFilter.setVisibility(View.INVISIBLE);
+            coughWheezeLevelFilterInput.setVisibility(View.INVISIBLE);
+            coughWheezeLevelSliderFilter.setVisibility(View.INVISIBLE);
+        } else {
+            nightWakingChipsFilterTitle.setVisibility(View.VISIBLE);
+            nightWakingChipsFilter.setVisibility(View.VISIBLE);
+            activityLimitsFilterTitle.setVisibility(View.VISIBLE);
+            activityLimitsChipsFilter.setVisibility(View.VISIBLE);
+            coughWheezeLevelFilterInput.setVisibility(View.VISIBLE);
+            coughWheezeLevelSliderFilter.setVisibility(View.VISIBLE);
+        }
+
+        if (UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*&& provider doesn't have permission to see triggers*/) {
             triggersChipsFilterTitle.setVisibility(View.INVISIBLE);
             triggersChipsFilter.setVisibility(View.INVISIBLE);
         } else {
