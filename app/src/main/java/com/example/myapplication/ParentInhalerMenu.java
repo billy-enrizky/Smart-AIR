@@ -16,27 +16,19 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ParentInhalerMenu extends AppCompatActivity {
 
-    ChildAccount currentUser;
-    TextView rescueinhaler;
-    TextView controllerinhaler;
-    TextView rescuetitle;
-    TextView controllertitle;
-    ImageView imageViewRescue;
-    ImageView imageViewController;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_inhaler_menu);
 
-        rescueinhaler = findViewById(R.id.rescueinhaler);
-        controllerinhaler = findViewById(R.id.controllerinhaler);
-        rescuetitle = findViewById(R.id.textView38);
-        controllertitle = findViewById(R.id.textView35);
-        imageViewRescue = findViewById(R.id.imageView26);
-        imageViewController = findViewById(R.id.imageView25);
+        TextView rescueinhaler = findViewById(R.id.rescueinhaler);
+        TextView controllerinhaler = findViewById(R.id.controllerinhaler);
+        TextView rescuetitle = findViewById(R.id.textView38);
+        TextView controllertitle = findViewById(R.id.textView35);
+        ImageView imageViewRescue = findViewById(R.id.imageView26);
+        ImageView imageViewController = findViewById(R.id.imageView25);
 
-        InhalerModel.ListenToDatabase(currentUser.getID() + "1", true, new ResultCallBack<Inhaler>() {
+        InhalerModel.ListenToDatabase(UserManager.currentUser.getID() + "1", true, new ResultCallBack<Inhaler>() {
             @Override
             public void onComplete(Inhaler inhaler) {
                 if (inhaler != null) {
@@ -55,7 +47,7 @@ public class ParentInhalerMenu extends AppCompatActivity {
             }
         });
 
-        InhalerModel.ListenToDatabase(currentUser.getID() + "0", false, new ResultCallBack<Inhaler>() {
+        InhalerModel.ListenToDatabase(UserManager.currentUser.getID() + "0", false, new ResultCallBack<Inhaler>() {
             @Override
             public void onComplete(Inhaler inhaler) {
                 if (inhaler != null) {
@@ -80,6 +72,11 @@ public class ParentInhalerMenu extends AppCompatActivity {
             public void onClick(View v) {
                 startActivity(new Intent(ParentInhalerMenu.this, ParentInhalerCreate.class));
             }
+        });
+        Button doneButton = findViewById(R.id.donebutton);
+
+        doneButton.setOnClickListener(v -> {
+            startActivity(new Intent(ParentInhalerMenu.this, ParentActivity.class));
         });
     }
 }

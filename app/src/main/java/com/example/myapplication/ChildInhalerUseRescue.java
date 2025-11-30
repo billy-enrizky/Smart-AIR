@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.userdata.ChildAccount;
@@ -30,10 +32,12 @@ public class ChildInhalerUseRescue extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         Button happyButton = findViewById(R.id.happybutton);
@@ -85,8 +89,7 @@ public class ChildInhalerUseRescue extends AppCompatActivity {
                 if (rescueLog.getExtraInfo().isEmpty()) {
                     rescueLog.setExtraInfo("Low Inhaler Warning!");
                     lowButton.setBackgroundTintList(ColorStateList.valueOf(0xFFFF0000));
-                }
-                else {
+                } else {
                     rescueLog.setExtraInfo("");
                     lowButton.setBackgroundTintList(ColorStateList.valueOf(0xFFFF4646));
                 }
@@ -99,7 +102,38 @@ public class ChildInhalerUseRescue extends AppCompatActivity {
                 RescueLogModel.writeIntoDB(rescueLog, new CallBack() {
                     @Override
                     public void onComplete() {
-                        startActivity(new Intent(ChildInhalerUseRescue.this, ChildInhalerMenu.class));
+                        InhalerModel.ReadFromDatabase(UserManager.currentUser.getID(), true, new ResultCallBack<Inhaler>() {
+                            @Override
+                            public void onComplete(Inhaler inhaler) {
+                                if (inhaler != null) {
+                                    inhaler.oneDose();
+                                    InhalerModel.writeIntoDB(inhaler, new CallBack() {
+                                        @Override
+                                        public void onComplete() {
+                                            AchievementsModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<Achievement>() {
+                                                @Override
+                                                public void onComplete(Achievement achievement) {
+                                                    if (achievement == null) {
+                                                        Toast.makeText(ChildInhalerUseRescue.this, "Warning: Achievement Error.", Toast.LENGTH_SHORT).show();
+                                                        startActivity(new Intent(ChildInhalerUseRescue.this, ChildInhalerMenu.class));
+                                                    } else {
+                                                        achievement.usedRescue();
+                                                        AchievementsModel.writeIntoDB(achievement, new CallBack() {
+                                                            @Override
+                                                            public void onComplete() {
+                                                                startActivity(new Intent(ChildInhalerUseRescue.this, ChildInhalerMenu.class));
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Can't find inhaler", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     }
                 });
             }
