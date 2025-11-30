@@ -5,7 +5,9 @@ public interface ResultCallBack<T> {
     Otherwise, the asynchronization cause bugs.
     For example, using UserManager.currentUser.firstTime before the reading is done would cause bug.
     Callback make it possible that the code would executed only after the reading is done.
+    */
 
+    /*
     The difference between this and the very CallBack interface is:
     we can use it to return value after interacting with database.
     For example(pseudo code),

@@ -11,7 +11,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-
         <activity
             android:name=".providermanaging.AccessPermissionActivity"
             android:exported="false" />
@@ -70,22 +69,12 @@
             android:exported="false" />
         <activity
             android:name=".SignIn.SignInView"
-            android:exported="true" />
-
-        <activity
-            android:name=".ChildInhalerInstructions"
-            android:exported="true"
-        />
-        <activity
-            android:name=".ChildInhalerMenu"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerLogs"
             android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".safety.PEFEntryActivity"
@@ -108,25 +97,6 @@
         <activity
             android:name=".safety.ActionPlanActivity"
             android:exported="false" />
-        <activity
-            android:name=".ChildInhalerDailyStreak"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerUse"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerUseRescue"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerUseController"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerVideo"
-            android:exported="true" />
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
