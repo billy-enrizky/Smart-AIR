@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/activity_r3_use" />
+
+    <Button
+        android:id="@+id/backbutton"
+        android:layout_width="134dp"
+        android:layout_height="57dp"
+        android:backgroundTint="#196D75"
+        android:fontFamily="@font/happy_monkey"
+        android:text="Back"
+        android:textAlignment="viewStart"
+        android:textColor="#FFFFFF"
+        android:textSize="22dp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="277dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <Button
+        android:id="@+id/rescuebutton"
+        android:layout_width="169dp"
+        android:layout_height="318dp"
+        android:backgroundTint="#FF7A7A"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:text="Rescue"
+        android:textColor="#590000"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        app:cornerRadius="20dp"
+        tools:layout_editor_absoluteX="23dp"
+        tools:layout_editor_absoluteY="371dp" />
+
+    <Button
+        android:id="@+id/controllerbutton"
+        android:layout_width="169dp"
+        android:layout_height="318dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#8DB4F6"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:text="Controller"
+        android:textColor="#001552"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        app:cornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="371dp" />
+
+    <ImageView
+        android:id="@+id/imageView15"
+        android:layout_width="165dp"
+        android:layout_height="278dp"
+        android:layout_marginStart="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.624"
+        app:srcCompat="@drawable/asthma" />
+
+    <ImageView
+        android:id="@+id/imageView16"
+        android:layout_width="149dp"
+        android:layout_height="244dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView13"
+        app:layout_constraintHorizontal_bias="0.908"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.622"
+        app:srcCompat="@drawable/inhaler2" />
+
+    <TextView
+        android:id="@+id/textView32"
+        android:layout_width="364dp"
+        android:layout_height="109dp"
+        android:fontFamily="@font/happy_monkey"
+        android:text="Select your inhaler:"
+        android:textColor="#A440FF"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView13"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.335" />
+
+    <ImageView
+        android:id="@+id/imageView19"
+        android:layout_width="194dp"
+        android:layout_height="223dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/inhaler4"
+        tools:layout_editor_absoluteY="39dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
