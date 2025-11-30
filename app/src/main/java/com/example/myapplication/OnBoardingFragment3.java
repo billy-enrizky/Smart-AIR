@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,7 @@ import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.myapplication.userdata.AccountType;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,20 +67,23 @@ public class OnBoardingFragment3 extends Fragment {
         Start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserManager.mDatabase.child("users").child(UserManager.currentUser.getID()).child("firstTime").setValue(false).addOnCompleteListener(
-                        new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Intent intent = new Intent(requireActivity(), MainActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Exception e = task.getException();
-                                    Log.e("Firebase", "Write failed", e);
-                                }
-                            }
+                UserManager.currentUser.setFirstTime(false);
+                UserManager.currentUser.WriteIntoDatabase(new CallBack() {
+                    @Override
+                    public void onComplete() {
+                        if(UserManager.currentUser.getAccount() == AccountType.PARENT){
+                            Intent intent = new Intent(requireActivity(), ParentActivity.class);
+                            startActivity(intent);
+                        }else if(UserManager.currentUser.getAccount() == AccountType.PROVIDER){
+                            Intent intent = new Intent(requireActivity(), ProviderActivity.class);
+                            startActivity(intent);
+                        }else{
+                            Intent intent = new Intent(requireActivity(), ChildActivity.class);
+                            startActivity(intent);
                         }
-                );
+                        getActivity().finish();
+                    }
+                });
             }
         });
         return view;

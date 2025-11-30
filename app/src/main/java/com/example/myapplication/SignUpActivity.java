@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.userdata.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -50,10 +52,9 @@ public class SignUpActivity extends AppCompatActivity {
         // underlined the return text to notify user it's clickable
         GoBackText.setPaintFlags(GoBackText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         // Set up click listener for the sign-up button
-        Button[] types = new Button[3];
+        Button[] types = new Button[2];
         types[0] = findViewById(R.id.choose_parent);
-        types[1] = findViewById(R.id.choose_child);
-        types[2] = findViewById(R.id.choose_provider);
+        types[1] = findViewById(R.id.choose_provider);
         for (int i = 0; i < types.length; i++) {
             types[i].setOnClickListener(new View.OnClickListener() {
                 // On click: execute following coding
@@ -88,9 +89,6 @@ public class SignUpActivity extends AppCompatActivity {
                                     switch(((Button)v).getText().toString()) {
                                         case "Parent":
                                             CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
-                                            break;
-                                        case "Child":
-                                            CurrentUserData = new IndependentChildAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
                                             break;
                                         case "Provider":
                                             CurrentUserData = new ProviderAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
@@ -164,7 +162,7 @@ public class SignUpActivity extends AppCompatActivity {
         return Password.length() >= 6 && Password.matches("^.*(?=.*[a-z].*)(?=.*[A-Z].*)(?=.*\\d.*)(?=.*[!@#$%^&*()_+\\-].*).*$");
     }
     public void GoToSignIn() {
-        Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+        Intent intent = new Intent(SignUpActivity.this, SignInView.class);
         startActivity(intent);
     }
 }

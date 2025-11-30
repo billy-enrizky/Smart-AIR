@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,15 +10,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.myapplication.userdata.DependentChildAccount;
-import com.example.myapplication.userdata.IndependentChildAccount;
-import com.example.myapplication.userdata.ParentAccount;
-import com.example.myapplication.userdata.ProviderAccount;
+import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.userdata.AccountType;
+import com.example.myapplication.userdata.ChildAccount;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,42 +29,50 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        if(UserManager.currentUser.getAccount() == AccountType.DEP_CHILD){
-            UserManager.currentUser = new DependentChildAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
-                @Override
-                public void onComplete(){
-                    /*Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
-                    startActivity(intent1);*/
-                }
-            });
-        }else if(UserManager.currentUser.getAccount() == AccountType.INDEP_CHILD){
-            UserManager.currentUser = new IndependentChildAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
-                @Override
-                public void onComplete(){
-                    /*Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
-                    startActivity(intent1);*/
-                }
-            });
-        }else if(UserManager.currentUser.getAccount() == AccountType.PARENT){
-            UserManager.currentUser = new ParentAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
-                @Override
-                public void onComplete(){
-                    Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
-                    startActivity(intent1);
-                }
-            });
-        }else{
-            UserManager.currentUser = new ProviderAccount();
-            UserManager.currentUser.ReadFromDatabase(UserManager.mAuth.getCurrentUser().getUid(), new CallBack(){
-                @Override
-                public void onComplete(){
-                    Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);
-                    startActivity(intent1);
-                }
-            });
+
+        Log.d(TAG, "MainActivity onCreate - currentUser: " + UserManager.currentUser);
+
+        if (UserManager.currentUser == null) {
+            Log.w(TAG, "No user logged in, redirecting to SignIn");
+            // If no user is logged in, redirect to sign in
+            Intent intent = new Intent(MainActivity.this, SignInView.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        AccountType accountType = UserManager.currentUser.getAccount();
+        Log.d(TAG, "Account type: " + accountType);
+
+        if (accountType == AccountType.CHILD) {
+            Log.d(TAG, "Redirecting to ChildActivity");
+            ChildAccount child = (ChildAccount) UserManager.currentUser;
+            String parentID = child.getParent_id();
+            String username = child.getID();
+            UserManager.ChildUserListener(parentID, username);
+            Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
+            startActivity(intent1);
+            finish();
+        } else if (accountType == AccountType.PARENT) {
+            Log.d(TAG, "Redirecting to ParentActivity");
+            String uid = UserManager.currentUser.getID();
+            UserManager.UserListener(uid, AccountType.PARENT);
+            Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
+            startActivity(intent1);
+            finish();
+        } else if (accountType == AccountType.PROVIDER) {
+            Log.d(TAG, "Redirecting to ProviderActivity");
+            String uid = UserManager.currentUser.getID();
+            UserManager.UserListener(uid, AccountType.PROVIDER);
+            Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);
+            startActivity(intent1);
+            finish();
+        } else {
+            Log.w(TAG, "Unknown account type: " + accountType + ", redirecting to SignIn");
+            // Unknown account type, redirect to sign in
+            Intent intent = new Intent(MainActivity.this, SignInView.class);
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -78,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public void GoToSignIn(android.view.View view) {
-        Intent intent = new Intent(this, SignInActivity.class);
+        Intent intent = new Intent(this, SignInView.class);
         startActivity(intent);
     }
 }

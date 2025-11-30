@@ -13,10 +13,36 @@
         android:theme="@style/Theme.MyApplication">
 
         <activity
+            android:name=".providermanaging.AccessPermissionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".childmanaging.ScrollingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/Theme.MyApplication.NoActionBar" />
+        <activity
+            android:name=".childmanaging.SignInChildProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChildActivity"
+            android:exported="false" />
+        <activity
+            android:name=".selector.SelectorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".providermanaging.InvitationAcceptActivity"
+            android:exported="false" />
+        <activity
+            android:name=".providermanaging.InvitationCreateActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProviderActivity"
             android:exported="false" />
         <activity
             android:name=".ParentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".childmanaging.CreateChildActivity"
             android:exported="false" />
         <activity
             android:name=".OnBoardingActivity"
@@ -31,7 +57,19 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".SignInActivity"
+            android:name=".dailycheckin.CheckInView"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.FilterCheckInByDate"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.FilterCheckInBySymptoms"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.ViewCheckInHistory"
+            android:exported="false" />
+        <activity
+            android:name=".SignIn.SignInView"
             android:exported="true" />
 
         <activity
@@ -49,6 +87,27 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         </activity>
+        <activity
+            android:name=".safety.PEFEntryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.PEFHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.SetPersonalBestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.TriageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.IncidentHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.ProviderReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.ActionPlanActivity"
+            android:exported="false" />
         <activity
             android:name=".ChildInhalerDailyStreak"
             android:exported="true" />
@@ -69,5 +128,7 @@
             android:resource="@array/preloaded_fonts" />
 
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
 </manifest>

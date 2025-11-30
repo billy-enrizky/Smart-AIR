@@ -17,13 +17,12 @@ public class UserData {
 
     public UserData(){
         ID = "";
-        Account = AccountType.DEP_CHILD;
         FirstTime = true;
     }
     public UserData(String ID) {
         this.ID = ID;
         this.FirstTime = true;
-        Account = AccountType.DEP_CHILD;
+        Account = AccountType.CHILD;
     }
 
     public String getID() {
@@ -32,6 +31,7 @@ public class UserData {
     public void setID(String ID) {
         this.ID = ID;
     }
+
     public boolean getFirstTime() {
         return this.FirstTime;
     }
@@ -45,6 +45,12 @@ public class UserData {
 
     public AccountType getAccount() {
         return this.Account;
+    }
+
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     public void WriteIntoDatabase(CallBack callback) {
@@ -77,4 +83,5 @@ public class UserData {
             }
         });
     }
+
 }

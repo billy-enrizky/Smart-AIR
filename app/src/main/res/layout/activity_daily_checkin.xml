@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E8D65D">
+
+    <TextView
+        android:id="@+id/daily_checkin_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="104dp"
+        android:layout_marginEnd="55dp"
+        android:text="Daily Check-in"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/night_waking"
+        android:layout_width="362dp"
+        android:layout_height="106dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="22dp"
+        android:text="Woke up last night due to coughing/wheezing"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/daily_checkin_title" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/activity_limits"
+        android:layout_width="385dp"
+        android:layout_height="169dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="22dp"
+        app:chipSpacingHorizontal="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.176"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_limits_filter_title"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/no_interfere_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Symptoms did not interfere with physical activity" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/some_interfere_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Symptoms somewhat interfered with physical activity" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/all_interfere_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Symptoms greatly interfered with physical activity" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <TextView
+        android:id="@+id/activity_limits_filter_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="148dp"
+        android:text="Choose the most accurate option"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/night_waking" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/cough_wheeze_slider_filter"
+        android:layout_width="336dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="38dp"
+        android:valueFrom="0.0"
+        android:valueTo="10.0"
+        android:stepSize="1.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cough_wheeze_title" />
+
+    <TextView
+        android:id="@+id/cough_wheeze_title"
+        android:layout_width="251dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="116dp"
+        android:text="Level of Coughing/Wheezing"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_limits" />
+
+    <Button
+        android:id="@+id/log_checkin"
+        android:layout_width="187dp"
+        android:layout_height="69dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginEnd="124dp"
+        android:onClick="runCheckIn"
+        android:text="Log"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/triggers" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/triggers"
+        android:layout_width="391dp"
+        android:layout_height="111dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cough_wheeze_slider_filter">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/exercise_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Exercise" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/cold_air_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Cold Air" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/dust_pets_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Dust/pets" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/smoke_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Smoke" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/illness_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Illness" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/perfume_cleaners_strong_odors_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Perfume/cleaners/strong odors" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <Button
+        android:id="@+id/leaveCheckIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="310dp"
+        android:onClick="goBack"
+        android:text="Back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

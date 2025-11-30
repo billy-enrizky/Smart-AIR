@@ -6,30 +6,44 @@ import androidx.annotation.NonNull;
 
 import com.example.myapplication.CallBack;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.providermanaging.InviteCode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class ParentAccount extends UserData {
-    ArrayList<String> Children_id;
+public class ParentAccount extends UserData implements Cloneable {
     String Email;
+    HashMap<String, ChildAccount> children;
+    InviteCode InviteCode;
+    ArrayList<String> LinkedProvidersId;
+
     public ParentAccount() {
         super();
         Email = "";
-        Children_id = new ArrayList<String>();
+        this.children = new HashMap<String, ChildAccount>();
+        this.LinkedProvidersId = new ArrayList<String>();
         Account = AccountType.PARENT;
     }
     public ParentAccount(String ID, String Email) {
         super(ID);
         this.Email = Email;
         this.Account = AccountType.PARENT;
-        Children_id = new ArrayList<String>();
+        this.children = new HashMap<String, ChildAccount>();
+        this.LinkedProvidersId = new ArrayList<String>();
     }
 
-    public void addChild(String id) {
-        Children_id.add(id);
+    public ParentAccount(ParentAccount other) {
+        this.Email = other.Email;
+        this.Account = AccountType.PARENT;
+        this.LinkedProvidersId = new ArrayList<String>();
+
+    }
+
+    public void addChild(ChildAccount child) {
+        this.children.put(child.ID, child);
     }
     public void setEmail(String Email){
         this.Email = Email;
@@ -37,12 +51,29 @@ public class ParentAccount extends UserData {
     public String getEmail(){
         return Email;
     }
-    public ArrayList<String> getChildrenid(){
-        return Children_id;
+    public HashMap<String, ChildAccount> getChildren(){
+        return this.children;
+    }
+    public void setChildren(HashMap<String, ChildAccount> children){
+        this.children = children;
     }
 
-    public void setChildrenid(ArrayList<String> Children_id){
-        this.Children_id = Children_id;
+
+    public void setInviteCode(InviteCode inviteCode){
+        this.InviteCode = inviteCode;
+    }
+    public InviteCode getInviteCode(){
+        return InviteCode;
+    }
+    public void setLinkedProvidersId(ArrayList<String> LinkedProviders){
+        this.LinkedProvidersId = LinkedProviders;
+    }
+    public ArrayList<String> getLinkedProvidersId(){
+        return LinkedProvidersId;
+    }
+
+    public void addLinkedProvider(String ID){
+        LinkedProvidersId.add(ID);
     }
 
     @Override
@@ -56,13 +87,13 @@ public class ParentAccount extends UserData {
                 else {
                     DataSnapshot Snapshot = task.getResult();
                     ParentAccount Data = Snapshot.getValue(ParentAccount.class);
-                    //     UserManager.mDatabase.child("test").setValue(Data.childrenid);
                     ParentAccount.this.ID = Data.ID;
                     ParentAccount.this.Account = Data.Account;
                     ParentAccount.this.FirstTime = Data.FirstTime;
                     ParentAccount.this.Email = Data.Email;
-                    ParentAccount.this.Children_id = Data.Children_id;
-                    //UserManager.mDatabase.child("test").setValue(ParentAccount.this.Children_id);
+                    ParentAccount.this.children = Data.children;
+                    ParentAccount.this.InviteCode = Data.InviteCode;
+                    ParentAccount.this.LinkedProvidersId = Data.LinkedProvidersId;
                     if(callback != null){
                         callback.onComplete();
                     }
@@ -71,3 +102,4 @@ public class ParentAccount extends UserData {
         });
     }
 }
+

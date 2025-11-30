@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.SignIn.SignInView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -93,7 +94,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         backToSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ResetPasswordActivity.this, SignInActivity.class);
+                Intent intent = new Intent(ResetPasswordActivity.this, SignInView.class);
                 startActivity(intent);
             }
         });

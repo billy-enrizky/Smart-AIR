@@ -92,8 +92,8 @@
 
     <TextView
         android:id="@+id/signInLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="321dp"
+        android:layout_height="66dp"
         android:clickable="true"
         android:focusable="true"
         android:text="Already have an account? Sign in"
@@ -105,29 +105,10 @@
         app:layout_constraintTop_toBottomOf="@+id/choose_provider" />
 
     <Button
-        android:id="@+id/choose_child"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="164dp"
-        android:layout_marginTop="248dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="1dp"
-        android:backgroundTint="#9AC17C"
-        android:text="Child"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/choose_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.468" />
-
-    <Button
         android:id="@+id/choose_provider"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="143dp"
-        android:layout_marginTop="33dp"
         android:layout_marginEnd="143dp"
         android:layout_marginBottom="236dp"
         android:backgroundTint="#A47CC1"
@@ -136,24 +117,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/choose_child" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/choose_parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginBottom="152dp"
+        android:layout_marginTop="500dp"
+        android:layout_marginBottom="343dp"
         android:backgroundTint="#6C8C53"
         android:text="Parent"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/signInLink"
-        app:layout_constraintEnd_toStartOf="@+id/choose_provider"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chooseAccountTitle"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
