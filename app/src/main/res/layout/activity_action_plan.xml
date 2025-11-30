@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Update the steps for each zone. These steps will appear in the triage decision cards." />
+                android:text="Update the steps for each zone. These steps will appear in the triage decision cards for all children." />
 
             <TextView
                 android:layout_width="wrap_content"

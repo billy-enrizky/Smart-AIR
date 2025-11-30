@@ -45,7 +45,7 @@
         android:id="@+id/button20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="47dp"
+        android:layout_marginStart="68dp"
         android:layout_marginBottom="93dp"
         android:onClick="ChildSignin"
         android:text="Sign In"
@@ -77,5 +77,32 @@
         app:layout_constraintBottom_toTopOf="@+id/button21"
         app:layout_constraintStart_toStartOf="@+id/childListContainer"
         app:layout_constraintTop_toBottomOf="@+id/childListContainer" />
+
+    <Button
+        android:id="@+id/go_to_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="88dp"
+        android:layout_marginEnd="33dp"
+        android:layout_marginBottom="92dp"
+        android:onClick="goToFilterByDate"
+        android:text="Filter History"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/button20" />
+
+    <Button
+        android:id="@+id/logEntry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="47dp"
+        android:onClick="GoToDailyCheckIn"
+        android:text="Daily Check-in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button21"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

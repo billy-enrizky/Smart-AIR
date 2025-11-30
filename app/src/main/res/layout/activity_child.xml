@@ -16,6 +16,20 @@
         android:layout_marginStart="65dp"
         android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_signoutbutton" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/CheckInFragmentContainerChild"
+        android:name="com.example.myapplication.GoToDailyCheckinFragment"
+        android:layout_width="130dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="248dp"
+        android:layout_marginTop="664dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_leave_daily_checkin" />
+
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

@@ -17,6 +17,8 @@ import com.example.myapplication.CallBack;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.providermanaging.Permission;
+import com.example.myapplication.safety.IncidentHistoryActivity;
+import com.example.myapplication.safety.PEFHistoryActivity;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
@@ -184,8 +186,16 @@ public class AccessInfoActivity extends AppCompatActivity {
     public void Triggers(android.view.View view){
     }
     public void PeakFlow(android.view.View view){
+        Intent intent = new Intent(this, PEFHistoryActivity.class);
+        intent.putExtra("childId", currentChild.getID());
+        intent.putExtra("parentId", currentChild.getParent_id());
+        startActivity(intent);
     }
     public void TriageIncidents(android.view.View view){
+        Intent intent = new Intent(this, IncidentHistoryActivity.class);
+        intent.putExtra("childId", currentChild.getID());
+        intent.putExtra("parentId", currentChild.getParent_id());
+        startActivity(intent);
     }
     public void SummaryCharts(android.view.View view){
     }
