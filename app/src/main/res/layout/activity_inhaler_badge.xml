@@ -38,7 +38,7 @@
         app:layout_constraintVertical_bias="0.047" />
 
     <TextView
-        android:id="@+id/textView32"
+        android:id="@+id/badge2"
         android:layout_width="375dp"
         android:layout_height="114dp"
         android:layout_marginTop="56dp"
@@ -55,7 +55,7 @@
         app:layout_constraintVertical_bias="0.558" />
 
     <TextView
-        android:id="@+id/textView44"
+        android:id="@+id/badge3"
         android:layout_width="364dp"
         android:layout_height="109dp"
         android:layout_marginTop="56dp"
@@ -73,7 +73,7 @@
         app:layout_constraintVertical_bias="0.865" />
 
     <TextView
-        android:id="@+id/textView39"
+        android:id="@+id/badge1"
         android:layout_width="364dp"
         android:layout_height="109dp"
         android:layout_marginTop="56dp"
