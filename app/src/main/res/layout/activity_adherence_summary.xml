@@ -11,25 +11,31 @@
         android:id="@+id/button23"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="13dp"
         android:text="Back"
-        tools:layout_editor_absoluteX="22dp"
-        tools:layout_editor_absoluteY="13dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView39"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="87dp"
         android:text="Current Child: "
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="87dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView50"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="175dp"
         android:text="Controller Adherence:"
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="33dp"
-        tools:layout_editor_absoluteY="175dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
