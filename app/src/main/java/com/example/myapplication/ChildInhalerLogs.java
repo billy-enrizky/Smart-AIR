@@ -42,7 +42,24 @@ public class ChildInhalerLogs extends AppCompatActivity {
             ID = UserManager.currentUser.getID();
         }
 
+<<<<<<< Updated upstream
         RescueLogModel.readFromDB(ID, new ResultCallBack<HashMap<String, RescueLog>>() {
+=======
+        if (UserManager.currentUser == null) {
+            Intent intent = new Intent(ChildInhalerLogs.this, SignInView.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        
+        findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ChildInhalerLogs.this, ChildInhalerMenu.class));
+            }
+        });
+        RescueLogModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<HashMap<String, RescueLog>>() {
+>>>>>>> Stashed changes
             @Override
             public void onComplete(HashMap<String, RescueLog> result) {
                 addRescueLogs(new ArrayList<>(result.values()));

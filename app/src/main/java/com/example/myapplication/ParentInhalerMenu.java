@@ -32,7 +32,7 @@ public class ParentInhalerMenu extends AppCompatActivity {
             public void onComplete(Inhaler inhaler) {
                 if (inhaler != null) {
                     rescueinhaler.setText(inhaler.displayInfo());
-                    if (inhaler.checkExpiry(System.currentTimeMillis())) {
+                    if (inhaler.checkExpiry()) {
                         Toast.makeText(ParentInhalerMenu.this, "Rescue inhaler almost expired.", Toast.LENGTH_SHORT).show();
                     }
                     if (inhaler.checkEmpty()) {
@@ -51,7 +51,7 @@ public class ParentInhalerMenu extends AppCompatActivity {
             public void onComplete(Inhaler inhaler) {
                 if (inhaler != null) {
                     controllerinhaler.setText(inhaler.displayInfo());
-                    if (inhaler.checkExpiry(System.currentTimeMillis())) {
+                    if (inhaler.checkExpiry()) {
                         Toast.makeText(ParentInhalerMenu.this, "Controller inhaler almost expired.", Toast.LENGTH_SHORT).show();
                     }
                     if (inhaler.checkEmpty()) {
