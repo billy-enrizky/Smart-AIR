@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,9 +26,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.charts.ChartComponent;
-import com.example.myapplication.medication.ControllerSchedule;
-import com.example.myapplication.reports.AdherenceCalculator;
 import com.example.myapplication.dailycheckin.CheckInEntry;
+import com.example.myapplication.medication.ControllerSchedule;
 import com.example.myapplication.safety.PEFReading;
 import com.example.myapplication.safety.RescueUsage;
 import com.example.myapplication.safety.TriageIncident;

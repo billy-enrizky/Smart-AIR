@@ -5,39 +5,38 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".providers.ProviderActivity">
+    tools:context=".reports.AdherenceSummaryActivity">
 
     <Button
-        android:id="@+id/button15"
+        android:id="@+id/button23"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="28dp"
-        android:onClick="Signout"
-        android:text="Sign out"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="13dp"
+        android:onClick="Back"
+        android:text="Back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button16"
+    <TextView
+        android:id="@+id/textView39"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="37dp"
-        android:layout_marginTop="40dp"
-        android:onClick="AcceptInvitation"
-        android:text="Accept Invite"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="87dp"
+        android:text="Current Child: "
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button15" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button22"
+    <TextView
+        android:id="@+id/textView50"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="34dp"
-        android:onClick="AccessInfo"
-        android:text="Children"
-        app:layout_constraintStart_toStartOf="@+id/button16"
-        app:layout_constraintTop_toBottomOf="@+id/button16" />
-
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="175dp"
+        android:text="Controller Adherence:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

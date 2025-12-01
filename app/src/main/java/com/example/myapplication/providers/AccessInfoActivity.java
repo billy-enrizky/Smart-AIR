@@ -20,6 +20,7 @@ import com.example.myapplication.UserManager;
 import com.example.myapplication.dailycheckin.CheckInHistoryFilters;
 import com.example.myapplication.dailycheckin.FilterCheckInByDate;
 import com.example.myapplication.providermanaging.Permission;
+import com.example.myapplication.reports.AdherenceSummaryActivity;
 import com.example.myapplication.reports.TrendSnippetActivity;
 import com.example.myapplication.safety.IncidentHistoryActivity;
 import com.example.myapplication.safety.PEFHistoryActivity;
@@ -188,7 +189,12 @@ public class AccessInfoActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public void ControllerAdherenceSummary(android.view.View view){
-
+        Intent intent = new Intent(this, AdherenceSummaryActivity.class);
+        intent.putExtra("childId", currentChild.getID());
+        intent.putExtra("parentId", currentChild.getParent_id());
+        intent.putExtra("childName", currentChild.getName());
+        intent.putExtra("isProvider", "true");
+        startActivity(intent);
     }
     public void Symptoms(android.view.View view){
         CheckInHistoryFilters.getInstance().setUsername(currentChild.getID());
