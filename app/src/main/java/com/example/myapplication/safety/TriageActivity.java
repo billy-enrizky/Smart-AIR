@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.notifications.AlertDetector;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.HashMap;
@@ -417,7 +418,17 @@ public class TriageActivity extends AppCompatActivity {
                 .child("pefReadings")
                 .child(String.valueOf(timestamp));
         
-        pefRef.setValue(reading);
+        pefRef.setValue(reading).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Check for alerts after PEF is saved
+                String childName = childAccount.getName();
+                Integer personalBest = childAccount.getPersonalBest();
+                if (personalBest != null && personalBest > 0) {
+                    AlertDetector.checkRedZoneDay(parentId, childId, childName, value, personalBest);
+                    AlertDetector.checkWorseAfterDose(parentId, childId, childName, value, personalBest);
+                }
+            }
+        });
     }
 
     private void calculateCurrentZone() {

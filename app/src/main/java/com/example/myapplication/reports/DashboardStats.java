@@ -11,6 +11,7 @@ public class DashboardStats {
     private String lastRescueTimeFormatted;
     private int dailyRescueCount;
     private int dailySymptomsCount;
+    private double controllerAdherence;
 
     public DashboardStats() {
     }
@@ -24,6 +25,7 @@ public class DashboardStats {
         this.lastRescueTimeFormatted = "Never";
         this.dailyRescueCount = 0;
         this.dailySymptomsCount = 0;
+        this.controllerAdherence = 0.0;
     }
 
     public String getChildId() {
@@ -88,6 +90,14 @@ public class DashboardStats {
 
     public void setDailySymptomsCount(int dailySymptomsCount) {
         this.dailySymptomsCount = dailySymptomsCount;
+    }
+
+    public double getControllerAdherence() {
+        return controllerAdherence;
+    }
+
+    public void setControllerAdherence(double controllerAdherence) {
+        this.controllerAdherence = controllerAdherence;
     }
 }
 

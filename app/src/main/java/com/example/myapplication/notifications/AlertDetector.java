@@ -160,9 +160,7 @@ public class AlertDetector {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         Inhaler inhaler = child.getValue(Inhaler.class);
                         if (inhaler != null) {
-                            long currentTime = System.currentTimeMillis();
-
-                            if (inhaler.checkExpiry(currentTime)) {
+                            if (inhaler.checkExpiry()) {
                                 NotificationItem notification = new NotificationItem(
                                         NotificationItem.NotificationType.INVENTORY_EXPIRED,
                                         childId,

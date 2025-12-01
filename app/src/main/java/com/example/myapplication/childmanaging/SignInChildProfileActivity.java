@@ -54,6 +54,10 @@ public class SignInChildProfileActivity extends AppCompatActivity {
         findViewById(R.id.debugButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(currentChild == null){
+                    Toast.makeText(SignInChildProfileActivity.this, "Please select a child", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(SignInChildProfileActivity.this, ParentInhalerMenu.class);
                 startActivity(intent);
             }
@@ -62,6 +66,10 @@ public class SignInChildProfileActivity extends AppCompatActivity {
         findViewById(R.id.debugButton2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(currentChild == null){
+                    Toast.makeText(SignInChildProfileActivity.this, "Please select a child", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(SignInChildProfileActivity.this, ParentBadge.class);
                 startActivity(intent);
             }

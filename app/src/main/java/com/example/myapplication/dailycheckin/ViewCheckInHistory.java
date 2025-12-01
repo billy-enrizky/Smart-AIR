@@ -1,6 +1,5 @@
 package com.example.myapplication.dailycheckin;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,7 +20,6 @@ import com.example.myapplication.UserManager;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.userdata.AccountType;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,7 +38,12 @@ public class ViewCheckInHistory extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_history);
         this.historyTextTitle = (TextView)findViewById(R.id.view_history_title);
-        historyTextTitle.setText("History for " + SignInChildProfileActivity.getCurrentChild().getName());
+        Intent intent = getIntent();
+        if(intent.hasExtra("isProvider")&&intent.hasExtra("childName")){
+            historyTextTitle.setText("History for " + intent.getStringExtra("childName"));
+        }else{
+            historyTextTitle.setText("History for " + SignInChildProfileActivity.getCurrentChild().getName());
+        }
         this.historyText = (TextView)findViewById(R.id.display_history);
         createHistory();
         exportButton = (Button)findViewById(R.id.export_pdf_button);
@@ -57,6 +60,17 @@ public class ViewCheckInHistory extends AppCompatActivity {
 
     public void returnToSymptoms(View view) {
         Intent intent = new Intent(this, FilterCheckInBySymptoms.class);
+        Intent thisintent = getIntent();
+        if(thisintent.hasExtra("permissionToTriggers")){
+            intent.putExtra("permissionToTriggers", thisintent.getStringExtra("permissionToTriggers"));
+        }
+        if(thisintent.hasExtra("permissionToSymptoms")){
+            intent.putExtra("permissionToSymptoms", thisintent.getStringExtra("permissionToSymptoms"));
+        }
+        if(thisintent.hasExtra("isProvider")){
+            intent.putExtra("isProvider", thisintent.getStringExtra("isProvider"));
+            intent.putExtra("childName", thisintent.getStringExtra("childName"));
+        }
         startActivity(intent);
     }
 

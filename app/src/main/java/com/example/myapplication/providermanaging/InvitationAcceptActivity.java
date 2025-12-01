@@ -11,7 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.myapplication.ProviderActivity;
+import com.example.myapplication.providers.ProviderActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.UserManager;

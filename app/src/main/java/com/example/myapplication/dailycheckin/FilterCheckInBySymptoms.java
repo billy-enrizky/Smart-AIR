@@ -6,16 +6,10 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.myapplication.ChildActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
-import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.userdata.AccountType;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -50,8 +44,9 @@ public class FilterCheckInBySymptoms extends AppCompatActivity {
         // triggers
         triggersChipsFilterTitle = (TextView)findViewById(R.id.select_triggers_title);
         triggersChipsFilter = (ChipGroup)findViewById(R.id.triggers_filter);
+        Intent intent = getIntent();
 
-        if (UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*&& provider doesn't have permission to see symptoms*/) {
+        if (UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) && !intent.hasExtra("permissionToSymptoms")) {
             nightWakingChipsFilterTitle.setVisibility(View.INVISIBLE);
             nightWakingChipsFilter.setVisibility(View.INVISIBLE);
             activityLimitsFilterTitle.setVisibility(View.INVISIBLE);
@@ -67,7 +62,7 @@ public class FilterCheckInBySymptoms extends AppCompatActivity {
             coughWheezeLevelSliderFilter.setVisibility(View.VISIBLE);
         }
 
-        if (UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*&& provider doesn't have permission to see triggers*/) {
+        if (UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) && !intent.hasExtra("permissionToTriggers")) {
             triggersChipsFilterTitle.setVisibility(View.INVISIBLE);
             triggersChipsFilter.setVisibility(View.INVISIBLE);
         } else {
@@ -114,6 +109,17 @@ public class FilterCheckInBySymptoms extends AppCompatActivity {
         }
         filters.setTriggers(triggersFilter);
         Intent intent = new Intent(this, ViewCheckInHistory.class);
+        Intent thisintent = getIntent();
+        if(thisintent.hasExtra("permissionToTriggers")){
+            intent.putExtra("permissionToTriggers", thisintent.getStringExtra("permissionToTriggers"));
+        }
+        if(thisintent.hasExtra("permissionToSymptoms")){
+            intent.putExtra("permissionToSymptoms", thisintent.getStringExtra("permissionToSymptoms"));
+        }
+        if(thisintent.hasExtra("isProvider")){
+            intent.putExtra("isProvider", thisintent.getStringExtra("isProvider"));
+            intent.putExtra("childName", thisintent.getStringExtra("childName"));
+         }
         startActivity(intent);
     }
 }

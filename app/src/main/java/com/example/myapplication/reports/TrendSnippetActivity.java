@@ -69,7 +69,6 @@ public class TrendSnippetActivity extends AppCompatActivity {
         parentId = getIntent().getStringExtra("parentId");
         childId = getIntent().getStringExtra("childId");
         childName = getIntent().getStringExtra("childName");
-
         if (parentId == null || childId == null) {
             Log.e(TAG, "Missing parentId or childId");
             finish();
@@ -117,9 +116,21 @@ public class TrendSnippetActivity extends AppCompatActivity {
 
     private void loadAllCharts() {
         loadZoneDistribution();
-        loadPEFTrend();
-        loadRescuePerDay();
-        loadSymptomsPerDay();
+        if(!getIntent().hasExtra("PEFBanned")){
+            loadPEFTrend();
+        }else{
+            findViewById(R.id.PEF).setVisibility(View.GONE);
+        }
+        if(!getIntent().hasExtra("RescueLogBanned")){
+            loadRescuePerDay();
+        }else{
+            findViewById(R.id.RM).setVisibility(View.GONE);
+        }
+        if(!getIntent().hasExtra("SymptomsBanned")) {
+            loadSymptomsPerDay();
+        }else{
+            findViewById(R.id.SC).setVisibility(View.GONE);
+        }
     }
 
     private void loadZoneDistribution() {

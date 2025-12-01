@@ -23,6 +23,10 @@ public class Inhaler {
 
     public Inhaler(String username, long datePurchased, long dateExpiry, int maxcapacity, int spraycount, boolean isRescue){
         this.username = username;
+        if (isRescue)
+            this.username = username+"1";
+        else
+            this.username = username+"0";
         this.isRescue = isRescue;
         this.datePurchased = datePurchased;
         this.dateExpiry = dateExpiry;
@@ -30,8 +34,8 @@ public class Inhaler {
         this.spraycount = spraycount;
     }
 
-    public boolean checkExpiry(long todayDate){
-        return (todayDate - this.dateExpiry < DATEEXPIRYTHRESHOLD);
+    public boolean checkExpiry(){
+        return (this.dateExpiry - System.currentTimeMillis() < DATEEXPIRYTHRESHOLD);
     }
 
     public boolean checkEmpty(){

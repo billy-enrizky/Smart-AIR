@@ -1,54 +1,63 @@
 package com.example.myapplication;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.service.controls.Control;
-import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.util.TypedValue;
-import android.graphics.Color;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.myapplication.providers.AccessInfoActivity;
 import com.example.myapplication.SignIn.SignInView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 public class ChildInhalerLogs extends AppCompatActivity {
-    private static final String TAG = "ChildInhalerLogs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inhaler_logs);
         
-        // Check if user is logged in
-        if (UserManager.currentUser == null) {
-            Log.w(TAG, "No user logged in, redirecting to SignIn");
-            Intent intent = new Intent(ChildInhalerLogs.this, SignInView.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
+        Intent intent = getIntent();
+        String ID;
         
-        findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ChildInhalerLogs.this, ChildInhalerMenu.class));
+        if(intent.hasExtra("isProvider")){
+            findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ChildInhalerLogs.this, AccessInfoActivity.class));
+                }
+            });
+            ID = intent.getStringExtra("ID");
+        } else {
+            if (UserManager.currentUser == null) {
+                Intent signInIntent = new Intent(ChildInhalerLogs.this, SignInView.class);
+                startActivity(signInIntent);
+                finish();
+                return;
             }
-        });
-        RescueLogModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<HashMap<String, RescueLog>>() {
+            findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ChildInhalerLogs.this, ChildInhalerMenu.class));
+                }
+            });
+            ID = UserManager.currentUser.getID();
+        }
+
+        RescueLogModel.readFromDB(ID, new ResultCallBack<HashMap<String, RescueLog>>() {
             @Override
             public void onComplete(HashMap<String, RescueLog> result) {
                 addRescueLogs(new ArrayList<>(result.values()));
             }
         });
-        ControllerLogModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<HashMap<String, ControllerLog>>() {
+        ControllerLogModel.readFromDB(ID, new ResultCallBack<HashMap<String, ControllerLog>>() {
             @Override
             public void onComplete(HashMap<String, ControllerLog> result) {
                 addControllerLogs(new ArrayList<>(result.values()));

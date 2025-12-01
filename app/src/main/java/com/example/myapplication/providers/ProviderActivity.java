@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.providers;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.R;
 import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.UserManager;
 import com.example.myapplication.providermanaging.InvitationAcceptActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -25,11 +27,18 @@ public class ProviderActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        UserManager.isProviderAccount(this);
     }
     public void Signout(android.view.View view){
         UserManager.currentUser = null;
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, SignInView.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void AccessInfo(android.view.View view){
+        Intent intent = new Intent(this, AccessInfoActivity.class);
         startActivity(intent);
         this.finish();
     }
