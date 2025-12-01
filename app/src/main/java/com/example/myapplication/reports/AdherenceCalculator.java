@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -23,8 +24,9 @@ import java.util.Set;
  * Time matching is not required - a day is considered adherent if at least one
  * controller log exists for that day, regardless of the time.
  * 
- * If a controller schedule exists with configured times, it is assumed that
- * medication should be taken daily (all days in the date range are planned dose days).
+ * The schedule is date-based (not time-based). Parents configure specific dates
+ * when controller medication should be taken. The schedule can be discontinuous
+ * (not every day) and multiple controller doses can be logged on the same day.
  */
 public class AdherenceCalculator {
     private static final String TAG = "AdherenceCalculator";
@@ -33,7 +35,7 @@ public class AdherenceCalculator {
      * Calculates adherence percentage for a child's controller medication usage.
      * 
      * @param childId The child's ID/username used to retrieve controller logs
-     * @param schedule The controller medication schedule (list of times)
+     * @param schedule The controller medication schedule (list of dates in yyyy-MM-dd format)
      * @param startDate Start of date range (timestamp in milliseconds)
      * @param endDate End of date range (timestamp in milliseconds, inclusive)
      * @param callback Callback to receive the adherence percentage (0.0-100.0)
@@ -55,9 +57,8 @@ public class AdherenceCalculator {
             return;
         }
 
-        // Get all days in the date range as "planned dose days"
-        // If schedule has times configured, medication should be taken daily
-        Set<String> scheduledDays = getScheduledDays(startDate, endDate);
+        // Get scheduled dates that fall within the date range
+        Set<String> scheduledDays = getScheduledDaysInRange(schedule, startDate, endDate);
         int totalScheduledDays = scheduledDays.size();
 
         if (totalScheduledDays == 0) {
@@ -68,7 +69,7 @@ public class AdherenceCalculator {
             return;
         }
 
-        Log.d(TAG, String.format("Calculating adherence for childId: %s, date range: %d days", childId, totalScheduledDays));
+        Log.d(TAG, String.format("Calculating adherence for childId: %s, scheduled days in range: %d", childId, totalScheduledDays));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String startDateStr = dateFormat.format(new Date(startDate));
@@ -90,6 +91,7 @@ public class AdherenceCalculator {
 
                 // Count how many scheduled days have at least one log
                 // Time matching is not required - any log on a scheduled day counts
+                // Multiple logs on the same day still count as one adherent day
                 int adherentDays = 0;
                 for (String scheduledDay : scheduledDays) {
                     if (daysWithLogs.contains(scheduledDay)) {
@@ -111,40 +113,37 @@ public class AdherenceCalculator {
     }
 
     /**
-     * Gets all days in the date range as a set of date strings (yyyy-MM-dd format).
-     * The end date is inclusive.
+     * Gets scheduled dates from the schedule that fall within the date range.
+     * Only dates that are both in the schedule AND within the date range are returned.
      * 
+     * @param schedule The controller medication schedule
      * @param startDate Start date (timestamp in milliseconds)
      * @param endDate End date (timestamp in milliseconds, inclusive)
-     * @return Set of date strings in yyyy-MM-dd format
+     * @return Set of date strings in yyyy-MM-dd format that are scheduled and in range
      */
-    private static Set<String> getScheduledDays(long startDate, long endDate) {
-        Set<String> days = new HashSet<>();
+    private static Set<String> getScheduledDaysInRange(ControllerSchedule schedule, long startDate, long endDate) {
+        Set<String> scheduledDaysInRange = new HashSet<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(startDate);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        // Get date range boundaries as date strings
+        String startDateStr = dateFormat.format(new Date(startDate));
+        String endDateStr = dateFormat.format(new Date(endDate));
 
-        // Ensure end date is at end of day for inclusive comparison
-        Calendar endCal = Calendar.getInstance();
-        endCal.setTimeInMillis(endDate);
-        endCal.set(Calendar.HOUR_OF_DAY, 23);
-        endCal.set(Calendar.MINUTE, 59);
-        endCal.set(Calendar.SECOND, 59);
-        endCal.set(Calendar.MILLISECOND, 999);
-        long endDateInclusive = endCal.getTimeInMillis();
-
-        // Add all days from start to end (inclusive)
-        while (cal.getTimeInMillis() <= endDateInclusive) {
-            days.add(dateFormat.format(cal.getTime()));
-            cal.add(Calendar.DAY_OF_MONTH, 1);
+        // Get all scheduled dates from the schedule
+        List<String> scheduledDates = schedule.getDates();
+        if (scheduledDates == null || scheduledDates.isEmpty()) {
+            return scheduledDaysInRange;
         }
 
-        return days;
+        // Filter scheduled dates to only include those within the date range
+        for (String scheduledDate : scheduledDates) {
+            // Compare date strings (yyyy-MM-dd format is sortable)
+            if (scheduledDate != null && scheduledDate.compareTo(startDateStr) >= 0 && scheduledDate.compareTo(endDateStr) <= 0) {
+                scheduledDaysInRange.add(scheduledDate);
+            }
+        }
+
+        return scheduledDaysInRange;
     }
 }
 
