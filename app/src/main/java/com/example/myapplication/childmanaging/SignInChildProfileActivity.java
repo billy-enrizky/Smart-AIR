@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.ParentActivity;
+import com.example.myapplication.ParentBadge;
 import com.example.myapplication.ParentInhalerMenu;
 import com.example.myapplication.R;
 import com.example.myapplication.SignIn.SignInView;
@@ -54,6 +55,14 @@ public class SignInChildProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SignInChildProfileActivity.this, ParentInhalerMenu.class);
+                startActivity(intent);
+            }
+        });
+        //DEBUG
+        findViewById(R.id.debugButton2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignInChildProfileActivity.this, ParentBadge.class);
                 startActivity(intent);
             }
         });
