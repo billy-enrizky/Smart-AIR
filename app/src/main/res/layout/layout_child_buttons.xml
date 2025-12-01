@@ -25,29 +25,29 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/buttonTrendSnippet"
+                android:id="@+id/buttonSignIn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:text="Trend Snippet"
+                android:text="Sign in"
                 android:textColor="#FFFFFF" />
 
             <Button
-                android:id="@+id/buttonGenerateReport"
+                android:id="@+id/buttonDailyCheckin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:text="Generate Report"
+                android:text="Daily Checkin"
                 android:textColor="#FFFFFF" />
 
             <Button
-                android:id="@+id/buttonDeleteChild"
+                android:id="@+id/buttonSetPersonalBest"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Delete Child"
+                android:text="Set PB"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
 
@@ -58,12 +58,45 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/buttonSetPersonalBest"
+                android:id="@+id/buttonInhaler"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:text="Set Personal Best"
+                android:text="Inhaler"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/buttonModifyNotes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Modify Notes"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/buttonBadges"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Badges"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonGenerateReport"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Generate Report"
                 android:textColor="#FFFFFF" />
 
             <Button
@@ -76,11 +109,44 @@
                 android:textColor="#FFFFFF" />
 
             <Button
+                android:id="@+id/buttonDailyCheckinHistory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Daily Checkin History"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
                 android:id="@+id/buttonIncidentHistory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginEnd="4dp"
                 android:text="Incident History"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/buttonDeleteChild"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Delete Child"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/buttonActionPlan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Action Plan"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
 
@@ -92,28 +158,9 @@
 
             <Button
                 android:id="@+id/buttonPEFHistory"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="4dp"
                 android:text="PEF History"
-                android:textColor="#FFFFFF" />
-
-            <Button
-                android:id="@+id/buttonActionPlan"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="4dp"
-                android:text="Action Plan"
-                android:textColor="#FFFFFF" />
-
-            <Button
-                android:id="@+id/buttonModifyNotes"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Modify Notes"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
