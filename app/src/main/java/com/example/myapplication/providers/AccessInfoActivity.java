@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.CallBack;
+import com.example.myapplication.ChildInhalerLogs;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.dailycheckin.CheckInHistoryFilters;
@@ -180,6 +181,10 @@ public class AccessInfoActivity extends AppCompatActivity {
         finish();
     }
     public void RescueLogs(android.view.View view){
+        Intent intent = new Intent(this, ChildInhalerLogs.class);
+        intent.putExtra("ID", currentChild.getID());
+        intent.putExtra("isProvider", "true");
+        startActivity(intent);
     }
     public void ControllerAdherenceSummary(android.view.View view){
     }
