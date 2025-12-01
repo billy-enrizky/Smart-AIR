@@ -13,7 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Switch;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +39,7 @@ import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -69,14 +70,11 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     private TextView textViewSymptomBurden;
     private FrameLayout frameLayoutZoneChart;
     private FrameLayout frameLayoutTrendChart;
+    private FrameLayout frameLayoutRescueChart;
+    private FrameLayout frameLayoutSymptomsChart;
 
-    private Switch switchRescueLogs;
-    private Switch switchControllerAdherence;
-    private Switch switchSymptoms;
-    private Switch switchTriggers;
-    private Switch switchPEF;
-    private Switch switchTriageIncidents;
-    private Switch switchSummaryCharts;
+    private LinearLayout linearLayoutSharedItems;
+    private TextView textViewNoSharing;
 
     private String parentId;
     private String childId;
@@ -87,6 +85,9 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     private Integer personalBest;
     private List<TriageIncident> triageIncidents;
     private List<CheckInEntry> checkInEntries;
+    private com.example.myapplication.providermanaging.Permission childPermissions;
+    private Map<String, Integer> rescueDailyCounts;
+    private Map<String, Integer> symptomsDailyCounts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,25 +136,97 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         textViewSymptomBurden = findViewById(R.id.textViewSymptomBurden);
         frameLayoutZoneChart = findViewById(R.id.frameLayoutZoneChart);
         frameLayoutTrendChart = findViewById(R.id.frameLayoutTrendChart);
+        frameLayoutRescueChart = findViewById(R.id.frameLayoutRescueChart);
+        frameLayoutSymptomsChart = findViewById(R.id.frameLayoutSymptomsChart);
 
-        switchRescueLogs = findViewById(R.id.switchRescueLogs);
-        switchControllerAdherence = findViewById(R.id.switchControllerAdherence);
-        switchSymptoms = findViewById(R.id.switchSymptoms);
-        switchTriggers = findViewById(R.id.switchTriggers);
-        switchPEF = findViewById(R.id.switchPEF);
-        switchTriageIncidents = findViewById(R.id.switchTriageIncidents);
-        switchSummaryCharts = findViewById(R.id.switchSummaryCharts);
+        linearLayoutSharedItems = findViewById(R.id.linearLayoutSharedItems);
+        textViewNoSharing = findViewById(R.id.textViewNoSharing);
 
         if (childName != null) {
             textViewChildName.setText("Child: " + childName);
         }
 
         updateDateButtons();
+        loadChildPermissions();
 
         buttonBack.setOnClickListener(v -> finish());
         buttonStartDate.setOnClickListener(v -> showDatePicker(true));
         buttonEndDate.setOnClickListener(v -> showDatePicker(false));
         buttonGeneratePDF.setOnClickListener(v -> generatePDF());
+    }
+
+    private void loadChildPermissions() {
+        DatabaseReference childRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId);
+
+        childRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                ChildAccount child = task.getResult().getValue(ChildAccount.class);
+                if (child != null && child.getPermission() != null) {
+                    childPermissions = child.getPermission();
+                    updateSharedTag();
+                } else {
+                    childPermissions = new com.example.myapplication.providermanaging.Permission();
+                    updateSharedTag();
+                }
+            } else {
+                childPermissions = new com.example.myapplication.providermanaging.Permission();
+                updateSharedTag();
+            }
+        });
+    }
+
+    private void updateSharedTag() {
+        if (childPermissions == null) {
+            linearLayoutSharedItems.setVisibility(View.GONE);
+            textViewNoSharing.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        linearLayoutSharedItems.removeAllViews();
+        List<String> sharedItems = new ArrayList<>();
+
+        if (Boolean.TRUE.equals(childPermissions.getRescueLogs())) {
+            sharedItems.add("Rescue logs");
+        }
+        if (Boolean.TRUE.equals(childPermissions.getControllerAdherenceSummary())) {
+            sharedItems.add("Controller adherence summary");
+        }
+        if (Boolean.TRUE.equals(childPermissions.getSymptoms())) {
+            sharedItems.add("Symptoms");
+        }
+        if (Boolean.TRUE.equals(childPermissions.getTriggers())) {
+            sharedItems.add("Triggers");
+        }
+        if (Boolean.TRUE.equals(childPermissions.getPeakFlow())) {
+            sharedItems.add("Peak-flow (PEF)");
+        }
+        if (Boolean.TRUE.equals(childPermissions.getTriageIncidents())) {
+            sharedItems.add("Triage incidents");
+        }
+        if (Boolean.TRUE.equals(childPermissions.getSummaryCharts())) {
+            sharedItems.add("Summary charts");
+        }
+
+        if (sharedItems.isEmpty()) {
+            linearLayoutSharedItems.setVisibility(View.GONE);
+            textViewNoSharing.setVisibility(View.VISIBLE);
+        } else {
+            textViewNoSharing.setVisibility(View.GONE);
+            linearLayoutSharedItems.setVisibility(View.VISIBLE);
+
+            for (String item : sharedItems) {
+                TextView itemView = new TextView(this);
+                itemView.setText("• " + item);
+                itemView.setTextSize(14f);
+                itemView.setTextColor(android.graphics.Color.parseColor("#4CAF50"));
+                itemView.setPadding(0, 4, 0, 4);
+                linearLayoutSharedItems.addView(itemView);
+            }
+        }
     }
 
     private void showDatePicker(boolean isStartDate) {
@@ -212,6 +285,8 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         loadSymptomBurden();
         loadZoneDistribution();
         loadPEFTrend();
+        loadRescuePerDay();
+        loadSymptomsPerDay();
         loadPersonalBest();
         loadTriageIncidents();
         loadTriggers();
@@ -417,10 +492,10 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
             return;
         }
         frameLayoutZoneChart.removeAllViews();
-        View chartView = ChartComponent.createChartView(this, frameLayoutZoneChart, ChartComponent.ChartType.BAR);
+        View chartView = ChartComponent.createChartView(this, frameLayoutZoneChart, ChartComponent.ChartType.PIE);
         frameLayoutZoneChart.addView(chartView);
-        BarChart barChart = chartView.findViewById(R.id.barChart);
-        ChartComponent.setupBarChart(barChart, reportData.getZoneDistribution(), "Zone Distribution");
+        com.github.mikephil.charting.charts.PieChart pieChart = chartView.findViewById(R.id.pieChart);
+        ChartComponent.setupPieChart(pieChart, reportData.getZoneDistribution(), "Zone Distribution");
     }
 
     private void updateTrendChart() {
@@ -436,6 +511,95 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         frameLayoutTrendChart.addView(chartView);
         LineChart lineChart = chartView.findViewById(R.id.lineChart);
         ChartComponent.setupLineChart(lineChart, dataPoints, "PEF Trend");
+    }
+
+    private void loadRescuePerDay() {
+        DatabaseReference rescueRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId)
+                .child("rescueUsage");
+
+        Query query = rescueRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Map<String, Integer> dailyCounts = new HashMap<>();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                if (snapshot.exists()) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        RescueUsage usage = child.getValue(RescueUsage.class);
+                        if (usage != null) {
+                            String dateKey = dateFormat.format(new Date(usage.getTimestamp()));
+                            int currentCount = dailyCounts.getOrDefault(dateKey, 0);
+                            dailyCounts.put(dateKey, currentCount + usage.getCount());
+                        }
+                    }
+                }
+
+                updateRescueChart(dailyCounts);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, "Error loading rescue per day", error.toException());
+            }
+        });
+    }
+
+    private void updateRescueChart(Map<String, Integer> dailyCounts) {
+        rescueDailyCounts = dailyCounts;
+        frameLayoutRescueChart.removeAllViews();
+        View chartView = ChartComponent.createChartView(this, frameLayoutRescueChart, ChartComponent.ChartType.BAR);
+        frameLayoutRescueChart.addView(chartView);
+        BarChart barChart = chartView.findViewById(R.id.barChart);
+        ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Rescue Medicine Use Per Day", Color.parseColor("#F44336"));
+    }
+
+    private void loadSymptomsPerDay() {
+        DatabaseReference incidentRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId)
+                .child("incidents");
+
+        Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Map<String, Integer> dailyCounts = new HashMap<>();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                if (snapshot.exists()) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        TriageIncident incident = child.getValue(TriageIncident.class);
+                        if (incident != null) {
+                            String dateKey = dateFormat.format(new Date(incident.getTimestamp()));
+                            dailyCounts.put(dateKey, dailyCounts.getOrDefault(dateKey, 0) + 1);
+                        }
+                    }
+                }
+
+                updateSymptomsChart(dailyCounts);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, "Error loading symptoms per day", error.toException());
+            }
+        });
+    }
+
+    private void updateSymptomsChart(Map<String, Integer> dailyCounts) {
+        symptomsDailyCounts = dailyCounts;
+        frameLayoutSymptomsChart.removeAllViews();
+        View chartView = ChartComponent.createChartView(this, frameLayoutSymptomsChart, ChartComponent.ChartType.BAR);
+        frameLayoutSymptomsChart.addView(chartView);
+        BarChart barChart = chartView.findViewById(R.id.barChart);
+        ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Symptoms Count Per Day", Color.parseColor("#9C27B0"));
     }
 
     private void loadPersonalBest() {
@@ -521,20 +685,20 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         });
     }
 
-    private BarChart createBarChartForPDF(int width, int height) {
-        BarChart barChart = new BarChart(this);
+    private PieChart createPieChartForPDF(int width, int height) {
+        PieChart pieChart = new PieChart(this);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
         );
-        barChart.setLayoutParams(params);
-        barChart.setBackgroundColor(Color.WHITE);
+        pieChart.setLayoutParams(params);
+        pieChart.setBackgroundColor(Color.WHITE);
         
         if (reportData.getZoneDistribution() != null && !reportData.getZoneDistribution().isEmpty()) {
-            ChartComponent.setupBarChart(barChart, reportData.getZoneDistribution(), "Zone Distribution");
+            ChartComponent.setupPieChart(pieChart, reportData.getZoneDistribution(), "Zone Distribution");
         }
         
-        return barChart;
+        return pieChart;
     }
 
     private LineChart createLineChartForPDF(int width, int height) {
@@ -555,6 +719,38 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         }
         
         return lineChart;
+    }
+
+    private BarChart createRescueBarChartForPDF(int width, int height) {
+        BarChart barChart = new BarChart(this);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        );
+        barChart.setLayoutParams(params);
+        barChart.setBackgroundColor(Color.WHITE);
+        
+        if (rescueDailyCounts != null && !rescueDailyCounts.isEmpty()) {
+            ChartComponent.setupDailyBarChart(barChart, rescueDailyCounts, "Rescue Medicine Use Per Day", Color.parseColor("#F44336"));
+        }
+        
+        return barChart;
+    }
+
+    private BarChart createSymptomsBarChartForPDF(int width, int height) {
+        BarChart barChart = new BarChart(this);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        );
+        barChart.setLayoutParams(params);
+        barChart.setBackgroundColor(Color.WHITE);
+        
+        if (symptomsDailyCounts != null && !symptomsDailyCounts.isEmpty()) {
+            ChartComponent.setupDailyBarChart(barChart, symptomsDailyCounts, "Symptoms Count Per Day", Color.parseColor("#9C27B0"));
+        }
+        
+        return barChart;
     }
 
     private Bitmap getChartBitmap(View chartView, int width, int height) {
@@ -630,15 +826,15 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
             File parentOutputFile = new File(documentsDir, parentFilename);
             generatePDFFile(parentOutputFile, "Parent Report", parentPrefs);
 
-            // Generate provider PDF (filtered by toggles)
+            // Generate provider PDF (filtered by permissions)
             SharingPreferences providerPrefs = new SharingPreferences(
-                switchRescueLogs.isChecked(),
-                switchControllerAdherence.isChecked(),
-                switchSymptoms.isChecked(),
-                switchTriggers.isChecked(),
-                switchPEF.isChecked(),
-                switchTriageIncidents.isChecked(),
-                switchSummaryCharts.isChecked()
+                Boolean.TRUE.equals(childPermissions != null ? childPermissions.getRescueLogs() : false),
+                Boolean.TRUE.equals(childPermissions != null ? childPermissions.getControllerAdherenceSummary() : false),
+                Boolean.TRUE.equals(childPermissions != null ? childPermissions.getSymptoms() : false),
+                Boolean.TRUE.equals(childPermissions != null ? childPermissions.getTriggers() : false),
+                Boolean.TRUE.equals(childPermissions != null ? childPermissions.getPeakFlow() : false),
+                Boolean.TRUE.equals(childPermissions != null ? childPermissions.getTriageIncidents() : false),
+                Boolean.TRUE.equals(childPermissions != null ? childPermissions.getSummaryCharts() : false)
             );
             String providerFilename = childId + "_report_provider_" + timestamp + ".pdf";
             File providerOutputFile = new File(documentsDir, providerFilename);
@@ -772,9 +968,9 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
             
             int chartWidth = pageWidth - (int)(margin * 2);
             int chartHeight = 400;
-            BarChart barChart = createBarChartForPDF(chartWidth, chartHeight);
-            if (barChart != null) {
-                Bitmap zoneChartBitmap = getChartBitmap(barChart, chartWidth, chartHeight);
+            PieChart pieChart = createPieChartForPDF(chartWidth, chartHeight);
+            if (pieChart != null) {
+                Bitmap zoneChartBitmap = getChartBitmap(pieChart, chartWidth, chartHeight);
                 if (zoneChartBitmap != null) {
                     canvas.drawBitmap(zoneChartBitmap, margin, y, paint);
                     y += zoneChartBitmap.getHeight() + sectionSpacing;
@@ -814,6 +1010,60 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                     canvas.drawBitmap(trendChartBitmap, margin, y, paint);
                     y += trendChartBitmap.getHeight() + sectionSpacing;
                     trendChartBitmap.recycle();
+                }
+            }
+        }
+
+        if (prefs.includeRescueLogs && prefs.includeSummaryCharts && rescueDailyCounts != null && !rescueDailyCounts.isEmpty()) {
+            if (y > pageHeight - 200) {
+                document.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                page = document.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = margin;
+            }
+
+            paint.setFakeBoldText(true);
+            canvas.drawText("Rescue Medicine Use Per Day Chart", margin, y, paint);
+            y += lineHeight + 10;
+            paint.setFakeBoldText(false);
+            
+            int chartWidth = pageWidth - (int)(margin * 2);
+            int chartHeight = 400;
+            BarChart rescueChart = createRescueBarChartForPDF(chartWidth, chartHeight);
+            if (rescueChart != null) {
+                Bitmap rescueChartBitmap = getChartBitmap(rescueChart, chartWidth, chartHeight);
+                if (rescueChartBitmap != null) {
+                    canvas.drawBitmap(rescueChartBitmap, margin, y, paint);
+                    y += rescueChartBitmap.getHeight() + sectionSpacing;
+                    rescueChartBitmap.recycle();
+                }
+            }
+        }
+
+        if (prefs.includeSymptoms && prefs.includeSummaryCharts && symptomsDailyCounts != null && !symptomsDailyCounts.isEmpty()) {
+            if (y > pageHeight - 200) {
+                document.finishPage(page);
+                pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, document.getPages().size() + 1).create();
+                page = document.startPage(pageInfo);
+                canvas = page.getCanvas();
+                y = margin;
+            }
+
+            paint.setFakeBoldText(true);
+            canvas.drawText("Symptoms Count Per Day Chart", margin, y, paint);
+            y += lineHeight + 10;
+            paint.setFakeBoldText(false);
+            
+            int chartWidth = pageWidth - (int)(margin * 2);
+            int chartHeight = 400;
+            BarChart symptomsChart = createSymptomsBarChartForPDF(chartWidth, chartHeight);
+            if (symptomsChart != null) {
+                Bitmap symptomsChartBitmap = getChartBitmap(symptomsChart, chartWidth, chartHeight);
+                if (symptomsChartBitmap != null) {
+                    canvas.drawBitmap(symptomsChartBitmap, margin, y, paint);
+                    y += symptomsChartBitmap.getHeight() + sectionSpacing;
+                    symptomsChartBitmap.recycle();
                 }
             }
         }
