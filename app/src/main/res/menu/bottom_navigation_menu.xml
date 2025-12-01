@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_dashboard"
-        android:icon="@android:drawable/ic_menu_view"
+        android:icon="@drawable/navigationbar_home"
         android:title="Dashboard" />
     <item
         android:id="@+id/nav_children"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@drawable/navigationbar_childrenmanager"
         android:title="Children" />
     <item
         android:id="@+id/nav_providers"
-        android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@drawable/navigationbar_providermanager"
         android:title="Providers" />
 </menu>
 
