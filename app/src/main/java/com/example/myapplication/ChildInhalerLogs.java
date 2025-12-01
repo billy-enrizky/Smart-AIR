@@ -32,6 +32,8 @@ public class ChildInhalerLogs extends AppCompatActivity {
                 }
             });
             ID = intent.getStringExtra("ID");
+            findViewById(R.id.textView23).setVisibility(View.GONE);
+            findViewById(R.id.controllerlog).setVisibility(View.GONE);
         }else{
             findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -41,19 +43,20 @@ public class ChildInhalerLogs extends AppCompatActivity {
             });
             ID = UserManager.currentUser.getID();
         }
-
         RescueLogModel.readFromDB(ID, new ResultCallBack<HashMap<String, RescueLog>>() {
             @Override
             public void onComplete(HashMap<String, RescueLog> result) {
                 addRescueLogs(new ArrayList<>(result.values()));
             }
         });
-        ControllerLogModel.readFromDB(ID, new ResultCallBack<HashMap<String, ControllerLog>>() {
-            @Override
-            public void onComplete(HashMap<String, ControllerLog> result) {
-                addControllerLogs(new ArrayList<>(result.values()));
-            }
-        });
+        if(!intent.hasExtra("isProvider")) {
+            ControllerLogModel.readFromDB(ID, new ResultCallBack<HashMap<String, ControllerLog>>() {
+                @Override
+                public void onComplete(HashMap<String, ControllerLog> result) {
+                    addControllerLogs(new ArrayList<>(result.values()));
+                }
+            });
+        }
     }
     private void addRescueLogs(ArrayList<RescueLog> logs) {
         Collections.sort(logs);
