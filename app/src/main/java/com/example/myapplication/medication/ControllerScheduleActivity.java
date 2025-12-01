@@ -1,6 +1,6 @@
 package com.example.myapplication.medication;
 
-import android.app.TimePickerDialog;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,14 +25,15 @@ import com.google.firebase.database.DatabaseReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 public class ControllerScheduleActivity extends AppCompatActivity {
     private static final String TAG = "ControllerScheduleActivity";
 
-    private LinearLayout linearLayoutTimes;
-    private Button buttonAddTime;
+    private LinearLayout linearLayoutDates;
+    private Button buttonAddDate;
     private Button buttonSave;
     private Button buttonCancel;
     private TextView textViewChildName;
@@ -40,8 +41,8 @@ public class ControllerScheduleActivity extends AppCompatActivity {
     private String parentId;
     private String childId;
     private String childName;
-    private List<String> scheduleTimes;
-    private List<View> timeViews;
+    private List<String> scheduleDates;  // Dates in yyyy-MM-dd format
+    private List<View> dateViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +65,8 @@ public class ControllerScheduleActivity extends AppCompatActivity {
             return;
         }
 
-        linearLayoutTimes = findViewById(R.id.linearLayoutTimes);
-        buttonAddTime = findViewById(R.id.buttonAddTime);
+        linearLayoutDates = findViewById(R.id.linearLayoutDates);
+        buttonAddDate = findViewById(R.id.buttonAddDate);
         buttonSave = findViewById(R.id.buttonSave);
         buttonCancel = findViewById(R.id.buttonCancel);
         textViewChildName = findViewById(R.id.textViewChildName);
@@ -74,10 +75,10 @@ public class ControllerScheduleActivity extends AppCompatActivity {
             textViewChildName.setText("Child: " + childName);
         }
 
-        scheduleTimes = new ArrayList<>();
-        timeViews = new ArrayList<>();
+        scheduleDates = new ArrayList<>();
+        dateViews = new ArrayList<>();
 
-        buttonAddTime.setOnClickListener(v -> showTimePicker());
+        buttonAddDate.setOnClickListener(v -> showDatePicker());
 
         buttonSave.setOnClickListener(v -> saveSchedule());
 
@@ -86,46 +87,72 @@ public class ControllerScheduleActivity extends AppCompatActivity {
         loadExistingSchedule();
     }
 
-    private void showTimePicker() {
+    private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
-                (view, selectedHour, selectedMinute) -> {
-                    String time = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
-                    if (!scheduleTimes.contains(time)) {
-                        scheduleTimes.add(time);
-                        addTimeView(time);
+                (view, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+                    Calendar selectedCal = Calendar.getInstance();
+                    selectedCal.set(selectedYear, selectedMonth, selectedDayOfMonth);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    String date = dateFormat.format(selectedCal.getTime());
+                    
+                    if (!scheduleDates.contains(date)) {
+                        scheduleDates.add(date);
+                        Collections.sort(scheduleDates);  // Keep dates sorted
+                        refreshDateViews();
                     } else {
-                        Toast.makeText(this, "This time is already added", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "This date is already added", Toast.LENGTH_SHORT).show();
                     }
                 },
-                hour,
-                minute,
-                true
+                year,
+                month,
+                day
         );
 
-        timePickerDialog.show();
+        datePickerDialog.show();
     }
 
-    private void addTimeView(String time) {
+    private void addDateView(String date) {
         LayoutInflater inflater = LayoutInflater.from(this);
-        View timeView = inflater.inflate(R.layout.item_schedule_time, linearLayoutTimes, false);
+        View dateView = inflater.inflate(R.layout.item_schedule_date, linearLayoutDates, false);
 
-        TextView textViewTime = timeView.findViewById(R.id.textViewTime);
-        textViewTime.setText(time);
+        TextView textViewDate = dateView.findViewById(R.id.textViewDate);
+        // Format date for display (e.g., "Dec 02, 2025")
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat displayFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+            java.util.Date dateObj = inputFormat.parse(date);
+            if (dateObj != null) {
+                textViewDate.setText(displayFormat.format(dateObj));
+            } else {
+                textViewDate.setText(date);
+            }
+        } catch (Exception e) {
+            textViewDate.setText(date);
+        }
 
-        Button buttonRemove = timeView.findViewById(R.id.buttonRemove);
+        Button buttonRemove = dateView.findViewById(R.id.buttonRemove);
         buttonRemove.setOnClickListener(v -> {
-            scheduleTimes.remove(time);
-            linearLayoutTimes.removeView(timeView);
-            timeViews.remove(timeView);
+            scheduleDates.remove(date);
+            linearLayoutDates.removeView(dateView);
+            dateViews.remove(dateView);
         });
 
-        linearLayoutTimes.addView(timeView);
-        timeViews.add(timeView);
+        linearLayoutDates.addView(dateView);
+        dateViews.add(dateView);
+    }
+
+    private void refreshDateViews() {
+        linearLayoutDates.removeAllViews();
+        dateViews.clear();
+        for (String date : scheduleDates) {
+            addDateView(date);
+        }
     }
 
     private void loadExistingSchedule() {
@@ -140,14 +167,11 @@ public class ControllerScheduleActivity extends AppCompatActivity {
                 ChildAccount child = task.getResult().getValue(ChildAccount.class);
                 if (child != null && child.getControllerSchedule() != null) {
                     ControllerSchedule schedule = child.getControllerSchedule();
-                    if (schedule.getTimes() != null) {
-                        scheduleTimes.clear();
-                        scheduleTimes.addAll(schedule.getTimes());
-                        linearLayoutTimes.removeAllViews();
-                        timeViews.clear();
-                        for (String time : scheduleTimes) {
-                            addTimeView(time);
-                        }
+                    if (schedule.getDates() != null && !schedule.getDates().isEmpty()) {
+                        scheduleDates.clear();
+                        scheduleDates.addAll(schedule.getDates());
+                        Collections.sort(scheduleDates);  // Keep dates sorted
+                        refreshDateViews();
                     }
                 }
             }
@@ -155,12 +179,12 @@ public class ControllerScheduleActivity extends AppCompatActivity {
     }
 
     private void saveSchedule() {
-        if (scheduleTimes.isEmpty()) {
-            Toast.makeText(this, "Please add at least one scheduled time", Toast.LENGTH_SHORT).show();
+        if (scheduleDates.isEmpty()) {
+            Toast.makeText(this, "Please add at least one scheduled date", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        ControllerSchedule schedule = new ControllerSchedule(scheduleTimes);
+        ControllerSchedule schedule = new ControllerSchedule(scheduleDates);
 
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")

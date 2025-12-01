@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.providers.AccessInfoActivity;
+import com.example.myapplication.SignIn.SignInView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,8 +23,10 @@ public class ChildInhalerLogs extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inhaler_logs);
+        
         Intent intent = getIntent();
         String ID;
+        
         if(intent.hasExtra("isProvider")){
             findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -32,7 +35,13 @@ public class ChildInhalerLogs extends AppCompatActivity {
                 }
             });
             ID = intent.getStringExtra("ID");
-        }else{
+        } else {
+            if (UserManager.currentUser == null) {
+                Intent signInIntent = new Intent(ChildInhalerLogs.this, SignInView.class);
+                startActivity(signInIntent);
+                finish();
+                return;
+            }
             findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -42,24 +51,7 @@ public class ChildInhalerLogs extends AppCompatActivity {
             ID = UserManager.currentUser.getID();
         }
 
-<<<<<<< Updated upstream
         RescueLogModel.readFromDB(ID, new ResultCallBack<HashMap<String, RescueLog>>() {
-=======
-        if (UserManager.currentUser == null) {
-            Intent intent = new Intent(ChildInhalerLogs.this, SignInView.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
-        
-        findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ChildInhalerLogs.this, ChildInhalerMenu.class));
-            }
-        });
-        RescueLogModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<HashMap<String, RescueLog>>() {
->>>>>>> Stashed changes
             @Override
             public void onComplete(HashMap<String, RescueLog> result) {
                 addRescueLogs(new ArrayList<>(result.values()));
