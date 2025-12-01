@@ -157,13 +157,13 @@
                 app:cornerRadius="5dp" />
 
             <Button
-                android:id="@+id/buttonDeleteChild"
+                android:id="@+id/buttonPEFHistory"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:backgroundTint="#6E8CA0"
-                android:text="Delete Child"
+                android:text="PEF History"
                 android:textColor="#FFFFFF"
                 app:cornerRadius="5dp" />
 
@@ -185,21 +185,11 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/buttonPEFHistory"
+                android:id="@+id/buttonDeleteChild"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:backgroundTint="#6E8CA0"
-                android:text="PEF History"
-                android:textColor="#FFFFFF"
-                app:cornerRadius="5dp" />
-
-            <Button
-                android:id="@+id/buttonPEFHistory2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#6E8CA0"
-                android:text="PEF History"
+                android:text="Delete Child"
                 android:textColor="#FFFFFF"
                 app:cornerRadius="5dp" />
         </LinearLayout>
