@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.userdata.ChildAccount;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,7 +28,7 @@ public class ParentInhalerMenu extends AppCompatActivity {
         ImageView imageViewRescue = findViewById(R.id.imageView26);
         ImageView imageViewController = findViewById(R.id.imageView25);
 
-        InhalerModel.ListenToDatabase(UserManager.currentUser.getID() + "1", true, new ResultCallBack<Inhaler>() {
+        InhalerModel.ListenToDatabase(SignInChildProfileActivity.currentChild.getID() + "1", true, new ResultCallBack<Inhaler>() {
             @Override
             public void onComplete(Inhaler inhaler) {
                 if (inhaler != null) {
@@ -47,7 +47,7 @@ public class ParentInhalerMenu extends AppCompatActivity {
             }
         });
 
-        InhalerModel.ListenToDatabase(UserManager.currentUser.getID() + "0", false, new ResultCallBack<Inhaler>() {
+        InhalerModel.ListenToDatabase(SignInChildProfileActivity.currentChild.getID() + "0", false, new ResultCallBack<Inhaler>() {
             @Override
             public void onComplete(Inhaler inhaler) {
                 if (inhaler != null) {

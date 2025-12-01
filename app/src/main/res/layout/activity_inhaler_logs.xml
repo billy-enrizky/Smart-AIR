@@ -117,15 +117,16 @@
 
     <ImageView
         android:id="@+id/imageView11"
-        android:layout_width="91dp"
-        android:layout_height="84dp"
-        android:background="#FFFFFF"
+        android:layout_width="104dp"
+        android:layout_height="104dp"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.059"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019"
-        app:srcCompat="@drawable/script" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/script"
+        tools:srcCompat="@drawable/log" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
