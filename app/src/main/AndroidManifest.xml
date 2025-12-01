@@ -95,6 +95,9 @@
             android:name=".childmanaging.CreateChildActivity"
             android:exported="false" />
         <activity
+            android:name=".childmanaging.EditNotesActivity"
+            android:exported="false" />
+        <activity
             android:name=".OnBoardingActivity"
             android:exported="false" />
         <activity

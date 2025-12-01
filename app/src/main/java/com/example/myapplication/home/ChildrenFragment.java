@@ -31,6 +31,7 @@ import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.childmanaging.CreateChildActivity;
+import com.example.myapplication.childmanaging.EditNotesActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -71,6 +72,7 @@ public class ChildrenFragment extends Fragment {
     private Button buttonIncidentHistory;
     private Button buttonPEFHistory;
     private Button buttonActionPlan;
+    private Button buttonModifyNotes;
 
     @Nullable
     @Override
@@ -106,6 +108,7 @@ public class ChildrenFragment extends Fragment {
         buttonIncidentHistory = buttonsLayout.findViewById(R.id.buttonIncidentHistory);
         buttonPEFHistory = buttonsLayout.findViewById(R.id.buttonPEFHistory);
         buttonActionPlan = buttonsLayout.findViewById(R.id.buttonActionPlan);
+        buttonModifyNotes = buttonsLayout.findViewById(R.id.buttonModifyNotes);
         
         setupButtons();
         updateButtonsVisibility(false);
@@ -441,6 +444,16 @@ public class ChildrenFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        
+        buttonModifyNotes.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                Intent intent = new Intent(getActivity(), EditNotesActivity.class);
+                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
+                intent.putExtra("childId", selectedChildInfo.child.getID());
+                intent.putExtra("childName", selectedChildInfo.child.getName());
+                startActivity(intent);
+            }
+        });
     }
 
     private void updateButtonsVisibility(boolean visible) {
@@ -453,6 +466,7 @@ public class ChildrenFragment extends Fragment {
         buttonIncidentHistory.setVisibility(visibility);
         buttonPEFHistory.setVisibility(visibility);
         buttonActionPlan.setVisibility(visibility);
+        buttonModifyNotes.setVisibility(visibility);
     }
 
     private void deleteChild(ChildAccount child, int position) {
@@ -531,22 +545,12 @@ public class ChildrenFragment extends Fragment {
             }
             ChildZoneInfo info = children.get(position);
             holder.textViewChildName.setText(info.child.getName());
-            holder.textViewZoneName.setText(info.zone.getDisplayName());
-            holder.textViewZoneName.setTextColor(info.zone.getColorResource());
             
-            if (info.zone != Zone.UNKNOWN) {
-                holder.textViewZonePercentage.setText(String.format(Locale.getDefault(), "%.1f%% of Personal Best", info.percentage));
-                holder.textViewZonePercentage.setVisibility(View.VISIBLE);
+            String notes = info.child.getNotes();
+            if (notes != null && !notes.trim().isEmpty()) {
+                holder.textViewNotes.setText(notes);
             } else {
-                holder.textViewZonePercentage.setText("Personal Best not set or no PEF readings");
-                holder.textViewZonePercentage.setVisibility(View.VISIBLE);
-            }
-            
-            if (info.lastPEFDate != null) {
-                holder.textViewLastPEF.setText("Last PEF: " + info.lastPEFDate);
-                holder.textViewLastPEF.setVisibility(View.VISIBLE);
-            } else {
-                holder.textViewLastPEF.setVisibility(View.GONE);
+                holder.textViewNotes.setText("No notes");
             }
             
             holder.itemView.setOnClickListener(v -> {
@@ -572,17 +576,13 @@ public class ChildrenFragment extends Fragment {
         class ViewHolder extends RecyclerView.ViewHolder {
             CardView cardView;
             TextView textViewChildName;
-            TextView textViewZoneName;
-            TextView textViewZonePercentage;
-            TextView textViewLastPEF;
+            TextView textViewNotes;
 
             ViewHolder(View itemView) {
                 super(itemView);
                 cardView = (CardView) itemView;
                 textViewChildName = itemView.findViewById(R.id.textViewChildName);
-                textViewZoneName = itemView.findViewById(R.id.textViewZoneName);
-                textViewZonePercentage = itemView.findViewById(R.id.textViewZonePercentage);
-                textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
+                textViewNotes = itemView.findViewById(R.id.textViewNotes);
             }
         }
     }

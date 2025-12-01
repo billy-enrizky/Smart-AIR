@@ -104,7 +104,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginEnd="4dp"
                 android:text="Action Plan"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/buttonModifyNotes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Modify Notes"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
