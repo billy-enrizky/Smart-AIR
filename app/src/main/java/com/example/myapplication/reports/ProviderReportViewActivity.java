@@ -32,10 +32,13 @@ public class ProviderReportViewActivity extends AppCompatActivity {
     private static final String TAG = "ProviderReportView";
 
     private String pdfFilePath;
+    private String providerPdfPath;
+    private String reportType;
     private PdfRenderer pdfRenderer;
     private ParcelFileDescriptor fileDescriptor;
     private LinearLayout pdfPagesContainer;
     private Button buttonSavePDF;
+    private Button buttonSwitchPDF;
     private TextView textViewTitle;
 
     @Override
@@ -50,6 +53,8 @@ public class ProviderReportViewActivity extends AppCompatActivity {
         });
 
         pdfFilePath = getIntent().getStringExtra("pdfFilePath");
+        providerPdfPath = getIntent().getStringExtra("providerPdfPath");
+        reportType = getIntent().getStringExtra("reportType");
         String childName = getIntent().getStringExtra("childName");
 
         if (pdfFilePath == null) {
@@ -67,14 +72,74 @@ public class ProviderReportViewActivity extends AppCompatActivity {
         Button buttonBack = findViewById(R.id.buttonBack);
         pdfPagesContainer = findViewById(R.id.pdfPagesContainer);
         buttonSavePDF = findViewById(R.id.buttonSavePDF);
+        buttonSwitchPDF = findViewById(R.id.buttonSwitchPDF);
         textViewTitle = findViewById(R.id.textViewTitle);
 
         if (childName != null) {
-            textViewTitle.setText("Provider Report: " + childName);
+            updateTitle(childName);
         }
 
         buttonBack.setOnClickListener(v -> finish());
         buttonSavePDF.setOnClickListener(v -> savePDF());
+
+        if (providerPdfPath != null && reportType != null) {
+            buttonSwitchPDF.setVisibility(View.VISIBLE);
+            if (reportType.equals("parent")) {
+                buttonSwitchPDF.setText("Switch to Provider PDF");
+            } else {
+                buttonSwitchPDF.setText("Switch to Parent PDF");
+            }
+            buttonSwitchPDF.setOnClickListener(v -> switchPDF(childName));
+        } else {
+            buttonSwitchPDF.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateTitle(String childName) {
+        if (reportType != null && reportType.equals("parent")) {
+            textViewTitle.setText("Parent Report: " + childName);
+        } else {
+            textViewTitle.setText("Provider Report: " + childName);
+        }
+    }
+
+    private void switchPDF(String childName) {
+        if (providerPdfPath == null) {
+            return;
+        }
+
+        closeCurrentPDF();
+
+        String temp = pdfFilePath;
+        pdfFilePath = providerPdfPath;
+        providerPdfPath = temp;
+
+        if (reportType != null && reportType.equals("parent")) {
+            reportType = "provider";
+            buttonSwitchPDF.setText("Switch to Parent PDF");
+        } else {
+            reportType = "parent";
+            buttonSwitchPDF.setText("Switch to Provider PDF");
+        }
+
+        updateTitle(childName);
+        pdfPagesContainer.removeAllViews();
+        displayPDF();
+    }
+
+    private void closeCurrentPDF() {
+        if (pdfRenderer != null) {
+            pdfRenderer.close();
+            pdfRenderer = null;
+        }
+        if (fileDescriptor != null) {
+            try {
+                fileDescriptor.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Error closing file descriptor", e);
+            }
+            fileDescriptor = null;
+        }
     }
 
     private void displayPDF() {
@@ -158,16 +223,7 @@ public class ProviderReportViewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (pdfRenderer != null) {
-            pdfRenderer.close();
-        }
-        if (fileDescriptor != null) {
-            try {
-                fileDescriptor.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Error closing file descriptor", e);
-            }
-        }
+        closeCurrentPDF();
     }
 }
 
