@@ -32,6 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import android.graphics.Color;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -66,7 +68,8 @@ public class ChildInhalerMenu extends AppCompatActivity {
         streakButton.setEnabled(false);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            // Only apply horizontal padding, not vertical to avoid white space at top/bottom
+            v.setPadding(systemBars.left, 0, systemBars.right, 0);
             return insets;
         });
         AchievementsModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<Achievement>() {
@@ -288,7 +291,7 @@ public class ChildInhalerMenu extends AppCompatActivity {
                     textViewZoneName.setText("Zone Not Available");
                     textViewZonePercentage.setText("Personal Best not set");
                     textViewLastPEF.setText("");
-                    cardViewZone.setCardBackgroundColor(Zone.UNKNOWN.getColorResource());
+                    cardViewZone.setCardBackgroundColor(getZoneColor(Zone.UNKNOWN));
                 }
             });
             return;
@@ -316,7 +319,7 @@ public class ChildInhalerMenu extends AppCompatActivity {
                         String dateStr = sdf.format(new Date(finalReading.getTimestamp()));
                         textViewLastPEF.setText("Last PEF: " + dateStr);
 
-                        cardViewZone.setCardBackgroundColor(zone.getColorResource());
+                        cardViewZone.setCardBackgroundColor(getZoneColor(zone));
                     }
                 });
             } else {
@@ -339,6 +342,20 @@ public class ChildInhalerMenu extends AppCompatActivity {
         textViewZoneName.setText("Zone Not Available");
         textViewZonePercentage.setText("No PEF readings yet");
         textViewLastPEF.setText("");
-        cardViewZone.setCardBackgroundColor(Zone.UNKNOWN.getColorResource());
+        cardViewZone.setCardBackgroundColor(getZoneColor(Zone.UNKNOWN));
+    }
+
+    private int getZoneColor(Zone zone) {
+        switch (zone) {
+            case GREEN:
+                return Color.parseColor("#4CAF50"); // Material Green
+            case YELLOW:
+                return Color.parseColor("#FFC107"); // Material Amber
+            case RED:
+                return Color.parseColor("#F44336"); // Material Red
+            case UNKNOWN:
+            default:
+                return Color.parseColor("#9E9E9E"); // Material Grey
+        }
     }
 }

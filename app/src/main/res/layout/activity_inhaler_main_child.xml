@@ -1,64 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/main">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5"
-        android:scaleType="fitXY"
         app:srcCompat="@drawable/activity_r3_template" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewZone"
-        android:layout_width="0dp"
+        android:layout_width="261dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="85dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="12dp">
 
             <TextView
                 android:id="@+id/textViewZoneName"
-                android:layout_width="wrap_content"
+                android:layout_width="208dp"
                 android:layout_height="wrap_content"
                 android:text="Zone Not Available"
-                android:textSize="24sp"
+                android:textColor="#FFFFFF"
+                android:textSize="21sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textViewZonePercentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:text=""
-                android:textSize="16sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/textViewLastPEF"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:text=""
-                android:textSize="14sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -246,7 +247,9 @@
         android:id="@+id/emergencyButton"
         android:layout_width="279dp"
         android:layout_height="136dp"
+        android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="#FF3333"
         android:fontFamily="@font/happy_monkey"
         android:gravity="bottom|center_horizontal"
@@ -260,10 +263,8 @@
         app:cornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.66"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.978" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/signOutButton"
@@ -302,17 +303,19 @@
         android:id="@+id/textView44"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/happy_monkey"
         android:text="Current Zone Status"
         android:textColor="#006157"
         android:textSize="30dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/imageView3"
+        app:layout_constraintBottom_toTopOf="@+id/cardViewZone"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.103" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView29"
@@ -419,5 +422,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.057"
         app:srcCompat="@drawable/exit" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
