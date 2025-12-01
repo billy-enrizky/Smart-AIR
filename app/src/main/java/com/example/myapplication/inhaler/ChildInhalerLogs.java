@@ -23,10 +23,10 @@ public class ChildInhalerLogs extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inhaler_logs);
-        
+
         Intent intent = getIntent();
         String ID;
-        
+
         if(intent.hasExtra("isProvider")){
             findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
                 @Override
