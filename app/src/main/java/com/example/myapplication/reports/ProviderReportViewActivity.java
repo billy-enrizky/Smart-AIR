@@ -64,6 +64,7 @@ public class ProviderReportViewActivity extends AppCompatActivity {
     }
 
     private void initializeViews(String childName) {
+        Button buttonBack = findViewById(R.id.buttonBack);
         pdfPagesContainer = findViewById(R.id.pdfPagesContainer);
         buttonSavePDF = findViewById(R.id.buttonSavePDF);
         textViewTitle = findViewById(R.id.textViewTitle);
@@ -72,6 +73,7 @@ public class ProviderReportViewActivity extends AppCompatActivity {
             textViewTitle.setText("Provider Report: " + childName);
         }
 
+        buttonBack.setOnClickListener(v -> finish());
         buttonSavePDF.setOnClickListener(v -> savePDF());
     }
 
