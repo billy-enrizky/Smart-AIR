@@ -28,7 +28,6 @@ public class ChildInhalerDailyStreak extends AppCompatActivity {
         badge3 = findViewById(R.id.badge3);
         donebutton = findViewById(R.id.donebutton);
         badgeinfo = findViewById(R.id.badgeinfo);
-
         AchievementsModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<Achievement>() {
             @Override
             public void onComplete(Achievement achievement) {
@@ -37,13 +36,13 @@ public class ChildInhalerDailyStreak extends AppCompatActivity {
                     Toast.makeText(ChildInhalerDailyStreak.this,"Somehow no achievement.",Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(ChildInhalerDailyStreak.this, ChildInhalerMenu.class));}
                 else {
-                    if (achievement.badges[0])
+                    if (achievement.badges.get(0))
                         badge1.setImageResource(R.drawable.badge1);
-                    if (achievement.badges[1])
-                        badge1.setImageResource(R.drawable.badge2);
-                    if (achievement.badges[2])
-                        badge1.setImageResource(R.drawable.badge3);
-                    streak.setText(achievement.getCurrentStreak());
+                    if (achievement.badges.get(1))
+                        badge2.setImageResource(R.drawable.badge2);
+                    if (achievement.badges.get(2))
+                        badge3.setImageResource(R.drawable.badge3);
+                    streak.setText(String.valueOf(achievement.getCurrentStreak()));
                 }
             }
         });

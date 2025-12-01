@@ -10,6 +10,7 @@ import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
 import com.example.myapplication.userdata.UserData;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -79,6 +80,7 @@ public class SignInModel {
         });
     }
     void usernameExists(String username, ResultCallBack<String> callBack){
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
         mDatabase.child("users").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -90,7 +92,7 @@ public class SignInModel {
                     Boolean exists = false;
                     for(DataSnapshot userSnapshot: Snapshot.getChildren()){
                         String accountType = userSnapshot.child("account").getValue(String.class);
-                        if("PARENT".equals(accountType) && userSnapshot.child("children").hasChild(username)){
+                        if("PARENT".equals(accountType) && userSnapshot.child("children").hasChild(encodedUsername)){
                             if(callBack != null){
                                 callBack.onComplete(userSnapshot.getKey());
                                 exists = true;
@@ -109,7 +111,8 @@ public class SignInModel {
     }
 
     void QueryDBforChildren(String ParentID, String username, ResultCallBack<UserData> callBack){
-        mDatabase.child("users").child(ParentID).child("children").child(username).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        mDatabase.child("users").child(ParentID).child("children").child(encodedUsername).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {

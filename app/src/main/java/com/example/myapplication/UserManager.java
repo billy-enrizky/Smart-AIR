@@ -11,6 +11,7 @@ import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.userdata.ProviderAccount;
 import com.example.myapplication.userdata.UserData;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -99,7 +100,8 @@ public class UserManager {
 
     public static void ChildUserListener(String parent_id, String username) {
         if (userListener != null) return;
-        userListener = mDatabase.child("users").child(parent_id).child("children").child(username).addValueEventListener(new ValueEventListener() {
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        userListener = mDatabase.child("users").child(parent_id).child("children").child(encodedUsername).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 currentUser = snapshot.getValue(ChildAccount.class);
@@ -114,7 +116,8 @@ public class UserManager {
 
     public static void stopChildUserListener(String parent_id, String username) {
         if (userListener != null) {
-            mDatabase.child("users").child(parent_id).child("children").child(username).removeEventListener(userListener);
+            String encodedUsername = FirebaseKeyEncoder.encode(username);
+            mDatabase.child("users").child(parent_id).child("children").child(encodedUsername).removeEventListener(userListener);
             userListener = null;
         }
     }

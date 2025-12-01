@@ -79,6 +79,7 @@ public class ChildActivity extends AppCompatActivity {
         buttonIncidentHistory = findViewById(R.id.buttonIncidentHistory);
         buttonTriage = findViewById(R.id.buttonTriage);
 
+
         pefEntryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -126,6 +127,17 @@ public class ChildActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ChildActivity.this, TriageActivity.class);
+                intent.putExtra("childId", childAccount.getID());
+                intent.putExtra("parentId", childAccount.getParent_id());
+                startActivity(intent);
+            }
+        });
+
+        //DEBUG
+        findViewById(R.id.debugButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChildActivity.this, ChildInhalerMenu.class);
                 intent.putExtra("childId", childAccount.getID());
                 intent.putExtra("parentId", childAccount.getParent_id());
                 startActivity(intent);

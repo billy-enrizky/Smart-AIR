@@ -28,7 +28,6 @@ public class ChildInhalerUse extends AppCompatActivity {
         rescue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(ChildInhalerUse.this, ChildInhalerUseRescue.class);
                 startActivity(intent);
             }
@@ -37,7 +36,6 @@ public class ChildInhalerUse extends AppCompatActivity {
         controller.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(ChildInhalerUse.this, ChildInhalerUseController.class);
                 startActivity(intent);
             }

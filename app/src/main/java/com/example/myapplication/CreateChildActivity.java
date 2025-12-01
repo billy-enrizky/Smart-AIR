@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -92,12 +93,13 @@ public class CreateChildActivity extends AppCompatActivity {
 
         // check to see if username taken
         //boolean usernameTaken = false;
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
-                    if (userSnapshot.child("account").getValue().equals("PARENT") && userSnapshot.child("children").hasChild(username)) {
+                    if (userSnapshot.child("account").getValue().equals("PARENT") && userSnapshot.child("children").hasChild(encodedUsername)) {
                         Toast.makeText(CreateChildActivity.this, "Username already in use", Toast.LENGTH_SHORT).show();
                         return;
                     }
