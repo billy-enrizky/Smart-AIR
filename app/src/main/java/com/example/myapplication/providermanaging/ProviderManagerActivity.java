@@ -21,7 +21,7 @@ import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.providermanaging.InvitationCreateActivity;
 
-public class AccessPermissionActivity extends AppCompatActivity {
+public class ProviderManagerActivity extends AppCompatActivity {
     ParentAccount user;
     LinearLayout container;
     ChildAccount currentChild;
@@ -41,7 +41,7 @@ public class AccessPermissionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_access_permission);
+        setContentView(R.layout.activity_provider_manager);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -130,11 +130,12 @@ public class AccessPermissionActivity extends AppCompatActivity {
             currentChild.WriteIntoDatabase(new com.example.myapplication.CallBack() {
                 @Override
                 public void onComplete() {
-                    Toast.makeText(AccessPermissionActivity.this, 
-                            "Access permissions modified for " + currentChild.getName(), 
+                    Toast.makeText(ProviderManagerActivity.this, 
+                            "Provider permissions modified for " + currentChild.getName(), 
                             Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
 }
+

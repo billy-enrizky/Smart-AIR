@@ -21,7 +21,7 @@
             android:name=".providers.AccessInfoActivity"
             android:exported="false" />
         <activity
-            android:name=".providermanaging.AccessPermissionActivity"
+            android:name=".providermanaging.ProviderManagerActivity"
             android:exported="false" />
         <activity
             android:name=".childmanaging.ScrollingActivity"
