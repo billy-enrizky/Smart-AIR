@@ -45,6 +45,45 @@
             android:name=".ParentActivity"
             android:exported="false" />
         <activity
+            android:name=".ChildInhalerInstructions"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerMenu"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerLogs"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerBadge"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerDailyStreak"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUse"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseReady"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseAfter"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseRescue"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseController"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerVideo"
+            android:exported="false" />
+        <activity
+            android:name=".ParentInhalerCreate"
+            android:exported="false" />
+        <activity
+            android:name=".ParentInhalerMenu"
+            android:exported="false" />
+        <activity
             android:name=".childmanaging.CreateChildActivity"
             android:exported="false" />
         <activity
@@ -83,30 +122,6 @@
             android:name=".SignInActivity"
             android:exported="true" />
         <activity
-            android:name=".ChildInhalerInstructions"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerMenu"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerLogs"
-            android:exported="false" />
-        <activity
-            android:name=".ChildInhalerDailyStreak"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerUse"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerUseRescue"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerUseController"
-            android:exported="true" />
-        <activity
-            android:name=".ChildInhalerVideo"
-            android:exported="true" />
-        <activity
             android:name=".notifications.NotificationActivity"
             android:exported="true" />
         <activity
@@ -115,6 +130,9 @@
         <activity
             android:name=".reports.ProviderReportGeneratorActivity"
             android:exported="true" />
+        <activity
+            android:name=".reports.ProviderReportViewActivity"
+            android:exported="false" />
         <activity
             android:name=".safety.PEFEntryActivity"
             android:exported="false" />

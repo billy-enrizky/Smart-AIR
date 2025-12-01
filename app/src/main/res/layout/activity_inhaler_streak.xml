@@ -25,7 +25,7 @@
         android:layout_height="68dp"
         android:backgroundTint="#ED8100"
         android:fontFamily="@font/happy_monkey"
-        android:text="Cool!"
+        android:text="Done"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="40dp"

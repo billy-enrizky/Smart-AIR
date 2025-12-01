@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,20 +31,20 @@ public class ParentBadge extends AppCompatActivity {
                     AchievementsModel.writeIntoDB(a, new CallBack() {
                         @Override
                         public void onComplete() {
-                            req1.setText(a.getBadgeRequirements()[0]);
-                            req2.setText(a.getBadgeRequirements()[1]);
-                            req3.setText(a.getBadgeRequirements()[2]);
-                            req4.setText(a.getBadgeRequirements()[3]);
-                            req5.setText(a.getBadgeRequirements()[4]);
+                            req1.setText(a.getBadgeRequirements().get(0));
+                            req2.setText(a.getBadgeRequirements().get(1));
+                            req3.setText(a.getBadgeRequirements().get(2));
+                            req4.setText(a.getBadgeRequirements().get(3));
+                            req5.setText(a.getBadgeRequirements().get(4));
                         }
                     });
                 }
                 else {
-                    req1.setText(achievement.getBadgeRequirements()[0]);
-                    req2.setText(achievement.getBadgeRequirements()[1]);
-                    req3.setText(achievement.getBadgeRequirements()[2]);
-                    req4.setText(achievement.getBadgeRequirements()[3]);
-                    req5.setText(achievement.getBadgeRequirements()[4]);
+                    req1.setText(achievement.getBadgeRequirements().get(0));
+                    req2.setText(achievement.getBadgeRequirements().get(1));
+                    req3.setText(achievement.getBadgeRequirements().get(2));
+                    req4.setText(achievement.getBadgeRequirements().get(3));
+                    req5.setText(achievement.getBadgeRequirements().get(4));
                 }
             }
         });
@@ -69,7 +70,13 @@ public class ParentBadge extends AppCompatActivity {
 
                         if (achievement == null) {Toast.makeText(ParentBadge.this,"Somehow no achievement.",Toast.LENGTH_SHORT).show();}
                         else {
-                            achievement.setBadgeRequirements(new int[]{Integer.parseInt(r1),Integer.parseInt(r2),Integer.parseInt(r3),Integer.parseInt(r4),Integer.parseInt(r5)});
+                            ArrayList<Integer> temp = new ArrayList<Integer>();
+                            temp.add(Integer.parseInt(r1));
+                            temp.add(Integer.parseInt(r2));
+                            temp.add(Integer.parseInt(r3));
+                            temp.add(Integer.parseInt(r4));
+                            temp.add(Integer.parseInt(r5));
+                            achievement.setBadgeRequirements(temp);
                             AchievementsModel.writeIntoDB(achievement, new CallBack() {
                                 @Override
                                 public void onComplete() {

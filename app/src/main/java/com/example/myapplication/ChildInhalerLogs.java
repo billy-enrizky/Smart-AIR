@@ -66,11 +66,11 @@ public class ChildInhalerLogs extends AppCompatActivity {
             TextView title = new TextView(this);
             TextView content = new TextView(this);
             title.setText(log.getDate());
-            title.setTextSize(TypedValue.COMPLEX_UNIT_DIP,18);
+            title.setTextSize(TypedValue.COMPLEX_UNIT_DIP,15);
             title.setTextColor(0xFF000000);
             logItem.addView(title);
             content.setText(log.getInfo());
-            content.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14);
+            content.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12);
             content.setTextColor(0xFF000000);
             logItem.addView(content);
             ((LinearLayout)findViewById(R.id.linearlayout1)).addView(logItem);

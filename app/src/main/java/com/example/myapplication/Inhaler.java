@@ -22,10 +22,7 @@ public class Inhaler {
     public Inhaler(){}
 
     public Inhaler(String username, long datePurchased, long dateExpiry, int maxcapacity, int spraycount, boolean isRescue){
-        if (isRescue)
-            this.username = username+"1";
-        else
-            this.username = username+"0";
+        this.username = username;
         this.isRescue = isRescue;
         this.datePurchased = datePurchased;
         this.dateExpiry = dateExpiry;

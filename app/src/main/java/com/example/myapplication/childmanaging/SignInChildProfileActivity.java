@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.ParentActivity;
+import com.example.myapplication.ParentInhalerMenu;
 import com.example.myapplication.R;
 import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.UserManager;
@@ -29,7 +30,7 @@ import com.example.myapplication.userdata.ParentAccount;
 public class SignInChildProfileActivity extends AppCompatActivity {
     ParentAccount user;
     LinearLayout container;
-    static ChildAccount currentChild;
+    public static ChildAccount currentChild;
     TextView textView23;
     EditText editTextText2;
     @Override
@@ -48,6 +49,14 @@ public class SignInChildProfileActivity extends AppCompatActivity {
         textView23 = findViewById(R.id.textView23);
         editTextText2 = findViewById(R.id.editTextText2);
         currentChild = null;
+        //DEBUG
+        findViewById(R.id.debugButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignInChildProfileActivity.this, ParentInhalerMenu.class);
+                startActivity(intent);
+            }
+        });
         for(ChildAccount child : user.getChildren().values()){
             addChildToUI(child);
         }

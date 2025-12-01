@@ -32,10 +32,10 @@ public class ChildInhalerInstructions extends AppCompatActivity {
                     @Override
                     public void onComplete(Achievement achievement) {
                         if (achievement == null) {Toast.makeText(ChildInhalerInstructions.this, "Warning: Achievement Error.", Toast.LENGTH_SHORT).show();}
-                        else if (!achievement.badges[1]){
+                        else if (!achievement.badges.get(1)){
                             achievement.updateStreakTechnique();
                             if (achievement.checkBadge2()) {Toast.makeText(ChildInhalerInstructions.this, "You've earned a new badge!", Toast.LENGTH_SHORT).show();
-                                achievement.badges[1] = true;}
+                                achievement.badges.set(1, true);}
                             AchievementsModel.writeIntoDB(achievement, new CallBack() {
                                 @Override
                                 public void onComplete() {

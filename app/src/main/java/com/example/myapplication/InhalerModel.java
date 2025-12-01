@@ -19,8 +19,10 @@ public class InhalerModel {
     //Modify if inhaler.InhalerID is not null and not equals ""
 
     public static void writeIntoDB(com.example.myapplication.Inhaler inhaler, CallBack callback){
+        // inhaler.username already has "1" or "0" suffix appended by Inhaler constructor
+        // so we use it directly without appending again
         String username = inhaler.username;
-        DatabaseReference Ref = UserManager.mDatabase.child("InhalerManager").child(username + (inhaler.isRescue?"_1":"_0")).getRef();
+        DatabaseReference Ref = UserManager.mDatabase.child("InhalerManager").child(username).getRef();
         Ref.setValue(inhaler).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(Task<Void> task) {
