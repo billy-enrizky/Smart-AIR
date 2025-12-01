@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.safety.PEFHistoryActivity;
+import com.example.myapplication.safety.IncidentHistoryActivity;
 import com.example.myapplication.safety.PEFReading;
 import com.example.myapplication.safety.RescueUsage;
 import com.example.myapplication.safety.SetPersonalBestActivity;
@@ -851,6 +852,14 @@ public class ParentActivity extends AppCompatActivity {
                 startActivity(intent);
             });
             
+            holder.buttonIncidentHistory.setOnClickListener(v -> {
+                Intent intent = new Intent(ParentActivity.this, IncidentHistoryActivity.class);
+                intent.putExtra("parentId", info.child.getParent_id());
+                intent.putExtra("childId", info.child.getID());
+                intent.putExtra("childName", info.child.getName());
+                startActivity(intent);
+            });
+            
             holder.buttonDeleteChild.setOnClickListener(v -> {
                 deleteChild(info.child, position);
             });
@@ -871,6 +880,7 @@ public class ParentActivity extends AppCompatActivity {
             Button buttonControllerSchedule;
             Button buttonDeleteChild;
             Button buttonSetPersonalBest;
+            Button buttonIncidentHistory;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -883,6 +893,7 @@ public class ParentActivity extends AppCompatActivity {
                 buttonControllerSchedule = itemView.findViewById(R.id.buttonControllerSchedule);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
                 buttonSetPersonalBest = itemView.findViewById(R.id.buttonSetPersonalBest);
+                buttonIncidentHistory = itemView.findViewById(R.id.buttonIncidentHistory);
     }
         }
     }
