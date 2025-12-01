@@ -9,6 +9,8 @@ public class DashboardStats {
     private Long lastRescueTime;
     private int weeklyRescueCount;
     private String lastRescueTimeFormatted;
+    private int dailyRescueCount;
+    private int dailySymptomsCount;
 
     public DashboardStats() {
     }
@@ -20,6 +22,8 @@ public class DashboardStats {
         this.lastRescueTime = null;
         this.weeklyRescueCount = 0;
         this.lastRescueTimeFormatted = "Never";
+        this.dailyRescueCount = 0;
+        this.dailySymptomsCount = 0;
     }
 
     public String getChildId() {
@@ -68,6 +72,22 @@ public class DashboardStats {
 
     public void setLastRescueTimeFormatted(String lastRescueTimeFormatted) {
         this.lastRescueTimeFormatted = lastRescueTimeFormatted;
+    }
+
+    public int getDailyRescueCount() {
+        return dailyRescueCount;
+    }
+
+    public void setDailyRescueCount(int dailyRescueCount) {
+        this.dailyRescueCount = dailyRescueCount;
+    }
+
+    public int getDailySymptomsCount() {
+        return dailySymptomsCount;
+    }
+
+    public void setDailySymptomsCount(int dailySymptomsCount) {
+        this.dailySymptomsCount = dailySymptomsCount;
     }
 }
 
