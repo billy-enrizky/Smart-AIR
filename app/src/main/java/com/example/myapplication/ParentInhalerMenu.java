@@ -27,8 +27,7 @@ public class ParentInhalerMenu extends AppCompatActivity {
         TextView controllertitle = findViewById(R.id.textView35);
         ImageView imageViewRescue = findViewById(R.id.imageView26);
         ImageView imageViewController = findViewById(R.id.imageView25);
-
-        InhalerModel.ListenToDatabase(SignInChildProfileActivity.currentChild.getID() + "1", true, new ResultCallBack<Inhaler>() {
+        InhalerModel.ListenToDatabase(SignInChildProfileActivity.currentChild.getID(), true, new ResultCallBack<Inhaler>() {
             @Override
             public void onComplete(Inhaler inhaler) {
                 if (inhaler != null) {
@@ -47,7 +46,7 @@ public class ParentInhalerMenu extends AppCompatActivity {
             }
         });
 
-        InhalerModel.ListenToDatabase(SignInChildProfileActivity.currentChild.getID() + "0", false, new ResultCallBack<Inhaler>() {
+        InhalerModel.ListenToDatabase(SignInChildProfileActivity.currentChild.getID(), false, new ResultCallBack<Inhaler>() {
             @Override
             public void onComplete(Inhaler inhaler) {
                 if (inhaler != null) {
