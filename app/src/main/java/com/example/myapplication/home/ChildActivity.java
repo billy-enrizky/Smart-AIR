@@ -1,6 +1,6 @@
 package com.example.myapplication;
 
-import android.content.Intent;
+import  android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +43,7 @@ public class ChildActivity extends AppCompatActivity {
     private TextView textViewLastPEF;
     private CardView cardViewZone;
     private Button buttonEnterPEF;
-    private Button buttonViewPEFHistory;
+    private Button buttonViewLogHistory;
     private Button buttonTriage;
     
     private ChildAccount childAccount;
@@ -79,7 +79,7 @@ public class ChildActivity extends AppCompatActivity {
         textViewLastPEF = findViewById(R.id.textViewLastPEF);
         cardViewZone = findViewById(R.id.cardViewZone);
         buttonEnterPEF = findViewById(R.id.buttonEnterPEF);
-        buttonViewPEFHistory = findViewById(R.id.buttonViewPEFHistory);
+        buttonViewLogHistory = findViewById(R.id.buttonViewLogHistory);
         buttonTriage = findViewById(R.id.buttonTriage);
 
 
@@ -102,10 +102,10 @@ public class ChildActivity extends AppCompatActivity {
             }
         });
 
-        buttonViewPEFHistory.setOnClickListener(new View.OnClickListener() {
+        buttonViewLogHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ChildActivity.this, PEFHistoryActivity.class);
+                Intent intent = new Intent(ChildActivity.this, com.example.myapplication.LogHistoryActivity.class);
                 intent.putExtra("childId", childAccount.getID());
                 intent.putExtra("parentId", childAccount.getParent_id());
                 startActivity(intent);

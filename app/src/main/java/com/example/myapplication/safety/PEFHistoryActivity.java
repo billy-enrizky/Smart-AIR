@@ -88,7 +88,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
             }
         });
         
-        buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
+x        buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PEFHistoryActivity.this, PEFEntryActivity.class);

@@ -83,6 +83,9 @@
             android:name=".ChildInhalerVideo"
             android:exported="false" />
         <activity
+            android:name=".LogHistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".ParentInhalerCreate"
             android:exported="false" />
         <activity
