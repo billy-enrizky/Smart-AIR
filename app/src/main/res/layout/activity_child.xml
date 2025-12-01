@@ -97,11 +97,11 @@
         app:layout_constraintTop_toBottomOf="@+id/cardViewZone" />
 
     <Button
-        android:id="@+id/buttonViewPEFHistory"
+        android:id="@+id/buttonViewLogHistory"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="View PEF History"
+        android:text="View Log History"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonEnterPEF" />
@@ -118,7 +118,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonViewPEFHistory" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonViewLogHistory" />
 
     <Button
         android:id="@+id/debugButton"
