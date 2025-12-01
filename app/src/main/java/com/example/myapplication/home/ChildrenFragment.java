@@ -30,6 +30,7 @@ import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.childmanaging.CreateChildActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,6 +62,7 @@ public class ChildrenFragment extends Fragment {
     private ChildZoneInfo selectedChildInfo;
     private View buttonsLayout;
     private TextView textViewCurrentChild;
+    private Button buttonNewChild;
     private Button buttonTrendSnippet;
     private Button buttonGenerateReport;
     private Button buttonDeleteChild;
@@ -87,6 +89,12 @@ public class ChildrenFragment extends Fragment {
         adapter = new SimpleChildAdapter(childrenZoneInfo, this::onChildSelected);
         recyclerViewChildren.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerViewChildren.setAdapter(adapter);
+        
+        buttonNewChild = view.findViewById(R.id.buttonNewChild);
+        buttonNewChild.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CreateChildActivity.class);
+            startActivity(intent);
+        });
         
         buttonsLayout = view.findViewById(R.id.layoutChildButtons);
         textViewCurrentChild = buttonsLayout.findViewById(R.id.textViewCurrentChild);
