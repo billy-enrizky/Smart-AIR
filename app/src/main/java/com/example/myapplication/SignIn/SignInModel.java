@@ -77,6 +77,14 @@ public class SignInModel implements ISignInModel {
                     DataSnapshot snapshot = task.getResult();
                     AccountType type = snapshot.child("account").getValue(AccountType.class);
 
+                    if (type == null) {
+                        Log.e("firebase", "Missing or invalid account type for ID: " + ID);
+                        if (callBack != null) {
+                            callBack.onComplete(null);
+                        }
+                        return;
+                    }
+
                     UserData data;
                     if (type == AccountType.PARENT) {
                         data = snapshot.getValue(ParentAccount.class);

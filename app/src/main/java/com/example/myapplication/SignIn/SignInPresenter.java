@@ -7,6 +7,16 @@ import com.example.myapplication.userdata.UserData;
 
 public class SignInPresenter {
 
+    private static final String MSG_USER_NOT_FOUND = "User Not Found";
+    private static final String MSG_WELCOME = "Welcome!";
+    private static final String MSG_INPUT_EMPTY = "input cannot be empty";
+    
+    private static final java.util.regex.Pattern EMAIL_PATTERN = 
+        java.util.regex.Pattern.compile(
+            "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+            java.util.regex.Pattern.CASE_INSENSITIVE
+        );
+
     private ISignInView view;
     private ISignInModel model;
 
@@ -26,7 +36,7 @@ public class SignInPresenter {
 
     public void signin(String input1, String input2) {
         if (isNull(input1) || isNull(input2)) {
-            view.showShortMessage("input cannot be empty");
+            view.showShortMessage(MSG_INPUT_EMPTY);
             return;
         }
         String password = input2.trim();
@@ -42,36 +52,22 @@ public class SignInPresenter {
     public void signInForParentAndProvider(String email, String password) {
         model.SignInAuth(email, password, result -> {
             if (result) {
-                view.showShortMessage("Welcome!");
+                view.showShortMessage(MSG_WELCOME);
                 String ID = model.GetCurrentUIDAuth();
                 if (ID != null) {
                     model.QueryDBforNonChildren(ID, resultUser -> {
                         if (resultUser != null) {
-                            try {
-                                UserManager.currentUser = resultUser;
-                                if (UserManager.currentUser.getFirstTime()) {
-                                    view.GoToOnBoardingActivity();
-                                } else {
-                                    view.GoToMainActivity();
-                                }
-                            } catch (ExceptionInInitializerError | NoClassDefFoundError e) {
-                                // Handle case where UserManager static initialization fails
-                                // In tests, we can still verify the flow without UserManager
-                                if (resultUser.getFirstTime()) {
-                                    view.GoToOnBoardingActivity();
-                                } else {
-                                    view.GoToMainActivity();
-                                }
-                            }
+                            setCurrentUserSafely(resultUser);
+                            navigateBasedOnFirstTime(resultUser);
                         } else {
-                            view.showShortMessage("User Not Found");
+                            view.showShortMessage(MSG_USER_NOT_FOUND);
                         }
                     });
                 } else {
-                    view.showShortMessage("User Not Found");
+                    view.showShortMessage(MSG_USER_NOT_FOUND);
                 }
             } else {
-                view.showShortMessage("User Not Found");
+                view.showShortMessage(MSG_USER_NOT_FOUND);
             }
         });
     }
@@ -79,37 +75,22 @@ public class SignInPresenter {
     public void signInForChild(String username, String password) {
         model.usernameExists(username, result -> {
             if (result == null || result.equals("")) {
-                view.showShortMessage("User Not Found");
+                view.showShortMessage(MSG_USER_NOT_FOUND);
             } else {
                 String parentID = result;
                 model.QueryDBforChildren(parentID, username, childResult -> {
                     if (childResult == null) {
-                        view.showShortMessage("User Not Found");
+                        view.showShortMessage(MSG_USER_NOT_FOUND);
                         return;
                     }
                     ChildAccount child = (ChildAccount) childResult;
                     if (child.getPassword() == null || !child.getPassword().equals(password)) {
-                        view.showShortMessage("User Not Found");
+                        view.showShortMessage(MSG_USER_NOT_FOUND);
                         return;
                     }
-                    try {
-                        UserManager.currentUser = childResult;
-                        view.showShortMessage("Welcome!");
-                        if (UserManager.currentUser.getFirstTime()) {
-                            view.GoToOnBoardingActivity();
-                        } else {
-                            view.GoToMainActivity();
-                        }
-                    } catch (ExceptionInInitializerError | NoClassDefFoundError e) {
-                        // Handle case where UserManager static initialization fails
-                        // In tests, we can still verify the flow without UserManager
-                        view.showShortMessage("Welcome!");
-                        if (childResult.getFirstTime()) {
-                            view.GoToOnBoardingActivity();
-                        } else {
-                            view.GoToMainActivity();
-                        }
-                    }
+                    setCurrentUserSafely(childResult);
+                    view.showShortMessage(MSG_WELCOME);
+                    navigateBasedOnFirstTime(childResult);
                 });
             }
         });
@@ -119,12 +100,27 @@ public class SignInPresenter {
         if (input == null || input.isEmpty()) {
             return false;
         }
-        // Simple email validation without Android Patterns
-        return input.contains("@") && input.contains(".") && input.indexOf("@") > 0 
-                && input.indexOf("@") < input.lastIndexOf(".");
+        // Using Java regex for robust email validation without Android dependencies
+        return EMAIL_PATTERN.matcher(input).matches();
     }
 
     public Boolean isNull(String input) {
         return (input == null || input.equals(""));
+    }
+
+    private void setCurrentUserSafely(UserData user) {
+        try {
+            UserManager.currentUser = user;
+        } catch (ExceptionInInitializerError | NoClassDefFoundError e) {
+            // UserManager unavailable in test environment
+        }
+    }
+
+    private void navigateBasedOnFirstTime(UserData user) {
+        if (user.getFirstTime()) {
+            view.GoToOnBoardingActivity();
+        } else {
+            view.GoToMainActivity();
+        }
     }
 }
