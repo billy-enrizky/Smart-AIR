@@ -75,10 +75,20 @@ public class PEFHistoryActivity extends AppCompatActivity {
         Button buttonEnterPEF = findViewById(R.id.buttonEnterPEF);
         Button buttonRemoveAll = findViewById(R.id.buttonRemoveAll);
 
-        if(intent.hasExtra("isProvider")){
+        if (buttonBack == null) {
+            Log.e(TAG, "buttonBack not found in layout");
+            finish();
+            return;
+        }
+
+        if (intent != null && intent.hasExtra("isProvider")) {
             isProvider = true;
-            buttonEnterPEF.setVisibility(View.GONE);
-            buttonRemoveAll.setVisibility(View.GONE);
+            if (buttonEnterPEF != null) {
+                buttonEnterPEF.setVisibility(View.GONE);
+            }
+            if (buttonRemoveAll != null) {
+                buttonRemoveAll.setVisibility(View.GONE);
+            }
         }
 
         buttonBack.setOnClickListener(new View.OnClickListener() {
@@ -88,22 +98,26 @@ public class PEFHistoryActivity extends AppCompatActivity {
             }
         });
         
-        buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PEFHistoryActivity.this, PEFEntryActivity.class);
-                intent.putExtra("childId", childId);
-                intent.putExtra("parentId", parentId);
-                startActivity(intent);
-            }
-        });
+        if (buttonEnterPEF != null) {
+            buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(PEFHistoryActivity.this, PEFEntryActivity.class);
+                    intent.putExtra("childId", childId);
+                    intent.putExtra("parentId", parentId);
+                    startActivity(intent);
+                }
+            });
+        }
         
-        buttonRemoveAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeAllHistory();
-            }
-        });
+        if (buttonRemoveAll != null) {
+            buttonRemoveAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeAllHistory();
+                }
+            });
+        }
         
         historyItems = new ArrayList<>();
         adapter = new HistoryAdapter(historyItems, parentId, childId, this);
