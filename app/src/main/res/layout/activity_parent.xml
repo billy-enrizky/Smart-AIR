@@ -5,7 +5,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#99D9EA"
     tools:context=".ParentActivity">
+
+
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
@@ -14,12 +17,14 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:backgroundTint="#00A2E8"
         app:itemIconTint="@android:color/black"
         app:itemTextColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
