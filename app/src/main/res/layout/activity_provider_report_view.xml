@@ -32,13 +32,25 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
 
     <Button
-        android:id="@+id/buttonSavePDF"
+        android:id="@+id/buttonSwitchPDF"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:text="Switch to Provider PDF"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSavePDF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+
+    <Button
+        android:id="@+id/buttonSavePDF"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:text="Save PDF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonSwitchPDF"
         app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 
     <ScrollView

@@ -68,60 +68,6 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/textViewDashboardTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Dashboard"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewDashboardTiles"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false" />
-
-            <TextView
-                android:id="@+id/textViewTrendTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="PEF Trend"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:id="@+id/linearLayoutTrendToggle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/button7Days"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="7 Days" />
-
-                <Button
-                    android:id="@+id/button30Days"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="30 Days" />
-
-            </LinearLayout>
-
-            <FrameLayout
-                android:id="@+id/frameLayoutTrendChart"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="8dp" />
-
-            <TextView
                 android:id="@+id/textViewChildrenTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
