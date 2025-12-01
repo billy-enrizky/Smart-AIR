@@ -35,7 +35,7 @@ import com.example.myapplication.medication.ControllerScheduleActivity;
 import android.widget.ImageView;
 import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
-import com.example.myapplication.providermanaging.AccessPermissionActivity;
+import com.example.myapplication.providermanaging.ProviderManagerActivity;
 import com.example.myapplication.providermanaging.InvitationCreateActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -726,8 +726,8 @@ public class ParentActivity extends AppCompatActivity {
         this.finish();
     }
 
-    public void AccessPermission(android.view.View view) {
-        Intent intent = new Intent(this, AccessPermissionActivity.class);
+    public void ProviderManager(android.view.View view) {
+        Intent intent = new Intent(this, ProviderManagerActivity.class);
         startActivity(intent);
         this.finish();
     }
