@@ -131,6 +131,15 @@
             android:name=".reports.ProviderReportGeneratorActivity"
             android:exported="true" />
         <activity
+            android:name=".reports.ChildDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".reports.TrendSnippetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".reports.ProviderReportViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".safety.PEFEntryActivity"
             android:exported="false" />
         <activity

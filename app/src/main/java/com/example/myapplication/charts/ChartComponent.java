@@ -190,6 +190,62 @@ public class ChartComponent {
         chart.invalidate();
     }
 
+    public static void setupDailyBarChart(BarChart chart, Map<String, Integer> dailyData, String label, int color) {
+        if (chart == null || dailyData == null || dailyData.isEmpty()) {
+            return;
+        }
+
+        List<String> sortedDates = new ArrayList<>(dailyData.keySet());
+        sortedDates.sort(String::compareTo);
+
+        List<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < sortedDates.size(); i++) {
+            entries.add(new BarEntry(i, dailyData.get(sortedDates.get(i))));
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, label);
+        dataSet.setColor(color);
+        dataSet.setDrawValues(true);
+        dataSet.setValueTextSize(10f);
+
+        BarData barData = new BarData(dataSet);
+        chart.setData(barData);
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setLabelRotationAngle(-45f);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                int index = (int) value;
+                if (index >= 0 && index < sortedDates.size()) {
+                    String dateStr = sortedDates.get(index);
+                    try {
+                        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        SimpleDateFormat outputFormat = new SimpleDateFormat("MMM dd", Locale.getDefault());
+                        Date date = inputFormat.parse(dateStr);
+                        if (date != null) {
+                            return outputFormat.format(date);
+                        }
+                    } catch (Exception e) {
+                        return dateStr;
+                    }
+                }
+                return "";
+            }
+        });
+
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setAxisMinimum(0f);
+
+        chart.getAxisRight().setEnabled(false);
+        chart.getDescription().setEnabled(false);
+        chart.getLegend().setEnabled(false);
+        chart.setExtraOffsets(20f, 20f, 20f, 40f);
+        chart.invalidate();
+    }
+
     public static void setupPieChart(PieChart chart, Map<String, Integer> data, String label) {
         if (chart == null || data == null || data.isEmpty()) {
             return;

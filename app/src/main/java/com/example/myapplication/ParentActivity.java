@@ -27,10 +27,9 @@ import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.safety.ActionPlanActivity;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
-import com.example.myapplication.reports.DashboardStats;
 import com.example.myapplication.reports.ProviderReportGeneratorActivity;
-import com.example.myapplication.charts.ChartComponent;
-import android.widget.FrameLayout;
+import com.example.myapplication.reports.ChildDashboardActivity;
+import com.example.myapplication.reports.TrendSnippetActivity;
 import android.widget.ImageView;
 import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
@@ -56,18 +55,11 @@ public class ParentActivity extends AppCompatActivity {
     private static final String TAG = "ParentActivity";
     
     private RecyclerView recyclerViewChildren;
-    private RecyclerView recyclerViewDashboardTiles;
     private Button createChildButton;
-    private Button button7Days;
-    private Button button30Days;
-    private FrameLayout frameLayoutTrendChart;
     private TextView textViewNotificationBadge;
     private ParentAccount parentAccount;
     private ChildrenZoneAdapter adapter;
-    private DashboardTileAdapter dashboardTileAdapter;
     private List<ChildZoneInfo> childrenZoneInfo;
-    private List<DashboardStats> dashboardStatsList;
-    private int trendDays = 7;
     private com.google.firebase.database.DatabaseReference triageSessionsRef;
     private com.google.firebase.database.ChildEventListener triageListener;
     private com.google.firebase.database.DatabaseReference notificationsRef;
@@ -99,40 +91,13 @@ public class ParentActivity extends AppCompatActivity {
         dismissedAlertsPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         
         recyclerViewChildren = findViewById(R.id.recyclerViewChildren);
-        recyclerViewDashboardTiles = findViewById(R.id.recyclerViewDashboardTiles);
         createChildButton = findViewById(R.id.createChildPageButton);
-        button7Days = findViewById(R.id.button7Days);
-        button30Days = findViewById(R.id.button30Days);
-        frameLayoutTrendChart = findViewById(R.id.frameLayoutTrendChart);
         textViewNotificationBadge = findViewById(R.id.textViewNotificationBadge);
         
         childrenZoneInfo = new ArrayList<>();
         adapter = new ChildrenZoneAdapter(childrenZoneInfo);
         recyclerViewChildren.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewChildren.setAdapter(adapter);
-        
-        dashboardStatsList = new ArrayList<>();
-        dashboardTileAdapter = new DashboardTileAdapter(dashboardStatsList);
-        recyclerViewDashboardTiles.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recyclerViewDashboardTiles.setAdapter(dashboardTileAdapter);
-        
-        button7Days.setOnClickListener(v -> {
-            trendDays = 7;
-            button7Days.setBackgroundColor(android.graphics.Color.parseColor("#FFC107")); // Yellow
-            button30Days.setBackgroundColor(android.graphics.Color.GRAY);
-            loadTrendChart();
-        });
-        
-        button30Days.setOnClickListener(v -> {
-            trendDays = 30;
-            button7Days.setBackgroundColor(android.graphics.Color.GRAY);
-            button30Days.setBackgroundColor(android.graphics.Color.parseColor("#FFC107")); // Yellow
-            loadTrendChart();
-        });
-        
-        // Set initial state: 7 days selected (yellow), 30 days unselected (gray)
-        button7Days.setBackgroundColor(android.graphics.Color.parseColor("#FFC107")); // Yellow
-        button30Days.setBackgroundColor(android.graphics.Color.GRAY);
         
         Button notificationButton = findViewById(R.id.buttonNotificationButton);
         if (notificationButton != null) {
@@ -150,17 +115,13 @@ public class ParentActivity extends AppCompatActivity {
             }
         });
         
-        loadDashboardStats();
         loadChildrenZones();
-        loadTrendChart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadDashboardStats();
         loadChildrenZones();
-        loadTrendChart();
         attachTriageListener();
         attachNotificationsListener();
     }
@@ -559,9 +520,10 @@ public class ParentActivity extends AppCompatActivity {
             }
             
             holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(ParentActivity.this, SetPersonalBestActivity.class);
+                Intent intent = new Intent(ParentActivity.this, ChildDashboardActivity.class);
                 intent.putExtra("childId", info.child.getID());
                 intent.putExtra("parentId", info.child.getParent_id());
+                intent.putExtra("childName", info.child.getName());
                 startActivity(intent);
             });
             
@@ -571,6 +533,14 @@ public class ParentActivity extends AppCompatActivity {
                 intent.putExtra("parentId", info.child.getParent_id());
                 startActivity(intent);
                 return true;
+            });
+            
+            holder.buttonTrendSnippet.setOnClickListener(v -> {
+                Intent intent = new Intent(ParentActivity.this, TrendSnippetActivity.class);
+                intent.putExtra("parentId", info.child.getParent_id());
+                intent.putExtra("childId", info.child.getID());
+                intent.putExtra("childName", info.child.getName());
+                startActivity(intent);
             });
             
             holder.buttonGenerateReport.setOnClickListener(v -> {
@@ -596,6 +566,7 @@ public class ParentActivity extends AppCompatActivity {
             TextView textViewZoneName;
             TextView textViewZonePercentage;
             TextView textViewLastPEF;
+            Button buttonTrendSnippet;
             Button buttonGenerateReport;
             Button buttonDeleteChild;
 
@@ -605,6 +576,7 @@ public class ParentActivity extends AppCompatActivity {
                 textViewZoneName = itemView.findViewById(R.id.textViewZoneName);
                 textViewZonePercentage = itemView.findViewById(R.id.textViewZonePercentage);
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
+                buttonTrendSnippet = itemView.findViewById(R.id.buttonTrendSnippet);
                 buttonGenerateReport = itemView.findViewById(R.id.buttonGenerateReport);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
     }
@@ -638,291 +610,4 @@ public class ParentActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void loadDashboardStats() {
-        if (parentAccount == null || parentAccount.getChildren() == null) {
-            return;
-        }
-
-        dashboardStatsList.clear();
-        HashMap<String, ChildAccount> children = parentAccount.getChildren();
-
-        if (children.isEmpty()) {
-            runOnUiThread(() -> dashboardTileAdapter.notifyDataSetChanged());
-            return;
-        }
-
-        for (Map.Entry<String, ChildAccount> entry : children.entrySet()) {
-            ChildAccount child = entry.getValue();
-            loadDashboardStatsForChild(child);
-        }
-    }
-
-    private void loadDashboardStatsForChild(ChildAccount child) {
-        String parentId = child.getParent_id();
-        String childId = child.getID();
-        DashboardStats stats = new DashboardStats(childId, child.getName());
-
-        Integer personalBest = child.getPersonalBest();
-        if (personalBest != null && personalBest > 0) {
-            DatabaseReference pefRef = UserManager.mDatabase
-                    .child("users")
-                    .child(parentId)
-                    .child("children")
-                    .child(childId)
-                    .child("pefReadings");
-
-            Query todayPEFQuery = pefRef.orderByChild("timestamp").limitToLast(1);
-            todayPEFQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    PEFReading latestReading = null;
-                    if (snapshot.exists() && snapshot.hasChildren()) {
-                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                            latestReading = childSnapshot.getValue(PEFReading.class);
-                            break;
-                        }
-                    }
-
-                    if (latestReading != null) {
-                        long todayStart = getTodayStartTimestamp();
-                        if (latestReading.getTimestamp() >= todayStart) {
-                            int pefValue = latestReading.getValue();
-                            Zone zone = ZoneCalculator.calculateZone(pefValue, personalBest);
-                            stats.setTodayZone(zone);
-                        }
-                    }
-
-                    loadRescueStats(stats, parentId, childId);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    Log.e(TAG, "Error loading PEF for dashboard", error.toException());
-                    loadRescueStats(stats, parentId, childId);
-                }
-            });
-        } else {
-            loadRescueStats(stats, parentId, childId);
-        }
-    }
-
-    private void loadRescueStats(DashboardStats stats, String parentId, String childId) {
-        DatabaseReference rescueRef = UserManager.mDatabase
-                .child("users")
-                .child(parentId)
-                .child("children")
-                .child(childId)
-                .child("rescueUsage");
-
-        long sevenDaysAgo = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000L);
-        Query rescueQuery = rescueRef.orderByChild("timestamp").startAt(sevenDaysAgo);
-
-        rescueQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                long lastRescueTime = 0;
-                int weeklyCount = 0;
-
-                if (snapshot.exists()) {
-                    for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                        RescueUsage usage = childSnapshot.getValue(RescueUsage.class);
-                        if (usage != null) {
-                            long timestamp = usage.getTimestamp();
-                            if (timestamp > lastRescueTime) {
-                                lastRescueTime = timestamp;
-                            }
-                            weeklyCount += usage.getCount();
-                        }
-                    }
-                }
-
-                if (lastRescueTime > 0) {
-                    stats.setLastRescueTime(lastRescueTime);
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault());
-                    stats.setLastRescueTimeFormatted(sdf.format(new Date(lastRescueTime)));
-                } else {
-                    stats.setLastRescueTimeFormatted("Never");
-                }
-
-                stats.setWeeklyRescueCount(weeklyCount);
-
-                updateDashboardStats(stats);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading rescue stats", error.toException());
-                updateDashboardStats(stats);
-            }
-        });
-    }
-
-    private void updateDashboardStats(DashboardStats newStats) {
-        if (isFinishing() || isDestroyed()) {
-            return;
-        }
-        runOnUiThread(() -> {
-            if (isFinishing() || isDestroyed()) {
-                return;
-            }
-            boolean found = false;
-            for (int i = 0; i < dashboardStatsList.size(); i++) {
-                if (dashboardStatsList.get(i).getChildId().equals(newStats.getChildId())) {
-                    dashboardStatsList.set(i, newStats);
-                    dashboardTileAdapter.notifyItemChanged(i);
-                    found = true;
-                    return;
-                }
-            }
-            if (!found) {
-                dashboardStatsList.add(newStats);
-                dashboardTileAdapter.notifyItemInserted(dashboardStatsList.size() - 1);
-            }
-        });
-    }
-
-    private void loadTrendChart() {
-        if (parentAccount == null || parentAccount.getChildren() == null || parentAccount.getChildren().isEmpty()) {
-            return;
-        }
-
-        ChildAccount firstChild = parentAccount.getChildren().values().iterator().next();
-        String parentId = firstChild.getParent_id();
-        String childId = firstChild.getID();
-        Integer personalBest = firstChild.getPersonalBest();
-
-        if (personalBest == null || personalBest <= 0) {
-            return;
-        }
-
-        long daysAgo = System.currentTimeMillis() - (trendDays * 24 * 60 * 60 * 1000L);
-        DatabaseReference pefRef = UserManager.mDatabase
-                .child("users")
-                .child(parentId)
-                .child("children")
-                .child(childId)
-                .child("pefReadings");
-
-        Query pefQuery = pefRef.orderByChild("timestamp").startAt(daysAgo);
-        pefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                List<ChartComponent.PEFDataPoint> dataPoints = new ArrayList<>();
-                if (snapshot.exists()) {
-                    for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                        PEFReading reading = childSnapshot.getValue(PEFReading.class);
-                        if (reading != null) {
-                            dataPoints.add(new ChartComponent.PEFDataPoint(reading.getTimestamp(), reading.getValue()));
-                        }
-                    }
-                }
-
-                dataPoints.sort((a, b) -> Long.compare(a.getTimestamp(), b.getTimestamp()));
-
-                runOnUiThread(() -> {
-                    frameLayoutTrendChart.removeAllViews();
-                    View chartView = ChartComponent.createChartView(ParentActivity.this, frameLayoutTrendChart, ChartComponent.ChartType.LINE);
-                    frameLayoutTrendChart.addView(chartView);
-                    com.github.mikephil.charting.charts.LineChart lineChart = chartView.findViewById(R.id.lineChart);
-                    ChartComponent.setupLineChart(lineChart, dataPoints, "PEF Trend");
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading trend chart", error.toException());
-            }
-        });
-    }
-
-    private long getTodayStartTimestamp() {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
-        cal.set(java.util.Calendar.MINUTE, 0);
-        cal.set(java.util.Calendar.SECOND, 0);
-        cal.set(java.util.Calendar.MILLISECOND, 0);
-        return cal.getTimeInMillis();
-    }
-
-    private class DashboardTileAdapter extends RecyclerView.Adapter<DashboardTileAdapter.ViewHolder> {
-        private final List<DashboardStats> statsList;
-
-        public DashboardTileAdapter(List<DashboardStats> statsList) {
-            this.statsList = statsList;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_dashboard_tile, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            if (position < 0 || position >= getItemCount()) {
-                return;
-            }
-            DashboardStats stats = getStatsForPosition(position);
-
-            int tileType = position % 3;
-            String childName = stats.getChildName();
-
-            switch (tileType) {
-                case 0:
-                    holder.textViewTileTitle.setText(childName + " - Today's Zone");
-                    if (stats.getTodayZone() != Zone.UNKNOWN) {
-                        holder.textViewTileValue.setText(stats.getTodayZone().getDisplayName());
-                        holder.textViewTileValue.setTextColor(stats.getTodayZone().getColorResource());
-                        holder.textViewTileSubtitle.setText("Current status");
-                    } else {
-                        holder.textViewTileValue.setText("Unknown");
-                        holder.textViewTileValue.setTextColor(android.graphics.Color.GRAY);
-                        holder.textViewTileSubtitle.setText("No PEF reading today");
-                    }
-                    break;
-                case 1:
-                    holder.textViewTileTitle.setText(childName + " - Last Rescue");
-                    holder.textViewTileValue.setText(stats.getLastRescueTimeFormatted());
-                    holder.textViewTileValue.setTextColor(android.graphics.Color.parseColor("#FF9800"));
-                    holder.textViewTileSubtitle.setText("Most recent use");
-                    break;
-                case 2:
-                    holder.textViewTileTitle.setText(childName + " - Weekly Count");
-                    holder.textViewTileValue.setText(String.valueOf(stats.getWeeklyRescueCount()));
-                    holder.textViewTileValue.setTextColor(android.graphics.Color.parseColor("#F44336"));
-                    holder.textViewTileSubtitle.setText("Last 7 days");
-                    break;
-            }
-
-            holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(ParentActivity.this, PEFHistoryActivity.class);
-                intent.putExtra("childId", stats.getChildId());
-                intent.putExtra("parentId", parentAccount.getID());
-                startActivity(intent);
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return statsList.size() * 3;
-        }
-
-        private DashboardStats getStatsForPosition(int position) {
-            return statsList.get(position / 3);
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textViewTileTitle;
-            TextView textViewTileValue;
-            TextView textViewTileSubtitle;
-
-            ViewHolder(View itemView) {
-                super(itemView);
-                textViewTileTitle = itemView.findViewById(R.id.textViewTileTitle);
-                textViewTileValue = itemView.findViewById(R.id.textViewTileValue);
-                textViewTileSubtitle = itemView.findViewById(R.id.textViewTileSubtitle);
-            }
-        }
-    }
 }
