@@ -16,6 +16,7 @@ import com.example.myapplication.SignIn.SignInView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class ChildInhalerLogs extends AppCompatActivity {
@@ -55,6 +56,7 @@ public class ChildInhalerLogs extends AppCompatActivity {
         });
     }
     private void addRescueLogs(ArrayList<RescueLog> logs) {
+        Collections.sort(logs);
         for (RescueLog log : logs) {
             LinearLayout logItem = new LinearLayout(this);
             logItem.setOrientation(LinearLayout.VERTICAL);

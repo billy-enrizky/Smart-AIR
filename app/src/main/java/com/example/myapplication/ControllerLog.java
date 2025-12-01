@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
-public class ControllerLog {
+public class ControllerLog implements Comparable<ControllerLog>{
     String username;
     long timestamp;
     String feelingB;
@@ -51,5 +51,15 @@ public class ControllerLog {
     public String getExtraInfo(){return this.extraInfo;}
     public String getInfo(){
         return "Before: \n\tBreath Rating: "+this.getRatingB()+"\n\tFeeling: "+this.getFeelingB()+"\nAfter: \n\tBreath Rating: "+this.getRatingA()+"\n\tFeeling: "+this.getFeelingA()+"\n"+this.getExtraInfo();
+    }
+    @Override
+    public int compareTo(ControllerLog other){
+        if (other.getTimestamp() > this.getTimestamp()){
+            return 1;
+        }
+        else if (other.getTimestamp() < this.getTimestamp()){
+            return -1;
+        }
+        return 0;
     }
 }
