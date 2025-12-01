@@ -21,11 +21,111 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    android:id="@+id/button17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:onClick="Signout"
+                    android:text="Sign out" />
+
+                <FrameLayout
+                    android:id="@+id/buttonNotifications"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <Button
+                        android:id="@+id/buttonNotificationButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alerts" />
+
+                    <TextView
+                        android:id="@+id/textViewNotificationBadge"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:background="@android:drawable/presence_online"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/textViewDashboardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Dashboard"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewDashboardTiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/textViewTrendTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="PEF Trend"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/linearLayoutTrendToggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button7Days"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="7 Days" />
+
+                <Button
+                    android:id="@+id/button30Days"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="30 Days" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/frameLayoutTrendChart"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp" />
+
             <TextView
                 android:id="@+id/textViewChildrenTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:text="Children Status"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -77,16 +177,5 @@
                 android:text="Action Plan" />
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/button17"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="Signout"
-        android:text="Sign out"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -499,6 +499,18 @@ public class TriageActivity extends AppCompatActivity {
         
         sendTriageEscalationNotification();
     }
+
+    private void sendTriageEscalationNotification() {
+        if (childAccount == null) {
+            return;
+        }
+        String childName = childAccount.getName();
+        com.example.myapplication.notifications.AlertDetector.checkTriageEscalation(
+                childAccount.getParent_id(),
+                childAccount.getID(),
+                childName
+        );
+    }
     
     private void showHomeStepsDecisionCard(LayoutInflater inflater) {
         currentStepView = inflater.inflate(R.layout.layout_decision_home_steps, frameLayoutSteps, false);
@@ -550,10 +562,6 @@ public class TriageActivity extends AppCompatActivity {
             default:
                 return "1. Follow your personalized action plan\n2. Monitor symptoms closely\n3. Use rescue medication as prescribed\n4. Contact your healthcare provider if you have concerns\n5. Seek emergency care if symptoms become severe";
         }
-    }
-
-    private void sendTriageEscalationNotification() {
-        Toast.makeText(this, "Emergency guidance shown. Consider calling emergency services.", Toast.LENGTH_LONG).show();
     }
 
     private void saveTriageIncident() {
@@ -636,6 +644,14 @@ public class TriageActivity extends AppCompatActivity {
 
     private void sendRapidRescueAlert() {
         Toast.makeText(this, "Rapid rescue alert: rescue used 3+ times in 3 hours. Consider seeking medical care.", Toast.LENGTH_LONG).show();
+        if (childAccount != null) {
+            String childName = childAccount.getName();
+            com.example.myapplication.notifications.AlertDetector.checkRapidRescue(
+                    childAccount.getParent_id(),
+                    childAccount.getID(),
+                    childName
+            );
+        }
     }
     
     public void restartTriage() {

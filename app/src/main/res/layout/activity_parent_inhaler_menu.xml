@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView35"
+        android:layout_width="160dp"
+        android:layout_height="48dp"
+        android:text="Controller"
+        android:textAlignment="center"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.936"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.225" />
+
+    <TextView
+        android:id="@+id/textView38"
+        android:layout_width="147dp"
+        android:layout_height="49dp"
+        android:text="Rescue"
+        android:textAlignment="center"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.224" />
+
+    <Button
+        android:id="@+id/addbutton"
+        android:layout_width="86dp"
+        android:layout_height="93dp"
+        android:backgroundTint="#000F92"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:text="Add"
+        android:textColor="#FFFFFF"
+        android:textSize="23dp"
+        android:textStyle="bold"
+        app:cornerRadius="17dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02" />
+
+    <ImageView
+        android:id="@+id/imageView24"
+        android:layout_width="50dp"
+        android:layout_height="65dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.914"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.019"
+        app:srcCompat="@drawable/add" />
+
+    <TextView
+        android:id="@+id/textView37"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Inhaler Menu"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.218"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.044" />
+
+    <ImageView
+        android:id="@+id/imageView25"
+        android:layout_width="162dp"
+        android:layout_height="223dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.935"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.356"
+        app:srcCompat="@drawable/inhaler3" />
+
+    <ImageView
+        android:id="@+id/imageView26"
+        android:layout_width="151dp"
+        android:layout_height="211dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.061"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.35"
+        app:srcCompat="@drawable/inhaler2" />
+
+    <TextView
+        android:id="@+id/controllerinhaler"
+        android:layout_width="162dp"
+        android:layout_height="274dp"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.935"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.824" />
+
+    <TextView
+        android:id="@+id/rescueinhaler"
+        android:layout_width="162dp"
+        android:layout_height="274dp"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.064"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.824" />
+
+    <Button
+        android:id="@+id/donebutton"
+        android:layout_width="136dp"
+        android:layout_height="60dp"
+        android:text="Done"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.98" />
+</androidx.constraintlayout.widget.ConstraintLayout>

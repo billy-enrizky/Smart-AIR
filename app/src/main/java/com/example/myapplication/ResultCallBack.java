@@ -8,6 +8,9 @@ public interface ResultCallBack<T> {
     */
 
     /*
+    /
+
+    /
     The difference between this and the very CallBack interface is:
     we can use it to return value after interacting with database.
     For example(pseudo code),
@@ -31,3 +34,4 @@ public interface ResultCallBack<T> {
     */
     void onComplete(T result);
 }
+

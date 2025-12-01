@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+
         <activity
             android:name=".providermanaging.AccessPermissionActivity"
             android:exported="false" />
@@ -41,6 +42,48 @@
             android:name=".ParentActivity"
             android:exported="false" />
         <activity
+            android:name=".ChildInhalerInstructions"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerMenu"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerLogs"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerBadge"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerDailyStreak"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUse"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseReady"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseAfter"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseRescue"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseController"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerVideo"
+            android:exported="false" />
+        <activity
+            android:name=".ParentInhalerCreate"
+            android:exported="false" />
+        <activity
+            android:name=".ParentInhalerMenu"
+            android:exported="false" />
+        <activity
+            android:name=".ParentBadge"
+            android:exported="false" />
+        <activity
             android:name=".childmanaging.CreateChildActivity"
             android:exported="false" />
         <activity
@@ -54,7 +97,12 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".dailycheckin.CheckInView"
             android:exported="false" />
@@ -69,13 +117,19 @@
             android:exported="false" />
         <activity
             android:name=".SignIn.SignInView"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="true" />
+        <activity
+            android:name=".SignInActivity"
+            android:exported="true" />
+        <activity
+            android:name=".notifications.NotificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".medication.ControllerScheduleActivity"
+            android:exported="true" />
+        <activity
+            android:name=".reports.ProviderReportGeneratorActivity"
+            android:exported="true" />
         <activity
             android:name=".safety.PEFEntryActivity"
             android:exported="false" />
@@ -97,6 +151,20 @@
         <activity
             android:name=".safety.ActionPlanActivity"
             android:exported="false" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

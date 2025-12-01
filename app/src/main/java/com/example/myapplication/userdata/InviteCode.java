@@ -76,9 +76,10 @@ public class InviteCode {
                 else {
                     DataSnapshot Snapshot = task.getResult();
                     for(DataSnapshot child: Snapshot.getChildren()){
-                        if(child.getValue(UserData.class).getAccount() == AccountType.PARENT){
+                        UserData userData = child.getValue(UserData.class);
+                        if(userData != null && AccountType.PARENT.equals(userData.getAccount())){
                             ParentAccount parent = child.getValue(ParentAccount.class);
-                            if(parent.getInviteCode() != null){
+                            if(parent != null && parent.getInviteCode() != null){
                                 if(!parent.getInviteCode().IsValid()){
                                     parent.setInviteCode(null);
                                     parent.WriteIntoDatabase(null);
@@ -92,7 +93,7 @@ public class InviteCode {
         });
     }
 
-    public static void CodeInquiry(String InputCode, ResultCallBack callback){
+    public static void CodeInquiry(String InputCode, ResultCallBack<ParentAccount> callback){
         DatabaseReference usersRef = UserManager.mDatabase.child("users");
         Query query = usersRef.orderByChild("inviteCode/code").equalTo(InputCode);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -101,17 +102,18 @@ public class InviteCode {
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         ParentAccount parent = child.getValue(ParentAccount.class);
-                        if(parent.getInviteCode().IsValid() && parent.getInviteCode().getCode().equals(InputCode)){
-                            callback.onComplete(parent);
-                            return;
-                        }else{
-                            parent.setInviteCode(null);
-                            parent.WriteIntoDatabase(null);
+                        if(parent != null && parent.getInviteCode() != null){
+                            if(parent.getInviteCode().IsValid() && parent.getInviteCode().getCode().equals(InputCode)){
+                                callback.onComplete(parent);
+                                return;
+                            }else{
+                                parent.setInviteCode(null);
+                                parent.WriteIntoDatabase(null);
+                            }
                         }
                     }
-                } else {
-                    callback.onComplete(null);
                 }
+                callback.onComplete(null);
             }
             @Override
             public void onCancelled(DatabaseError error) {
