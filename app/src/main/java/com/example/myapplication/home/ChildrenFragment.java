@@ -20,8 +20,13 @@ import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.medication.ControllerScheduleActivity;
 import com.example.myapplication.reports.ProviderReportGeneratorActivity;
-import com.example.myapplication.reports.TrendSnippetActivity;
 import com.example.myapplication.safety.ActionPlanActivity;
+import com.example.myapplication.ParentInhalerMenu;
+import com.example.myapplication.ParentBadge;
+import com.example.myapplication.dailycheckin.CheckInView;
+import com.example.myapplication.dailycheckin.FilterCheckInByDate;
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.safety.IncidentHistoryActivity;
 import com.example.myapplication.safety.PEFHistoryActivity;
 import com.example.myapplication.safety.PEFReading;
@@ -64,15 +69,19 @@ public class ChildrenFragment extends Fragment {
     private View buttonsLayout;
     private TextView textViewCurrentChild;
     private Button buttonNewChild;
-    private Button buttonTrendSnippet;
-    private Button buttonGenerateReport;
-    private Button buttonDeleteChild;
+    private Button buttonSignIn;
+    private Button buttonDailyCheckin;
     private Button buttonSetPersonalBest;
-    private Button buttonControllerSchedule;
-    private Button buttonIncidentHistory;
-    private Button buttonPEFHistory;
-    private Button buttonActionPlan;
+    private Button buttonInhaler;
     private Button buttonModifyNotes;
+    private Button buttonBadges;
+    private Button buttonGenerateReport;
+    private Button buttonControllerSchedule;
+    private Button buttonDailyCheckinHistory;
+    private Button buttonIncidentHistory;
+    private Button buttonDeleteChild;
+    private Button buttonActionPlan;
+    private Button buttonPEFHistory;
 
     @Nullable
     @Override
@@ -100,15 +109,19 @@ public class ChildrenFragment extends Fragment {
         
         buttonsLayout = view.findViewById(R.id.layoutChildButtons);
         textViewCurrentChild = buttonsLayout.findViewById(R.id.textViewCurrentChild);
-        buttonTrendSnippet = buttonsLayout.findViewById(R.id.buttonTrendSnippet);
-        buttonGenerateReport = buttonsLayout.findViewById(R.id.buttonGenerateReport);
-        buttonDeleteChild = buttonsLayout.findViewById(R.id.buttonDeleteChild);
+        buttonSignIn = buttonsLayout.findViewById(R.id.buttonSignIn);
+        buttonDailyCheckin = buttonsLayout.findViewById(R.id.buttonDailyCheckin);
         buttonSetPersonalBest = buttonsLayout.findViewById(R.id.buttonSetPersonalBest);
-        buttonControllerSchedule = buttonsLayout.findViewById(R.id.buttonControllerSchedule);
-        buttonIncidentHistory = buttonsLayout.findViewById(R.id.buttonIncidentHistory);
-        buttonPEFHistory = buttonsLayout.findViewById(R.id.buttonPEFHistory);
-        buttonActionPlan = buttonsLayout.findViewById(R.id.buttonActionPlan);
+        buttonInhaler = buttonsLayout.findViewById(R.id.buttonInhaler);
         buttonModifyNotes = buttonsLayout.findViewById(R.id.buttonModifyNotes);
+        buttonBadges = buttonsLayout.findViewById(R.id.buttonBadges);
+        buttonGenerateReport = buttonsLayout.findViewById(R.id.buttonGenerateReport);
+        buttonControllerSchedule = buttonsLayout.findViewById(R.id.buttonControllerSchedule);
+        buttonDailyCheckinHistory = buttonsLayout.findViewById(R.id.buttonDailyCheckinHistory);
+        buttonIncidentHistory = buttonsLayout.findViewById(R.id.buttonIncidentHistory);
+        buttonDeleteChild = buttonsLayout.findViewById(R.id.buttonDeleteChild);
+        buttonActionPlan = buttonsLayout.findViewById(R.id.buttonActionPlan);
+        buttonPEFHistory = buttonsLayout.findViewById(R.id.buttonPEFHistory);
         
         setupButtons();
         updateButtonsVisibility(false);
@@ -363,12 +376,51 @@ public class ChildrenFragment extends Fragment {
     }
 
     private void setupButtons() {
-        buttonTrendSnippet.setOnClickListener(v -> {
+        buttonSignIn.setOnClickListener(v -> {
             if (selectedChildInfo != null) {
-                Intent intent = new Intent(getActivity(), TrendSnippetActivity.class);
-                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
-                intent.putExtra("childId", selectedChildInfo.child.getID());
-                intent.putExtra("childName", selectedChildInfo.child.getName());
+                SignInChildProfileActivity.currentChild = selectedChildInfo.child;
+                UserManager.currentUser = selectedChildInfo.child;
+                UserManager.mAuth.signOut();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
+            }
+        });
+        
+        buttonDailyCheckin.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                SignInChildProfileActivity.currentChild = selectedChildInfo.child;
+                Intent intent = new Intent(getActivity(), CheckInView.class);
+                startActivity(intent);
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
+            }
+        });
+        
+        buttonInhaler.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                SignInChildProfileActivity.currentChild = selectedChildInfo.child;
+                Intent intent = new Intent(getActivity(), ParentInhalerMenu.class);
+                startActivity(intent);
+            }
+        });
+        
+        buttonBadges.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                SignInChildProfileActivity.currentChild = selectedChildInfo.child;
+                Intent intent = new Intent(getActivity(), ParentBadge.class);
+                startActivity(intent);
+            }
+        });
+        
+        buttonDailyCheckinHistory.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                SignInChildProfileActivity.currentChild = selectedChildInfo.child;
+                com.example.myapplication.dailycheckin.CheckInHistoryFilters.getInstance().setUsername(selectedChildInfo.child.getID());
+                Intent intent = new Intent(getActivity(), FilterCheckInByDate.class);
                 startActivity(intent);
             }
         });
@@ -458,15 +510,19 @@ public class ChildrenFragment extends Fragment {
 
     private void updateButtonsVisibility(boolean visible) {
         int visibility = visible ? View.VISIBLE : View.GONE;
-        buttonTrendSnippet.setVisibility(visibility);
-        buttonGenerateReport.setVisibility(visibility);
-        buttonDeleteChild.setVisibility(visibility);
+        buttonSignIn.setVisibility(visibility);
+        buttonDailyCheckin.setVisibility(visibility);
         buttonSetPersonalBest.setVisibility(visibility);
-        buttonControllerSchedule.setVisibility(visibility);
-        buttonIncidentHistory.setVisibility(visibility);
-        buttonPEFHistory.setVisibility(visibility);
-        buttonActionPlan.setVisibility(visibility);
+        buttonInhaler.setVisibility(visibility);
         buttonModifyNotes.setVisibility(visibility);
+        buttonBadges.setVisibility(visibility);
+        buttonGenerateReport.setVisibility(visibility);
+        buttonControllerSchedule.setVisibility(visibility);
+        buttonDailyCheckinHistory.setVisibility(visibility);
+        buttonIncidentHistory.setVisibility(visibility);
+        buttonDeleteChild.setVisibility(visibility);
+        buttonActionPlan.setVisibility(visibility);
+        buttonPEFHistory.setVisibility(visibility);
     }
 
     private void deleteChild(ChildAccount child, int position) {
