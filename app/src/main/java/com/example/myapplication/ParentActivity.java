@@ -30,6 +30,7 @@ import com.example.myapplication.userdata.ParentAccount;
 import com.example.myapplication.reports.ProviderReportGeneratorActivity;
 import com.example.myapplication.reports.ChildDashboardActivity;
 import com.example.myapplication.reports.TrendSnippetActivity;
+import com.example.myapplication.medication.ControllerScheduleActivity;
 import android.widget.ImageView;
 import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
@@ -47,9 +48,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class ParentActivity extends AppCompatActivity {
     private static final String TAG = "ParentActivity";
@@ -63,9 +66,11 @@ public class ParentActivity extends AppCompatActivity {
     private com.google.firebase.database.DatabaseReference triageSessionsRef;
     private com.google.firebase.database.ChildEventListener triageListener;
     private com.google.firebase.database.DatabaseReference notificationsRef;
-    private com.google.firebase.database.ValueEventListener notificationsListener;
+    private com.google.firebase.database.ChildEventListener notificationsListener;
+    private com.google.firebase.database.ValueEventListener notificationsCountListener;
     private java.util.Map<String, String> lastSeenSessions = new java.util.HashMap<>();
     private java.util.Map<String, String> lastSeenWorseningIds = new java.util.HashMap<>();
+    private java.util.Set<String> seenNotificationIds = new java.util.HashSet<>();
     private SharedPreferences dismissedAlertsPrefs;
     private static final String PREFS_NAME = "ParentActivityDismissedAlerts";
 
@@ -123,7 +128,35 @@ public class ParentActivity extends AppCompatActivity {
         super.onResume();
         loadChildrenZones();
         attachTriageListener();
+        loadExistingNotificationIds();
         attachNotificationsListener();
+    }
+    
+    private void loadExistingNotificationIds() {
+        if (parentAccount == null) {
+            return;
+        }
+        if (notificationsRef == null) {
+            notificationsRef = UserManager.mDatabase
+                    .child("users")
+                    .child(parentAccount.getID())
+                    .child("notifications");
+        }
+        
+        // Load all existing notification IDs so we don't show alerts for them
+        notificationsRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                seenNotificationIds.clear();
+                DataSnapshot snapshot = task.getResult();
+                if (snapshot.exists()) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        if (child.getKey() != null) {
+                            seenNotificationIds.add(child.getKey());
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void loadChildrenZones() {
@@ -269,17 +302,162 @@ public class ParentActivity extends AppCompatActivity {
                     .child(parentAccount.getID())
                     .child("notifications");
         }
-        if (notificationsListener != null) {
+        
+        // Use ChildEventListener to detect new notifications in real-time
+        if (notificationsListener == null) {
+            notificationsListener = new com.google.firebase.database.ChildEventListener() {
+                @Override
+                public void onChildAdded(com.google.firebase.database.DataSnapshot snapshot, String previousChildName) {
+                    handleNewNotification(snapshot);
+                    updateNotificationBadgeCount();
+                }
+
+                @Override
+                public void onChildChanged(com.google.firebase.database.DataSnapshot snapshot, String previousChildName) {
+                    // Notification was updated (e.g., marked as read)
+                    updateNotificationBadgeCount();
+                }
+
+                @Override
+                public void onChildRemoved(com.google.firebase.database.DataSnapshot snapshot) {
+                    // Notification was deleted
+                    if (snapshot.getKey() != null) {
+                        seenNotificationIds.remove(snapshot.getKey());
+                    }
+                    updateNotificationBadgeCount();
+                }
+
+                @Override
+                public void onChildMoved(com.google.firebase.database.DataSnapshot snapshot, String previousChildName) {
+                }
+
+                @Override
+                public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                    Log.e(TAG, "Notifications listener cancelled", error.toException());
+                }
+            };
+            notificationsRef.addChildEventListener(notificationsListener);
+        }
+        
+        // Use ValueEventListener to maintain badge count
+        if (notificationsCountListener == null) {
+            notificationsCountListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    updateNotificationBadgeCount();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.e(TAG, "Notifications count listener cancelled", error.toException());
+                }
+            };
+            notificationsRef.addValueEventListener(notificationsCountListener);
+        }
+    }
+
+    private void detachNotificationsListener() {
+        if (notificationsRef != null) {
+            if (notificationsListener != null) {
+                notificationsRef.removeEventListener(notificationsListener);
+                notificationsListener = null;
+            }
+            if (notificationsCountListener != null) {
+                notificationsRef.removeEventListener(notificationsCountListener);
+                notificationsCountListener = null;
+            }
+        }
+    }
+    
+    private void handleNewNotification(com.google.firebase.database.DataSnapshot snapshot) {
+        if (snapshot == null || snapshot.getKey() == null) {
             return;
         }
-
-        notificationsListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
+        
+        String notificationId = snapshot.getKey();
+        
+        // Skip if we've already seen this notification
+        if (seenNotificationIds.contains(notificationId)) {
+            return;
+        }
+        
+        // Mark as seen
+        seenNotificationIds.add(notificationId);
+        
+        // Get notification data
+        com.example.myapplication.notifications.NotificationItem notification = 
+            snapshot.getValue(com.example.myapplication.notifications.NotificationItem.class);
+        
+        if (notification == null || notification.isRead()) {
+            return;
+        }
+        
+        // Check if this alert has already been dismissed
+        String alertKey = "notification_" + notificationId;
+        boolean isDismissed = dismissedAlertsPrefs.getBoolean(alertKey, false);
+        
+        if (isDismissed) {
+            return;
+        }
+        
+        // Show alert dialog for critical notifications
+        String childName = notification.getChildName() != null ? notification.getChildName() : "Your child";
+        String title = getNotificationTitle(notification.getType());
+        String message = notification.getMessage() != null ? notification.getMessage() : "New alert for " + childName;
+        
+        runOnUiThread(() -> {
+            new androidx.appcompat.app.AlertDialog.Builder(ParentActivity.this)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        // Mark this alert as dismissed
+                        dismissedAlertsPrefs.edit().putBoolean(alertKey, true).apply();
+                    })
+                    .show();
+            
+            android.widget.Toast.makeText(
+                    ParentActivity.this,
+                    message,
+                    android.widget.Toast.LENGTH_SHORT
+            ).show();
+        });
+    }
+    
+    private String getNotificationTitle(com.example.myapplication.notifications.NotificationItem.NotificationType type) {
+        if (type == null) {
+            return "New Alert";
+        }
+        switch (type) {
+            case RED_ZONE_DAY:
+                return "Red Zone Alert";
+            case RAPID_RESCUE:
+                return "Rapid Rescue Alert";
+            case WORSE_AFTER_DOSE:
+                return "Medication Effectiveness Alert";
+            case TRIAGE_ESCALATION:
+                return "Emergency Guidance Alert";
+            case INVENTORY_LOW:
+                return "Inventory Low Alert";
+            case INVENTORY_EXPIRED:
+                return "Inventory Expired Alert";
+            default:
+                return "New Alert";
+        }
+    }
+    
+    private void updateNotificationBadgeCount() {
+        if (notificationsRef == null || parentAccount == null) {
+            return;
+        }
+        
+        notificationsRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
                 int unreadCount = 0;
+                DataSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
-                        com.example.myapplication.notifications.NotificationItem notification = child.getValue(com.example.myapplication.notifications.NotificationItem.class);
+                        com.example.myapplication.notifications.NotificationItem notification = 
+                            child.getValue(com.example.myapplication.notifications.NotificationItem.class);
                         if (notification != null && !notification.isRead()) {
                             unreadCount++;
                         }
@@ -287,21 +465,7 @@ public class ParentActivity extends AppCompatActivity {
                 }
                 updateNotificationBadge(unreadCount);
             }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Notifications listener cancelled", error.toException());
-            }
-        };
-
-        notificationsRef.addValueEventListener(notificationsListener);
-    }
-
-    private void detachNotificationsListener() {
-        if (notificationsRef != null && notificationsListener != null) {
-            notificationsRef.removeEventListener(notificationsListener);
-            notificationsListener = null;
-        }
+        });
     }
 
     private void updateNotificationBadge(int count) {
@@ -551,6 +715,22 @@ public class ParentActivity extends AppCompatActivity {
                 startActivity(intent);
             });
             
+            holder.buttonControllerSchedule.setOnClickListener(v -> {
+                Intent intent = new Intent(ParentActivity.this, ControllerScheduleActivity.class);
+                intent.putExtra("parentId", info.child.getParent_id());
+                intent.putExtra("childId", info.child.getID());
+                intent.putExtra("childName", info.child.getName());
+                startActivity(intent);
+            });
+            
+            holder.buttonSetPersonalBest.setOnClickListener(v -> {
+                Intent intent = new Intent(ParentActivity.this, SetPersonalBestActivity.class);
+                intent.putExtra("parentId", info.child.getParent_id());
+                intent.putExtra("childId", info.child.getID());
+                intent.putExtra("childName", info.child.getName());
+                startActivity(intent);
+            });
+            
             holder.buttonDeleteChild.setOnClickListener(v -> {
                 deleteChild(info.child, position);
             });
@@ -568,7 +748,9 @@ public class ParentActivity extends AppCompatActivity {
             TextView textViewLastPEF;
             Button buttonTrendSnippet;
             Button buttonGenerateReport;
+            Button buttonControllerSchedule;
             Button buttonDeleteChild;
+            Button buttonSetPersonalBest;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -578,7 +760,9 @@ public class ParentActivity extends AppCompatActivity {
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
                 buttonTrendSnippet = itemView.findViewById(R.id.buttonTrendSnippet);
                 buttonGenerateReport = itemView.findViewById(R.id.buttonGenerateReport);
+                buttonControllerSchedule = itemView.findViewById(R.id.buttonControllerSchedule);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
+                buttonSetPersonalBest = itemView.findViewById(R.id.buttonSetPersonalBest);
     }
         }
     }

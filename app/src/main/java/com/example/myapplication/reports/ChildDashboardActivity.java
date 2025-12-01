@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.charts.ChartComponent;
+import com.example.myapplication.medication.ControllerSchedule;
+import com.example.myapplication.reports.AdherenceCalculator;
 import com.example.myapplication.safety.PEFHistoryActivity;
 import com.example.myapplication.safety.PEFReading;
 import com.example.myapplication.safety.RescueUsage;
@@ -278,12 +280,38 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     }
                 }
                 stats.setDailySymptomsCount(dailyCount);
-                updateDashboardStats(stats);
+                loadControllerAdherence(stats);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.e(TAG, "Error loading daily symptoms count", error.toException());
+                loadControllerAdherence(stats);
+            }
+        });
+    }
+
+    private void loadControllerAdherence(DashboardStats stats) {
+        if (childAccount == null) {
+            updateDashboardStats(stats);
+            return;
+        }
+
+        ControllerSchedule schedule = childAccount.getControllerSchedule();
+        if (schedule == null || schedule.isEmpty()) {
+            stats.setControllerAdherence(0.0);
+            updateDashboardStats(stats);
+            return;
+        }
+
+        // Calculate adherence for the last 30 days
+        long endDate = System.currentTimeMillis();
+        long startDate = endDate - (30L * 24 * 60 * 60 * 1000);
+
+        AdherenceCalculator.calculateAdherence(childId, schedule, startDate, endDate, new com.example.myapplication.ResultCallBack<Double>() {
+            @Override
+            public void onComplete(Double adherence) {
+                stats.setControllerAdherence(adherence != null ? adherence : 0.0);
                 updateDashboardStats(stats);
             }
         });
@@ -432,6 +460,19 @@ public class ChildDashboardActivity extends AppCompatActivity {
                     holder.textViewTileValue.setTextColor(android.graphics.Color.parseColor("#9C27B0"));
                     holder.textViewTileSubtitle.setText("Today");
                     break;
+                case 5:
+                    holder.textViewTileTitle.setText(childName + " - Controller Adherence");
+                    holder.textViewTileValue.setText(String.format(Locale.getDefault(), "%.1f%%", stats.getControllerAdherence()));
+                    // Color code: green for >=80%, yellow for 50-79%, red for <50%
+                    if (stats.getControllerAdherence() >= 80.0) {
+                        holder.textViewTileValue.setTextColor(android.graphics.Color.parseColor("#4CAF50"));
+                    } else if (stats.getControllerAdherence() >= 50.0) {
+                        holder.textViewTileValue.setTextColor(android.graphics.Color.parseColor("#FFC107"));
+                    } else {
+                        holder.textViewTileValue.setTextColor(android.graphics.Color.parseColor("#F44336"));
+                    }
+                    holder.textViewTileSubtitle.setText("Last 30 days");
+                    break;
             }
 
             holder.itemView.setOnClickListener(v -> {
@@ -444,7 +485,7 @@ public class ChildDashboardActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return statsList.isEmpty() ? 0 : 5;
+            return statsList.isEmpty() ? 0 : 6;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
