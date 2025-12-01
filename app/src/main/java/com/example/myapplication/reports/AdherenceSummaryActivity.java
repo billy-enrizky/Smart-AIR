@@ -61,7 +61,7 @@ public class AdherenceSummaryActivity extends AppCompatActivity {
                 ChildAccount child = task.getResult().getValue(ChildAccount.class);
                 if (child != null && child.getControllerSchedule() != null) {
                     ControllerSchedule schedule = child.getControllerSchedule();
-                    AdherenceCalculator.calculateAdherence(childId, schedule, startDate, endDate, new com.example.myapplication.ResultCallBack<Double>() {
+                    AdherenceCalculator.calculateAdherence(childId, schedule, 0, Long.MAX_VALUE, new com.example.myapplication.ResultCallBack<Double>() {
                         @Override
                         public void onComplete(Double adherence) {
                             adherenceText.setText("Controller Adherence: " + String.format(Locale.getDefault(), "%.1f%%", adherence));
