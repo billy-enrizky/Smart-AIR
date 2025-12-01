@@ -4,7 +4,10 @@ import static com.google.firebase.auth.FirebaseAuth.getInstance;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -41,6 +44,22 @@ public class CreateChildActivity extends AppCompatActivity {
     private EditText childPasswordEditText;
     private Button createChildButton;
     boolean usernameTaken = false;
+    private final View.OnTouchListener datePickerTouchInterceptor = (view, motionEvent) -> {
+        if (motionEvent == null) {
+            return false;
+        }
+        int action = motionEvent.getActionMasked();
+        ViewParent parent = view.getParent();
+        if (parent == null) {
+            return false;
+        }
+        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
+            parent.requestDisallowInterceptTouchEvent(true);
+        } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            parent.requestDisallowInterceptTouchEvent(false);
+        }
+        return false;
+    };
 
     private FirebaseAuth mAuth;
 
@@ -93,6 +112,7 @@ public class CreateChildActivity extends AppCompatActivity {
                 updateAgeFromDob();
             }
         });
+        enableDatePickerScroll(childDobDatePicker);
         UserManager.isParentAccount(this);
         childAgeEditText = (EditText)findViewById(R.id.input_child_age);
         updateAgeFromDob();
@@ -100,6 +120,19 @@ public class CreateChildActivity extends AppCompatActivity {
         createChildButton = (Button)findViewById(R.id.create_child_button);
         mAuth = getInstance();
 
+    }
+
+    private void enableDatePickerScroll(View view) {
+        if (view == null) {
+            return;
+        }
+        view.setOnTouchListener(datePickerTouchInterceptor);
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                enableDatePickerScroll(viewGroup.getChildAt(i));
+            }
+        }
     }
 
     public void createChildClick(View view) {
