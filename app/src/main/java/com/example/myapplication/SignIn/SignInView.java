@@ -13,6 +13,11 @@ import com.example.myapplication.R;
 import com.example.myapplication.ResetPasswordActivity;
 import com.example.myapplication.SignUpActivity;
 
+interface ISignInView {
+    void GoToMainActivity();
+    void GoToOnBoardingActivity();
+    void showShortMessage(String message);
+}
 
 public class SignInView extends AppCompatActivity implements ISignInView {
 
