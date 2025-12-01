@@ -149,4 +149,9 @@ public class SignInChildProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FilterCheckInByDate.class);
         startActivity(intent);
     }
+
+    public void CreateNewChild(android.view.View view) {
+        Intent intent = new Intent(this, CreateChildActivity.class);
+        startActivity(intent);
+    }
 }

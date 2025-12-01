@@ -35,7 +35,6 @@ import com.example.myapplication.medication.ControllerScheduleActivity;
 import android.widget.ImageView;
 import com.example.myapplication.SignIn.SignInView;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
-import com.example.myapplication.childmanaging.CreateChildActivity;
 import com.example.myapplication.providermanaging.AccessPermissionActivity;
 import com.example.myapplication.providermanaging.InvitationCreateActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -59,7 +58,6 @@ public class ParentActivity extends AppCompatActivity {
     private static final String TAG = "ParentActivity";
     
     private RecyclerView recyclerViewChildren;
-    private Button createChildButton;
     private TextView textViewNotificationBadge;
     private ParentAccount parentAccount;
     private ChildrenZoneAdapter adapter;
@@ -104,7 +102,6 @@ public class ParentActivity extends AppCompatActivity {
         dismissedAlertsPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         
         recyclerViewChildren = findViewById(R.id.recyclerViewChildren);
-        createChildButton = findViewById(R.id.createChildPageButton);
         textViewNotificationBadge = findViewById(R.id.textViewNotificationBadge);
         
         childrenZoneInfo = new ArrayList<>();
@@ -119,14 +116,6 @@ public class ParentActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         }
-        
-        createChildButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ParentActivity.this, CreateChildActivity.class);
-                startActivity(intent);
-            }
-        });
         
         attachChildrenZoneListeners();
     }
