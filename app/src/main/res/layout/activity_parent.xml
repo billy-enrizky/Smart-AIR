@@ -91,14 +91,6 @@
         android:onClick="SignInChildrenProfile"
                 android:text="Children Manager" />
 
-    <Button
-        android:id="@+id/button18"
-                android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-        android:onClick="CreateInvitation"
-                android:text="Link to new Provider" />
-
             <Button
                 android:id="@+id/button19"
                 android:layout_width="match_parent"

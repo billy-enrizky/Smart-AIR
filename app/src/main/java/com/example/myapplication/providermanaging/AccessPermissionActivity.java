@@ -19,6 +19,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.providermanaging.InvitationCreateActivity;
 
 public class AccessPermissionActivity extends AppCompatActivity {
     ParentAccount user;
@@ -73,6 +74,12 @@ public class AccessPermissionActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ParentActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void CreateInvitation(android.view.View view) {
+        Intent intent = new Intent(this, InvitationCreateActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 
     public void addChildToUI(ChildAccount child){
