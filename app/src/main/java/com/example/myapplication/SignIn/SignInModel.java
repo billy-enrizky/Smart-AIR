@@ -18,16 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-interface ISignInModel {
-    void ReloadUserAuth();
-    void SignInAuth(String email, String password, ResultCallBack<Boolean> callBack);
-    String GetCurrentUIDAuth();
-    void QueryDBforNonChildren(String ID, ResultCallBack<UserData> callBack);
-    void usernameExists(String username, ResultCallBack<String> callBack);
-    void QueryDBforChildren(String parentID, String username, ResultCallBack<UserData> callBack);
-}
-
-public class SignInModel implements ISignInModel {
+public class SignInModel {
 
     public FirebaseAuth mAuth;
     public DatabaseReference mDatabase;
@@ -37,14 +28,12 @@ public class SignInModel implements ISignInModel {
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
-    @Override
     public void ReloadUserAuth() {
         if (mAuth.getCurrentUser() != null) {
             mAuth.getCurrentUser().reload();
         }
     }
 
-    @Override
     public void SignInAuth(String email, String password, ResultCallBack<Boolean> callBack) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -54,7 +43,6 @@ public class SignInModel implements ISignInModel {
                 });
     }
 
-    @Override
     public String GetCurrentUIDAuth() {
         if (mAuth.getCurrentUser() != null) {
             return mAuth.getCurrentUser().getUid();
@@ -62,7 +50,6 @@ public class SignInModel implements ISignInModel {
         return null;
     }
 
-    @Override
     public void QueryDBforNonChildren(String ID, ResultCallBack<UserData> callBack) {
         mDatabase.child("users").child(ID).get()
                 .addOnCompleteListener(task -> {
@@ -98,7 +85,6 @@ public class SignInModel implements ISignInModel {
                 });
     }
 
-    @Override
     public void usernameExists(String username, ResultCallBack<String> callBack) {
         mDatabase.child("users").get()
                 .addOnCompleteListener(task -> {
@@ -132,7 +118,6 @@ public class SignInModel implements ISignInModel {
                 });
     }
 
-    @Override
     public void QueryDBforChildren(String parentID, String username,
                                    ResultCallBack<UserData> callBack) {
 

@@ -13,13 +13,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.ResetPasswordActivity;
 import com.example.myapplication.SignUpActivity;
 
-interface ISignInView {
-    void GoToMainActivity();
-    void GoToOnBoardingActivity();
-    void showShortMessage(String message);
-}
-
-public class SignInView extends AppCompatActivity implements ISignInView {
+public class SignInView extends AppCompatActivity {
 
     private EditText emailEditText;
     private EditText passwordEditText;
@@ -53,21 +47,18 @@ public class SignInView extends AppCompatActivity implements ISignInView {
         finish();
     }
 
-    @Override
     public void GoToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
-    @Override
     public void GoToOnBoardingActivity() {
         Intent intent = new Intent(this, OnBoardingActivity.class);
         startActivity(intent);
         finish();
     }
 
-    @Override
     public void showShortMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }

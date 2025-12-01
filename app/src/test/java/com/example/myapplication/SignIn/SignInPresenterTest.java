@@ -9,17 +9,22 @@ import com.example.myapplication.userdata.UserData;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 public class SignInPresenterTest {
 
-    private ISignInView view;
-    private ISignInModel model;
+    @Mock
+    private SignInView view;
+    
+    @Mock
+    private SignInModel model;
+    
     private SignInPresenter presenter;
 
     @Before
     public void setup() {
-        view = mock(ISignInView.class);
-        model = mock(ISignInModel.class);
+        MockitoAnnotations.openMocks(this);
         presenter = new SignInPresenter(view, model);
     }
 

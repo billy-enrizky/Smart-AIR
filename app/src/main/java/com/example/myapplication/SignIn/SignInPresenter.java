@@ -17,10 +17,10 @@ public class SignInPresenter {
             java.util.regex.Pattern.CASE_INSENSITIVE
         );
 
-    private ISignInView view;
-    private ISignInModel model;
+    private SignInView view;
+    private SignInModel model;
 
-    public SignInPresenter(ISignInView view, ISignInModel model) {
+    public SignInPresenter(SignInView view, SignInModel model) {
         this.view = view;
         this.model = model;
     }
