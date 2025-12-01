@@ -114,6 +114,7 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
+        Button buttonBack = findViewById(R.id.buttonBack);
         buttonStartDate = findViewById(R.id.buttonStartDate);
         buttonEndDate = findViewById(R.id.buttonEndDate);
         buttonGeneratePDF = findViewById(R.id.buttonGeneratePDF);
@@ -130,6 +131,7 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
 
         updateDateButtons();
 
+        buttonBack.setOnClickListener(v -> finish());
         buttonStartDate.setOnClickListener(v -> showDatePicker(true));
         buttonEndDate.setOnClickListener(v -> showDatePicker(false));
         buttonGeneratePDF.setOnClickListener(v -> generatePDF());
