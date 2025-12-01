@@ -107,16 +107,6 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonEnterPEF" />
 
     <Button
-        android:id="@+id/buttonIncidentHistory"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Incident History"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonViewPEFHistory" />
-
-    <Button
         android:id="@+id/buttonTriage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -128,7 +118,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonIncidentHistory" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonViewPEFHistory" />
 
     <Button
         android:id="@+id/debugButton"
