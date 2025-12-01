@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.safety.PEFHistoryActivity;
+import com.example.myapplication.safety.IncidentHistoryActivity;
 import com.example.myapplication.safety.PEFReading;
 import com.example.myapplication.safety.RescueUsage;
 import com.example.myapplication.safety.SetPersonalBestActivity;
@@ -73,6 +74,13 @@ public class ParentActivity extends AppCompatActivity {
     private java.util.Set<String> seenNotificationIds = new java.util.HashSet<>();
     private SharedPreferences dismissedAlertsPrefs;
     private static final String PREFS_NAME = "ParentActivityDismissedAlerts";
+    
+    // Real-time zone listeners for each child
+    private Map<String, Query> childPEFQueries = new HashMap<>();
+    private Map<String, ValueEventListener> childPEFListeners = new HashMap<>();
+    private Map<String, DatabaseReference> childAccountRefs = new HashMap<>();
+    private Map<String, ValueEventListener> childAccountListeners = new HashMap<>();
+    private Map<String, ChildAccount> latestChildAccounts = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,13 +128,13 @@ public class ParentActivity extends AppCompatActivity {
             }
         });
         
-        loadChildrenZones();
+        attachChildrenZoneListeners();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadChildrenZones();
+        attachChildrenZoneListeners();
         attachTriageListener();
         loadExistingNotificationIds();
         attachNotificationsListener();
@@ -159,11 +167,15 @@ public class ParentActivity extends AppCompatActivity {
         });
     }
 
-    private void loadChildrenZones() {
+    private void attachChildrenZoneListeners() {
         if (parentAccount == null || parentAccount.getChildren() == null) {
             return;
         }
         
+        // First, detach all existing listeners
+        detachChildrenZoneListeners();
+        
+        // Clear the current list and let listeners populate it
         runOnUiThread(() -> {
             childrenZoneInfo.clear();
             adapter.notifyDataSetChanged();
@@ -177,21 +189,15 @@ public class ParentActivity extends AppCompatActivity {
         
         for (Map.Entry<String, ChildAccount> entry : children.entrySet()) {
             ChildAccount child = entry.getValue();
-            loadChildZone(child);
+            attachChildZoneListener(child);
         }
     }
 
-    private void loadChildZone(ChildAccount child) {
+    private void attachChildZoneListener(ChildAccount child) {
         String parentId = child.getParent_id();
         String childId = child.getID();
-        Integer personalBest = child.getPersonalBest();
         
-        if (personalBest == null || personalBest <= 0) {
-            ChildZoneInfo info = new ChildZoneInfo(child, Zone.UNKNOWN, 0.0, null, null);
-            updateChildZoneInfo(info);
-            return;
-        }
-        
+        // Attach listener for PEF readings (real-time updates)
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
@@ -200,46 +206,161 @@ public class ParentActivity extends AppCompatActivity {
                 .child("pefReadings");
         
         Query latestPEFQuery = pefRef.orderByChild("timestamp").limitToLast(1);
+        childPEFQueries.put(childId, latestPEFQuery);
         
-        latestPEFQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Store initial child account
+        latestChildAccounts.put(childId, child);
+        
+        ValueEventListener pefListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                PEFReading latestReading = null;
-                if (snapshot.exists() && snapshot.hasChildren()) {
-                    for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                        latestReading = childSnapshot.getValue(PEFReading.class);
-                        break;
-                    }
+                // Use latest child account from map (updated by child account listener)
+                ChildAccount latestChild = latestChildAccounts.get(childId);
+                if (latestChild == null) {
+                    latestChild = child; // Fallback to original if not in map
                 }
-                
-                Zone zone = Zone.UNKNOWN;
-                double percentage = 0.0;
-                String lastPEFDate = null;
-                
-                if (latestReading != null) {
-                    int pefValue = latestReading.getValue();
-                    zone = ZoneCalculator.calculateZone(pefValue, personalBest);
-                    percentage = ZoneCalculator.calculatePercentage(pefValue, personalBest);
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
-                    lastPEFDate = sdf.format(new Date(latestReading.getTimestamp()));
-                }
-                
-                ChildZoneInfo info = new ChildZoneInfo(child, zone, percentage, lastPEFDate, latestReading);
-                updateChildZoneInfo(info);
+                updateChildZoneFromSnapshot(latestChild, snapshot);
             }
             
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading child zone", error.toException());
-                ChildZoneInfo info = new ChildZoneInfo(child, Zone.UNKNOWN, 0.0, null, null);
+                Log.e(TAG, "Error loading child zone for " + childId, error.toException());
+                ChildAccount latestChild = latestChildAccounts.get(childId);
+                if (latestChild == null) {
+                    latestChild = child;
+                }
+                ChildZoneInfo info = new ChildZoneInfo(latestChild, Zone.UNKNOWN, 0.0, null, null);
                 updateChildZoneInfo(info);
             }
-        });
+        };
+        
+        childPEFListeners.put(childId, pefListener);
+        latestPEFQuery.addValueEventListener(pefListener);
+        
+        // Attach listener for child account (to catch personalBest updates)
+        DatabaseReference childAccountRef = UserManager.mDatabase
+                .child("users")
+                .child(parentId)
+                .child("children")
+                .child(childId);
+        
+        childAccountRefs.put(childId, childAccountRef);
+        
+        ValueEventListener accountListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                // Update child account from snapshot
+                ChildAccount updatedChild = snapshot.getValue(ChildAccount.class);
+                if (updatedChild != null) {
+                    // Store latest child account for PEF listener to use
+                    latestChildAccounts.put(childId, updatedChild);
+                    
+                    // Trigger zone update by re-querying latest PEF
+                    Query pefQuery = childPEFQueries.get(childId);
+                    if (pefQuery != null) {
+                        pefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot pefSnapshot) {
+                                updateChildZoneFromSnapshot(updatedChild, pefSnapshot);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError error) {
+                                Log.e(TAG, "Error refreshing zone after personalBest change", error.toException());
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, "Error loading child account for " + childId, error.toException());
+            }
+        };
+        
+        childAccountListeners.put(childId, accountListener);
+        childAccountRef.addValueEventListener(accountListener);
+    }
+
+    private void updateChildZoneFromSnapshot(ChildAccount child, DataSnapshot snapshot) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        
+        Integer personalBest = child.getPersonalBest();
+        
+        if (personalBest == null || personalBest <= 0) {
+            ChildZoneInfo info = new ChildZoneInfo(child, Zone.UNKNOWN, 0.0, null, null);
+            updateChildZoneInfo(info);
+            return;
+        }
+        
+        PEFReading latestReading = null;
+        if (snapshot.exists() && snapshot.hasChildren()) {
+            for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                latestReading = childSnapshot.getValue(PEFReading.class);
+                break;
+            }
+        }
+        
+        Zone zone = Zone.UNKNOWN;
+        double percentage = 0.0;
+        String lastPEFDate = null;
+        
+        if (latestReading != null) {
+            int pefValue = latestReading.getValue();
+            zone = ZoneCalculator.calculateZone(pefValue, personalBest);
+            percentage = ZoneCalculator.calculatePercentage(pefValue, personalBest);
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
+            lastPEFDate = sdf.format(new Date(latestReading.getTimestamp()));
+        }
+        
+        ChildZoneInfo info = new ChildZoneInfo(child, zone, percentage, lastPEFDate, latestReading);
+        updateChildZoneInfo(info);
+    }
+
+    private void detachChildrenZoneListeners() {
+        // Detach all PEF listeners
+        for (Map.Entry<String, Query> entry : childPEFQueries.entrySet()) {
+            String childId = entry.getKey();
+            Query query = entry.getValue();
+            ValueEventListener listener = childPEFListeners.get(childId);
+            if (query != null && listener != null) {
+                query.removeEventListener(listener);
+            }
+        }
+        childPEFQueries.clear();
+        childPEFListeners.clear();
+        
+        // Detach all child account listeners
+        for (Map.Entry<String, DatabaseReference> entry : childAccountRefs.entrySet()) {
+            String childId = entry.getKey();
+            DatabaseReference ref = entry.getValue();
+            ValueEventListener listener = childAccountListeners.get(childId);
+            if (ref != null && listener != null) {
+                ref.removeEventListener(listener);
+            }
+        }
+        childAccountRefs.clear();
+        childAccountListeners.clear();
+        
+        // Clear latest child accounts cache
+        latestChildAccounts.clear();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        detachChildrenZoneListeners();
+        detachTriageListener();
+        detachNotificationsListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        detachChildrenZoneListeners();
         detachTriageListener();
         detachNotificationsListener();
     }
@@ -731,6 +852,14 @@ public class ParentActivity extends AppCompatActivity {
                 startActivity(intent);
             });
             
+            holder.buttonIncidentHistory.setOnClickListener(v -> {
+                Intent intent = new Intent(ParentActivity.this, IncidentHistoryActivity.class);
+                intent.putExtra("parentId", info.child.getParent_id());
+                intent.putExtra("childId", info.child.getID());
+                intent.putExtra("childName", info.child.getName());
+                startActivity(intent);
+            });
+            
             holder.buttonDeleteChild.setOnClickListener(v -> {
                 deleteChild(info.child, position);
             });
@@ -751,6 +880,7 @@ public class ParentActivity extends AppCompatActivity {
             Button buttonControllerSchedule;
             Button buttonDeleteChild;
             Button buttonSetPersonalBest;
+            Button buttonIncidentHistory;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -763,6 +893,7 @@ public class ParentActivity extends AppCompatActivity {
                 buttonControllerSchedule = itemView.findViewById(R.id.buttonControllerSchedule);
                 buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
                 buttonSetPersonalBest = itemView.findViewById(R.id.buttonSetPersonalBest);
+                buttonIncidentHistory = itemView.findViewById(R.id.buttonIncidentHistory);
     }
         }
     }
