@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
-public class RescueLog {
+public class RescueLog implements Comparable<RescueLog>{
     String username;
     long timestamp;
     String feeling;
@@ -42,5 +42,15 @@ public class RescueLog {
     public String getExtraInfo(){return this.extraInfo;}
     public String getInfo(){
         return "After: \n\tBreath Rating: "+this.getRating()+"\n\tFeeling: "+this.getFeeling()+"\n"+this.getExtraInfo();
+    }
+    @Override
+    public int compareTo(RescueLog other){
+        if (other.getTimestamp() > this.getTimestamp()){
+            return 1;
+        }
+        else if (other.getTimestamp() < this.getTimestamp()){
+            return -1;
+        }
+        return 0;
     }
 }

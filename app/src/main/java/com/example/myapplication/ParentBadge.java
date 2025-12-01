@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
+
 public class ParentBadge extends AppCompatActivity {
 
     @Override
@@ -22,29 +24,29 @@ public class ParentBadge extends AppCompatActivity {
         EditText req4 = findViewById(R.id.req4);
         EditText req5 = findViewById(R.id.req5);
 
-        AchievementsModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<Achievement>() {
+        AchievementsModel.readFromDB(SignInChildProfileActivity.currentChild.getID(), new ResultCallBack<Achievement>() {
             @Override
             public void onComplete(Achievement achievement) {
 
                 if (achievement == null) {
-                    Achievement a = new Achievement(UserManager.currentUser.getID());
+                    Achievement a = new Achievement(SignInChildProfileActivity.currentChild.getID());
                     AchievementsModel.writeIntoDB(a, new CallBack() {
                         @Override
                         public void onComplete() {
-                            req1.setText(a.getBadgeRequirements().get(0));
-                            req2.setText(a.getBadgeRequirements().get(1));
-                            req3.setText(a.getBadgeRequirements().get(2));
-                            req4.setText(a.getBadgeRequirements().get(3));
-                            req5.setText(a.getBadgeRequirements().get(4));
+                            req1.setText(String.valueOf(a.getBadgeRequirements().get(0)));
+                            req2.setText(String.valueOf(a.getBadgeRequirements().get(1)));
+                            req3.setText(String.valueOf(a.getBadgeRequirements().get(2)));
+                            req4.setText(String.valueOf(a.getBadgeRequirements().get(3)));
+                            req5.setText(String.valueOf(a.getBadgeRequirements().get(4)));
                         }
                     });
                 }
                 else {
-                    req1.setText(achievement.getBadgeRequirements().get(0));
-                    req2.setText(achievement.getBadgeRequirements().get(1));
-                    req3.setText(achievement.getBadgeRequirements().get(2));
-                    req4.setText(achievement.getBadgeRequirements().get(3));
-                    req5.setText(achievement.getBadgeRequirements().get(4));
+                    req1.setText(String.valueOf(achievement.getBadgeRequirements().get(0)));
+                    req2.setText(String.valueOf(achievement.getBadgeRequirements().get(1)));
+                    req3.setText(String.valueOf(achievement.getBadgeRequirements().get(2)));
+                    req4.setText(String.valueOf(achievement.getBadgeRequirements().get(3)));
+                    req5.setText(String.valueOf(achievement.getBadgeRequirements().get(4)));
                 }
             }
         });
@@ -56,15 +58,14 @@ public class ParentBadge extends AppCompatActivity {
             startActivity(new Intent(ParentBadge.this, ParentActivity.class));
         });
 
-        String r1 = req1.getText().toString();
-        String r2 = req2.getText().toString();
-        String r3 = req3.getText().toString();
-        String r4 = req4.getText().toString();
-        String r5 = req5.getText().toString();
-
         confirmbutton.setOnClickListener(v -> {
+            String r1 = req1.getText().toString().trim();
+            String r2 = req2.getText().toString().trim();
+            String r3 = req3.getText().toString().trim();
+            String r4 = req4.getText().toString().trim();
+            String r5 = req5.getText().toString().trim();
             if (allValid(r1,r2,r3,r4,r5)){
-                AchievementsModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<Achievement>() {
+                AchievementsModel.readFromDB(SignInChildProfileActivity.currentChild.getID(), new ResultCallBack<Achievement>() {
                     @Override
                     public void onComplete(Achievement achievement) {
 
@@ -97,6 +98,7 @@ public class ParentBadge extends AppCompatActivity {
             try {
                 Integer.parseInt(a);
             } catch (Exception e) {
+                Toast.makeText(ParentBadge.this,a+" is invalid.",Toast.LENGTH_SHORT).show();
                 return false;
             }
         return true;

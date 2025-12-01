@@ -81,6 +81,9 @@
             android:name=".ParentInhalerMenu"
             android:exported="false" />
         <activity
+            android:name=".ParentBadge"
+            android:exported="false" />
+        <activity
             android:name=".childmanaging.CreateChildActivity"
             android:exported="false" />
         <activity
