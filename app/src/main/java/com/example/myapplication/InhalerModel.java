@@ -20,7 +20,7 @@ public class InhalerModel {
 
     public static void writeIntoDB(com.example.myapplication.Inhaler inhaler, CallBack callback){
         String username = inhaler.username;
-        DatabaseReference Ref = UserManager.mDatabase.child("InhalerManager").child(username + (inhaler.isRescue?"_1":"_0")).getRef();
+        DatabaseReference Ref = UserManager.mDatabase.child("InhalerManager").child(username + (inhaler.isRescue?"1":"0")).getRef();
         Ref.setValue(inhaler).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(Task<Void> task) {

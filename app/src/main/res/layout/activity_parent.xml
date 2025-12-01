@@ -46,7 +46,7 @@
                         android:id="@+id/buttonNotificationButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Notifications" />
+                        android:text="Alerts" />
 
                     <TextView
                         android:id="@+id/textViewNotificationBadge"
