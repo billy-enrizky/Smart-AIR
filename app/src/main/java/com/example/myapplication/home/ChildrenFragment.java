@@ -12,13 +12,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.medication.ControllerScheduleActivity;
-import com.example.myapplication.reports.ChildDashboardActivity;
 import com.example.myapplication.reports.ProviderReportGeneratorActivity;
 import com.example.myapplication.reports.TrendSnippetActivity;
 import com.example.myapplication.safety.ActionPlanActivity;
@@ -49,7 +49,7 @@ public class ChildrenFragment extends Fragment {
     
     private RecyclerView recyclerViewChildren;
     private ParentAccount parentAccount;
-    private ChildrenAdapter adapter;
+    private SimpleChildAdapter adapter;
     private List<ChildZoneInfo> childrenZoneInfo;
     
     private Map<String, Query> childPEFQueries = new HashMap<>();
@@ -57,6 +57,18 @@ public class ChildrenFragment extends Fragment {
     private Map<String, DatabaseReference> childAccountRefs = new HashMap<>();
     private Map<String, ValueEventListener> childAccountListeners = new HashMap<>();
     private Map<String, ChildAccount> latestChildAccounts = new HashMap<>();
+    
+    private ChildZoneInfo selectedChildInfo;
+    private View buttonsLayout;
+    private TextView textViewCurrentChild;
+    private Button buttonTrendSnippet;
+    private Button buttonGenerateReport;
+    private Button buttonDeleteChild;
+    private Button buttonSetPersonalBest;
+    private Button buttonControllerSchedule;
+    private Button buttonIncidentHistory;
+    private Button buttonPEFHistory;
+    private Button buttonActionPlan;
 
     @Nullable
     @Override
@@ -72,9 +84,23 @@ public class ChildrenFragment extends Fragment {
         
         recyclerViewChildren = view.findViewById(R.id.recyclerViewChildren);
         childrenZoneInfo = new ArrayList<>();
-        adapter = new ChildrenAdapter(childrenZoneInfo);
-        recyclerViewChildren.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new SimpleChildAdapter(childrenZoneInfo, this::onChildSelected);
+        recyclerViewChildren.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerViewChildren.setAdapter(adapter);
+        
+        buttonsLayout = view.findViewById(R.id.layoutChildButtons);
+        textViewCurrentChild = buttonsLayout.findViewById(R.id.textViewCurrentChild);
+        buttonTrendSnippet = buttonsLayout.findViewById(R.id.buttonTrendSnippet);
+        buttonGenerateReport = buttonsLayout.findViewById(R.id.buttonGenerateReport);
+        buttonDeleteChild = buttonsLayout.findViewById(R.id.buttonDeleteChild);
+        buttonSetPersonalBest = buttonsLayout.findViewById(R.id.buttonSetPersonalBest);
+        buttonControllerSchedule = buttonsLayout.findViewById(R.id.buttonControllerSchedule);
+        buttonIncidentHistory = buttonsLayout.findViewById(R.id.buttonIncidentHistory);
+        buttonPEFHistory = buttonsLayout.findViewById(R.id.buttonPEFHistory);
+        buttonActionPlan = buttonsLayout.findViewById(R.id.buttonActionPlan);
+        
+        setupButtons();
+        updateButtonsVisibility(false);
         
         attachChildrenZoneListeners();
         
@@ -289,6 +315,10 @@ public class ChildrenFragment extends Fragment {
                         adapter.notifyItemChanged(i);
                     }
                     found = true;
+                    if (selectedChildInfo != null && selectedChildInfo.child.getID().equals(newInfo.child.getID())) {
+                        selectedChildInfo = newInfo;
+                        updateButtonsForSelectedChild();
+                    }
                     return;
                 }
             }
@@ -297,8 +327,124 @@ public class ChildrenFragment extends Fragment {
                 if (adapter != null) {
                     adapter.notifyItemInserted(childrenZoneInfo.size() - 1);
                 }
+                if (selectedChildInfo == null && childrenZoneInfo.size() == 1) {
+                    onChildSelected(newInfo, 0);
+                }
             }
         });
+    }
+
+    private void onChildSelected(ChildZoneInfo info, int position) {
+        selectedChildInfo = info;
+        updateButtonsForSelectedChild();
+        updateButtonsVisibility(true);
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void updateButtonsForSelectedChild() {
+        if (selectedChildInfo == null) {
+            return;
+        }
+        
+        textViewCurrentChild.setText("Current Child: " + selectedChildInfo.child.getName());
+    }
+
+    private void setupButtons() {
+        buttonTrendSnippet.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                Intent intent = new Intent(getActivity(), TrendSnippetActivity.class);
+                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
+                intent.putExtra("childId", selectedChildInfo.child.getID());
+                intent.putExtra("childName", selectedChildInfo.child.getName());
+                startActivity(intent);
+            }
+        });
+        
+        buttonGenerateReport.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                Intent intent = new Intent(getActivity(), ProviderReportGeneratorActivity.class);
+                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
+                intent.putExtra("childId", selectedChildInfo.child.getID());
+                intent.putExtra("childName", selectedChildInfo.child.getName());
+                startActivity(intent);
+            }
+        });
+        
+        buttonControllerSchedule.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                Intent intent = new Intent(getActivity(), ControllerScheduleActivity.class);
+                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
+                intent.putExtra("childId", selectedChildInfo.child.getID());
+                intent.putExtra("childName", selectedChildInfo.child.getName());
+                startActivity(intent);
+            }
+        });
+        
+        buttonSetPersonalBest.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                Intent intent = new Intent(getActivity(), SetPersonalBestActivity.class);
+                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
+                intent.putExtra("childId", selectedChildInfo.child.getID());
+                intent.putExtra("childName", selectedChildInfo.child.getName());
+                startActivity(intent);
+            }
+        });
+        
+        buttonIncidentHistory.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                Intent intent = new Intent(getActivity(), IncidentHistoryActivity.class);
+                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
+                intent.putExtra("childId", selectedChildInfo.child.getID());
+                intent.putExtra("childName", selectedChildInfo.child.getName());
+                startActivity(intent);
+            }
+        });
+        
+        buttonDeleteChild.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                int position = -1;
+                for (int i = 0; i < childrenZoneInfo.size(); i++) {
+                    if (childrenZoneInfo.get(i).child.getID().equals(selectedChildInfo.child.getID())) {
+                        position = i;
+                        break;
+                    }
+                }
+                if (position >= 0) {
+                    deleteChild(selectedChildInfo.child, position);
+                }
+            }
+        });
+        
+        buttonPEFHistory.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                Intent intent = new Intent(getActivity(), PEFHistoryActivity.class);
+                intent.putExtra("childId", selectedChildInfo.child.getID());
+                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
+                startActivity(intent);
+            }
+        });
+        
+        buttonActionPlan.setOnClickListener(v -> {
+            if (selectedChildInfo != null) {
+                Intent intent = new Intent(getActivity(), ActionPlanActivity.class);
+                intent.putExtra("parentId", selectedChildInfo.child.getParent_id());
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void updateButtonsVisibility(boolean visible) {
+        int visibility = visible ? View.VISIBLE : View.GONE;
+        buttonTrendSnippet.setVisibility(visibility);
+        buttonGenerateReport.setVisibility(visibility);
+        buttonDeleteChild.setVisibility(visibility);
+        buttonSetPersonalBest.setVisibility(visibility);
+        buttonControllerSchedule.setVisibility(visibility);
+        buttonIncidentHistory.setVisibility(visibility);
+        buttonPEFHistory.setVisibility(visibility);
+        buttonActionPlan.setVisibility(visibility);
     }
 
     private void deleteChild(ChildAccount child, int position) {
@@ -317,6 +463,11 @@ public class ChildrenFragment extends Fragment {
                             childrenZoneInfo.remove(position);
                             adapter.notifyItemRemoved(position);
                             adapter.notifyItemRangeChanged(position, childrenZoneInfo.size() - position);
+                            if (selectedChildInfo != null && selectedChildInfo.child.getID().equals(child.getID())) {
+                                selectedChildInfo = null;
+                                updateButtonsVisibility(false);
+                                textViewCurrentChild.setText("Current Child");
+                            }
                             android.widget.Toast.makeText(getContext(), "Child deleted successfully", android.widget.Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e(TAG, "Failed to delete child", task.getException());
@@ -344,18 +495,24 @@ public class ChildrenFragment extends Fragment {
         }
     }
 
-    private class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHolder> {
-        private final List<ChildZoneInfo> children;
+    private interface ChildSelectionListener {
+        void onChildSelected(ChildZoneInfo info, int position);
+    }
 
-        public ChildrenAdapter(List<ChildZoneInfo> children) {
+    private class SimpleChildAdapter extends RecyclerView.Adapter<SimpleChildAdapter.ViewHolder> {
+        private final List<ChildZoneInfo> children;
+        private final ChildSelectionListener selectionListener;
+
+        public SimpleChildAdapter(List<ChildZoneInfo> children, ChildSelectionListener selectionListener) {
             this.children = children;
+            this.selectionListener = selectionListener;
         }
 
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_child_zone_children, parent, false);
+                    .inflate(R.layout.item_child_card_simple, parent, false);
             return new ViewHolder(view);
         }
 
@@ -384,78 +541,19 @@ public class ChildrenFragment extends Fragment {
                 holder.textViewLastPEF.setVisibility(View.GONE);
             }
             
-            holder.buttonTrendSnippet.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), TrendSnippetActivity.class);
-                intent.putExtra("parentId", info.child.getParent_id());
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("childName", info.child.getName());
-                startActivity(intent);
+            holder.itemView.setOnClickListener(v -> {
+                if (selectionListener != null) {
+                    selectionListener.onChildSelected(info, position);
+                }
             });
             
-            holder.buttonGenerateReport.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), ProviderReportGeneratorActivity.class);
-                intent.putExtra("parentId", info.child.getParent_id());
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("childName", info.child.getName());
-                startActivity(intent);
-            });
-            
-            holder.buttonControllerSchedule.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), ControllerScheduleActivity.class);
-                intent.putExtra("parentId", info.child.getParent_id());
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("childName", info.child.getName());
-                startActivity(intent);
-            });
-            
-            holder.buttonSetPersonalBest.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), SetPersonalBestActivity.class);
-                intent.putExtra("parentId", info.child.getParent_id());
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("childName", info.child.getName());
-                startActivity(intent);
-            });
-            
-            holder.buttonIncidentHistory.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), IncidentHistoryActivity.class);
-                intent.putExtra("parentId", info.child.getParent_id());
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("childName", info.child.getName());
-                startActivity(intent);
-            });
-            
-            holder.buttonDeleteChild.setOnClickListener(v -> {
-                deleteChild(info.child, position);
-            });
-            
-            holder.buttonDashboard.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), ChildDashboardActivity.class);
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("parentId", info.child.getParent_id());
-                intent.putExtra("childName", info.child.getName());
-                startActivity(intent);
-            });
-            
-            holder.buttonPEFHistory.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), PEFHistoryActivity.class);
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("parentId", info.child.getParent_id());
-                startActivity(intent);
-            });
-            
-            holder.buttonActionPlan.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), ActionPlanActivity.class);
-                intent.putExtra("parentId", info.child.getParent_id());
-                startActivity(intent);
-            });
-            
-            holder.buttonEditChild.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), ChildDashboardActivity.class);
-                intent.putExtra("childId", info.child.getID());
-                intent.putExtra("parentId", info.child.getParent_id());
-                intent.putExtra("childName", info.child.getName());
-                startActivity(intent);
-            });
+            if (selectedChildInfo != null && selectedChildInfo.child.getID().equals(info.child.getID())) {
+                holder.itemView.setAlpha(1.0f);
+                holder.cardView.setCardElevation(8f);
+            } else {
+                holder.itemView.setAlpha(0.7f);
+                holder.cardView.setCardElevation(4f);
+            }
         }
 
         @Override
@@ -464,39 +562,20 @@ public class ChildrenFragment extends Fragment {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
+            CardView cardView;
             TextView textViewChildName;
             TextView textViewZoneName;
             TextView textViewZonePercentage;
             TextView textViewLastPEF;
-            Button buttonTrendSnippet;
-            Button buttonGenerateReport;
-            Button buttonControllerSchedule;
-            Button buttonDeleteChild;
-            Button buttonSetPersonalBest;
-            Button buttonIncidentHistory;
-            Button buttonDashboard;
-            Button buttonPEFHistory;
-            Button buttonActionPlan;
-            Button buttonEditChild;
 
             ViewHolder(View itemView) {
                 super(itemView);
+                cardView = (CardView) itemView;
                 textViewChildName = itemView.findViewById(R.id.textViewChildName);
                 textViewZoneName = itemView.findViewById(R.id.textViewZoneName);
                 textViewZonePercentage = itemView.findViewById(R.id.textViewZonePercentage);
                 textViewLastPEF = itemView.findViewById(R.id.textViewLastPEF);
-                buttonTrendSnippet = itemView.findViewById(R.id.buttonTrendSnippet);
-                buttonGenerateReport = itemView.findViewById(R.id.buttonGenerateReport);
-                buttonControllerSchedule = itemView.findViewById(R.id.buttonControllerSchedule);
-                buttonDeleteChild = itemView.findViewById(R.id.buttonDeleteChild);
-                buttonSetPersonalBest = itemView.findViewById(R.id.buttonSetPersonalBest);
-                buttonIncidentHistory = itemView.findViewById(R.id.buttonIncidentHistory);
-                buttonDashboard = itemView.findViewById(R.id.buttonDashboard);
-                buttonPEFHistory = itemView.findViewById(R.id.buttonPEFHistory);
-                buttonActionPlan = itemView.findViewById(R.id.buttonActionPlan);
-                buttonEditChild = itemView.findViewById(R.id.buttonEditChild);
             }
         }
     }
 }
-
