@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".notifications.NotificationActivity">
+    tools:context=".notifications.NotificationActivity"
+    android:background="#99D9EA">
 
     <Button
         android:id="@+id/buttonBack"
@@ -14,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:backgroundTint="#6E8CA0"
         android:text="Back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

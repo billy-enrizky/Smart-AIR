@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".reports.ProviderReportViewActivity">
+    tools:context=".reports.ProviderReportViewActivity"
+    android:background="#99D9EA">
 
     <Button
         android:id="@+id/buttonBack"

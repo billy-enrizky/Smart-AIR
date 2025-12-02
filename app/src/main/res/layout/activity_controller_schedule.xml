@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".medication.ControllerScheduleActivity">
+    tools:context=".medication.ControllerScheduleActivity"
+    android:background="#99D9EA">
 
     <ScrollView
         android:layout_width="0dp"
