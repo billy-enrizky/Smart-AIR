@@ -248,7 +248,7 @@ public class TriageActivity extends AppCompatActivity {
     }
     
     private void resetButtonPair(Button buttonYes, Button buttonNo) {
-        int defaultColor = 0xFF6200EE;
+        int defaultColor = 0xFF01A829;
         buttonYes.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
         buttonYes.setTextColor(0xFFFFFFFF);
         buttonNo.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
@@ -726,7 +726,7 @@ public class TriageActivity extends AppCompatActivity {
     
     private void highlightButton(Button selectedButton, Button otherButton, boolean isYes) {
         int selectedColor = 0xFFFFEB3B;
-        int defaultColor = 0xFF6200EE;
+        int defaultColor = 0xFF01A829;
         
         selectedButton.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
         selectedButton.setTextColor(0xFF000000);

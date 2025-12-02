@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -23,14 +24,24 @@
             android:id="@+id/buttonRescueYes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Yes" />
+            android:backgroundTint="#01A829"
+            android:fontFamily="@font/happy_monkey"
+            android:text="Yes"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:cornerRadius="30dp" />
 
         <Button
             android:id="@+id/buttonRescueNo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="No" />
+            android:backgroundTint="#01A829"
+            android:fontFamily="@font/happy_monkey"
+            android:text="No"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:cornerRadius="30dp" />
     </LinearLayout>
 
     <TextView
@@ -56,8 +67,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:backgroundTint="#01A829"
+        android:fontFamily="@font/happy_monkey"
         android:text="Next"
-        android:visibility="gone" />
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:cornerRadius="30dp" />
 
 </LinearLayout>
 
