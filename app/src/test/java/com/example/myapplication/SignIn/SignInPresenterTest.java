@@ -30,12 +30,13 @@ public class SignInPresenterTest {
         UserManager.currentUser = null;
     }
 
+    // ==================== initialize() Method Tests ====================
+    
     @Test
-    public void testInitialize() {
+    public void testInitialize_ResetsCurrentUserAndCallsReloadUserAuth() {
         // Set a non-null user to verify initialize() resets it
         UserManager.currentUser = new ParentAccount();
         
-        // Test initialize method
         presenter.initialize();
         
         // Verify UserManager.currentUser is set to null
@@ -45,54 +46,46 @@ public class SignInPresenterTest {
         verify(mockModel).ReloadUserAuth();
     }
 
+    // ==================== signin() Method Tests ====================
+    
     @Test
-    public void testSignin_WithNullInput1() {
-        // Test signin with null input1
+    public void testSignin_WithNullInput1_ShowsError() {
         presenter.signin(null, "password");
-        
         verify(mockView).showShortMessage("input cannot be empty");
         verify(mockModel, never()).SignInAuth(anyString(), anyString(), any());
         verify(mockModel, never()).usernameExists(anyString(), any());
     }
 
     @Test
-    public void testSignin_WithNullInput2() {
-        // Test signin with null input2
+    public void testSignin_WithNullInput2_ShowsError() {
         presenter.signin("email@test.com", null);
-        
         verify(mockView).showShortMessage("input cannot be empty");
         verify(mockModel, never()).SignInAuth(anyString(), anyString(), any());
         verify(mockModel, never()).usernameExists(anyString(), any());
     }
 
     @Test
-    public void testSignin_WithEmptyInput1() {
-        // Test signin with empty input1
+    public void testSignin_WithEmptyInput1_ShowsError() {
         presenter.signin("", "password");
-        
         verify(mockView).showShortMessage("input cannot be empty");
         verify(mockModel, never()).SignInAuth(anyString(), anyString(), any());
         verify(mockModel, never()).usernameExists(anyString(), any());
     }
 
     @Test
-    public void testSignin_WithEmptyInput2() {
-        // Test signin with empty input2
+    public void testSignin_WithEmptyInput2_ShowsError() {
         presenter.signin("email@test.com", "");
-        
         verify(mockView).showShortMessage("input cannot be empty");
         verify(mockModel, never()).SignInAuth(anyString(), anyString(), any());
         verify(mockModel, never()).usernameExists(anyString(), any());
     }
 
     @Test
-    public void testSignin_WithEmail() {
-        // Test signin with email (should call signInForParentAndProvider)
+    public void testSignin_WithEmail_CallsSignInForParentAndProvider() {
         String email = "test@example.com";
         String password = "password123";
         String userId = "user123";
         
-        // Set up mocks to execute full callback chain
         when(mockModel.GetCurrentUIDAuth()).thenReturn(userId);
         ParentAccount parentAccount = new ParentAccount();
         parentAccount.setFirstTime(false);
@@ -109,29 +102,24 @@ public class SignInPresenterTest {
         
         presenter.signin(email, password);
         
-        // Verify SignInAuth is called with email
         ArgumentCaptor<ResultCallBack<Boolean>> authCallback = ArgumentCaptor.forClass(ResultCallBack.class);
         verify(mockModel).SignInAuth(eq(email), eq(password), authCallback.capture());
         
-        // Execute the full callback chain to cover all lines
         authCallback.getValue().onComplete(true);
         verify(mockModel).GetCurrentUIDAuth();
         verify(mockModel).QueryDBforNonChildren(eq(userId), any(ResultCallBack.class));
         assertNotNull("QueryDBforNonChildren callback should be captured", queryCallbackHolder[0]);
         queryCallbackHolder[0].onComplete(parentAccount);
         
-        // Verify usernameExists is NOT called
         verify(mockModel, never()).usernameExists(anyString(), any());
     }
 
     @Test
-    public void testSignin_WithUsername() {
-        // Test signin with username (should call signInForChild)
+    public void testSignin_WithUsername_CallsSignInForChild() {
         String username = "testuser";
         String password = "password123";
         String parentId = "parent123";
         
-        // Set up mocks to execute full callback chain
         ChildAccount childAccount = new ChildAccount();
         childAccount.setPassword(password);
         childAccount.setID(username);
@@ -148,164 +136,135 @@ public class SignInPresenterTest {
         
         presenter.signin(username, password);
         
-        // Verify usernameExists is called
         ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
         verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
         
-        // Execute the full callback chain to cover all lines
         usernameCallback.getValue().onComplete(parentId);
         verify(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
         assertNotNull("QueryDBforChildren callback should be captured", queryCallbackHolder[0]);
         queryCallbackHolder[0].onComplete(childAccount);
         
-        // Verify SignInAuth is NOT called
         verify(mockModel, never()).SignInAuth(anyString(), anyString(), any());
     }
 
     @Test
-    public void testSignInForParentAndProvider_Success_FirstTimeTrue() {
-        // Test successful signin for parent/provider with FirstTime = true
+    public void testSignin_WithWhitespaceInputs_TrimsInputs() {
+        String email = "  test@example.com  ";
+        String password = "  password123  ";
+        
+        presenter.signin(email, password);
+        
+        verify(mockModel).SignInAuth(eq("test@example.com"), eq("password123"), any());
+    }
+
+    // ==================== signInForParentAndProvider() Method Tests ====================
+    
+    @Test
+    public void testSignInForParentAndProvider_SuccessWithFirstTimeTrue_NavigatesToOnboarding() {
         String email = "test@example.com";
         String password = "password123";
         String userId = "user123";
         
-        // Create a parent account with FirstTime = true
         ParentAccount parentAccount = new ParentAccount();
         parentAccount.setFirstTime(true);
         parentAccount.setID(userId);
         
-        // Set up mock before calling the method
         when(mockModel.GetCurrentUIDAuth()).thenReturn(userId);
         
-        // Use a holder to capture the QueryDBforNonChildren callback
         final ResultCallBack<UserData>[] queryCallbackHolder = new ResultCallBack[1];
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) {
-                // Capture the callback argument (index 1)
                 queryCallbackHolder[0] = invocation.getArgument(1);
                 return null;
             }
         }).when(mockModel).QueryDBforNonChildren(eq(userId), any(ResultCallBack.class));
         
-        // Call signInForParentAndProvider
         presenter.signInForParentAndProvider(email, password);
         
-        // Capture the auth callback
         ArgumentCaptor<ResultCallBack<Boolean>> authCallback = ArgumentCaptor.forClass(ResultCallBack.class);
         verify(mockModel).SignInAuth(eq(email), eq(password), authCallback.capture());
         
-        // Simulate successful authentication (this will trigger GetCurrentUIDAuth and QueryDBforNonChildren)
         authCallback.getValue().onComplete(true);
-        
-        // Verify GetCurrentUIDAuth was called
         verify(mockModel).GetCurrentUIDAuth();
-        
-        // Verify QueryDBforNonChildren was called and callback was captured
         verify(mockModel).QueryDBforNonChildren(eq(userId), any(ResultCallBack.class));
         assertNotNull("QueryDBforNonChildren callback should be captured", queryCallbackHolder[0]);
-        
-        // Simulate successful query with FirstTime = true
         queryCallbackHolder[0].onComplete(parentAccount);
         
-        // Verify welcome message and navigation to onboarding
         verify(mockView).showShortMessage("Welcome!");
         verify(mockView).GoToOnBoardingActivity();
         verify(mockView, never()).GoToMainActivity();
     }
 
     @Test
-    public void testSignInForParentAndProvider_Success_FirstTimeFalse() {
-        // Test successful signin for parent/provider with FirstTime = false
+    public void testSignInForParentAndProvider_SuccessWithFirstTimeFalse_NavigatesToMain() {
         String email = "test@example.com";
         String password = "password123";
         String userId = "user123";
         
-        // Create a parent account with FirstTime = false
         ParentAccount parentAccount = new ParentAccount();
         parentAccount.setFirstTime(false);
         parentAccount.setID(userId);
         
-        // Set up mock before calling the method
         when(mockModel.GetCurrentUIDAuth()).thenReturn(userId);
         
-        // Use a holder to capture the QueryDBforNonChildren callback
         final ResultCallBack<UserData>[] queryCallbackHolder = new ResultCallBack[1];
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) {
-                // Capture the callback argument (index 1)
                 queryCallbackHolder[0] = invocation.getArgument(1);
                 return null;
             }
         }).when(mockModel).QueryDBforNonChildren(eq(userId), any(ResultCallBack.class));
         
-        // Call signInForParentAndProvider
         presenter.signInForParentAndProvider(email, password);
         
-        // Capture the auth callback
         ArgumentCaptor<ResultCallBack<Boolean>> authCallback = ArgumentCaptor.forClass(ResultCallBack.class);
         verify(mockModel).SignInAuth(eq(email), eq(password), authCallback.capture());
         
-        // Simulate successful authentication (this will trigger GetCurrentUIDAuth and QueryDBforNonChildren)
         authCallback.getValue().onComplete(true);
-        
-        // Verify GetCurrentUIDAuth was called
         verify(mockModel).GetCurrentUIDAuth();
-        
-        // Verify QueryDBforNonChildren was called and callback was captured
         verify(mockModel).QueryDBforNonChildren(eq(userId), any(ResultCallBack.class));
         assertNotNull("QueryDBforNonChildren callback should be captured", queryCallbackHolder[0]);
-        
-        // Simulate successful query with FirstTime = false
         queryCallbackHolder[0].onComplete(parentAccount);
         
-        // Verify welcome message and navigation to main activity
         verify(mockView).showShortMessage("Welcome!");
         verify(mockView).GoToMainActivity();
         verify(mockView, never()).GoToOnBoardingActivity();
     }
 
     @Test
-    public void testSignInForParentAndProvider_Failure() {
-        // Test failed signin for parent/provider
+    public void testSignInForParentAndProvider_Failure_ShowsError() {
         String email = "test@example.com";
         String password = "wrongpassword";
         
-        // Call signInForParentAndProvider
         presenter.signInForParentAndProvider(email, password);
         
-        // Capture the callback
         ArgumentCaptor<ResultCallBack<Boolean>> authCallback = ArgumentCaptor.forClass(ResultCallBack.class);
         verify(mockModel).SignInAuth(eq(email), eq(password), authCallback.capture());
         
-        // Simulate failed authentication
         authCallback.getValue().onComplete(false);
         
-        // Verify error message
         verify(mockView).showShortMessage("User Not Found");
         verify(mockView, never()).GoToMainActivity();
         verify(mockView, never()).GoToOnBoardingActivity();
         verify(mockModel, never()).QueryDBforNonChildren(anyString(), any());
     }
 
+    // ==================== signInForChild() Method Tests ====================
+    
     @Test
-    public void testSignInForChild_EmptyResult() {
-        // Test signin for child when username doesn't exist
+    public void testSignInForChild_EmptyResult_ShowsError() {
         String username = "nonexistent";
         String password = "password123";
         
-        // Call signInForChild
         presenter.signInForChild(username, password);
         
-        // Capture the callback
         ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
         verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
         
-        // Simulate empty result (username not found)
         usernameCallback.getValue().onComplete("");
         
-        // Verify error message
         verify(mockView).showShortMessage("User Not Found");
         verify(mockView, never()).GoToMainActivity();
         verify(mockView, never()).GoToOnBoardingActivity();
@@ -313,27 +272,17 @@ public class SignInPresenterTest {
     }
 
     @Test
-    public void testSignInForChild_PasswordMismatch() {
-        // Test signin for child with wrong password
+    public void testSignInForChild_PasswordMismatch_ShowsError() {
         String username = "childuser";
         String password = "wrongpassword";
         String parentId = "parent123";
         String correctPassword = "correctpassword";
         
-        // Create a child account with different password
         ChildAccount childAccount = new ChildAccount();
         childAccount.setPassword(correctPassword);
         childAccount.setID(username);
         childAccount.setFirstTime(false);
         
-        // Call signInForChild
-        presenter.signInForChild(username, password);
-        
-        // Capture the usernameExists callback
-        ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
-        verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
-        
-        // Use a holder to capture the QueryDBforChildren callback
         final ResultCallBack<UserData>[] queryCallbackHolder = new ResultCallBack[1];
         doAnswer(new Answer<Void>() {
             @Override
@@ -343,43 +292,32 @@ public class SignInPresenterTest {
             }
         }).when(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
         
-        // Simulate username found
-        usernameCallback.getValue().onComplete(parentId);
+        presenter.signInForChild(username, password);
         
-        // Verify QueryDBforChildren was called and callback was captured
+        ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
+        verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
+        
+        usernameCallback.getValue().onComplete(parentId);
         verify(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
         assertNotNull("QueryDBforChildren callback should be captured", queryCallbackHolder[0]);
-        
-        // Simulate successful query but wrong password
         queryCallbackHolder[0].onComplete(childAccount);
         
-        // Verify error message
         verify(mockView).showShortMessage("User Not Found");
         verify(mockView, never()).GoToMainActivity();
         verify(mockView, never()).GoToOnBoardingActivity();
     }
 
     @Test
-    public void testSignInForChild_Success_FirstTimeTrue() {
-        // Test successful signin for child with FirstTime = true
+    public void testSignInForChild_SuccessWithFirstTimeTrue_NavigatesToOnboarding() {
         String username = "childuser";
         String password = "correctpassword";
         String parentId = "parent123";
         
-        // Create a child account with FirstTime = true
         ChildAccount childAccount = new ChildAccount();
         childAccount.setPassword(password);
         childAccount.setID(username);
         childAccount.setFirstTime(true);
         
-        // Call signInForChild
-        presenter.signInForChild(username, password);
-        
-        // Capture the usernameExists callback
-        ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
-        verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
-        
-        // Use a holder to capture the QueryDBforChildren callback
         final ResultCallBack<UserData>[] queryCallbackHolder = new ResultCallBack[1];
         doAnswer(new Answer<Void>() {
             @Override
@@ -389,17 +327,16 @@ public class SignInPresenterTest {
             }
         }).when(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
         
-        // Simulate username found
-        usernameCallback.getValue().onComplete(parentId);
+        presenter.signInForChild(username, password);
         
-        // Verify QueryDBforChildren was called and callback was captured
+        ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
+        verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
+        
+        usernameCallback.getValue().onComplete(parentId);
         verify(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
         assertNotNull("QueryDBforChildren callback should be captured", queryCallbackHolder[0]);
-        
-        // Simulate successful query with correct password and FirstTime = true
         queryCallbackHolder[0].onComplete(childAccount);
         
-        // Verify welcome message and navigation to onboarding
         verify(mockView).showShortMessage("Welcome!");
         verify(mockView).GoToOnBoardingActivity();
         verify(mockView, never()).GoToMainActivity();
@@ -407,26 +344,16 @@ public class SignInPresenterTest {
     }
 
     @Test
-    public void testSignInForChild_Success_FirstTimeFalse() {
-        // Test successful signin for child with FirstTime = false
+    public void testSignInForChild_SuccessWithFirstTimeFalse_NavigatesToMain() {
         String username = "childuser";
         String password = "correctpassword";
         String parentId = "parent123";
         
-        // Create a child account with FirstTime = false
         ChildAccount childAccount = new ChildAccount();
         childAccount.setPassword(password);
         childAccount.setID(username);
         childAccount.setFirstTime(false);
         
-        // Call signInForChild
-        presenter.signInForChild(username, password);
-        
-        // Capture the usernameExists callback
-        ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
-        verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
-        
-        // Use a holder to capture the QueryDBforChildren callback
         final ResultCallBack<UserData>[] queryCallbackHolder = new ResultCallBack[1];
         doAnswer(new Answer<Void>() {
             @Override
@@ -436,34 +363,33 @@ public class SignInPresenterTest {
             }
         }).when(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
         
-        // Simulate username found
-        usernameCallback.getValue().onComplete(parentId);
+        presenter.signInForChild(username, password);
         
-        // Verify QueryDBforChildren was called and callback was captured
+        ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
+        verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
+        
+        usernameCallback.getValue().onComplete(parentId);
         verify(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
         assertNotNull("QueryDBforChildren callback should be captured", queryCallbackHolder[0]);
-        
-        // Simulate successful query with correct password and FirstTime = false
         queryCallbackHolder[0].onComplete(childAccount);
         
-        // Verify welcome message and navigation to main activity
         verify(mockView).showShortMessage("Welcome!");
         verify(mockView).GoToMainActivity();
         verify(mockView, never()).GoToOnBoardingActivity();
         assertEquals(childAccount, UserManager.currentUser);
     }
 
+    // ==================== isEmail() Method Tests ====================
+    
     @Test
-    public void testIsEmail_ValidEmail() {
-        // Test isEmail with valid email
+    public void testIsEmail_ValidEmails_ReturnsTrue() {
         assertTrue(presenter.isEmail("test@example.com"));
         assertTrue(presenter.isEmail("user.name@domain.co.uk"));
         assertTrue(presenter.isEmail("user+tag@example.org"));
     }
 
     @Test
-    public void testIsEmail_InvalidEmail() {
-        // Test isEmail with invalid email
+    public void testIsEmail_InvalidEmails_ReturnsFalse() {
         assertFalse(presenter.isEmail("notanemail"));
         assertFalse(presenter.isEmail("test@"));
         assertFalse(presenter.isEmail("@example.com"));
@@ -471,36 +397,22 @@ public class SignInPresenterTest {
         assertFalse(presenter.isEmail("username"));
     }
 
+    // ==================== isNull() Method Tests ====================
+    
     @Test
-    public void testIsNull_NullInput() {
-        // Test isNull with null input
+    public void testIsNull_NullInput_ReturnsTrue() {
         assertTrue(presenter.isNull(null));
     }
 
     @Test
-    public void testIsNull_EmptyString() {
-        // Test isNull with empty string
+    public void testIsNull_EmptyString_ReturnsTrue() {
         assertTrue(presenter.isNull(""));
     }
 
     @Test
-    public void testIsNull_NonEmptyString() {
-        // Test isNull with non-empty string
+    public void testIsNull_NonEmptyString_ReturnsFalse() {
         assertFalse(presenter.isNull("not empty"));
         assertFalse(presenter.isNull(" "));
         assertFalse(presenter.isNull("test"));
     }
-
-    @Test
-    public void testSignin_WithWhitespaceInputs() {
-        // Test signin with whitespace-only inputs (should be trimmed but still valid)
-        String email = "  test@example.com  ";
-        String password = "  password123  ";
-        
-        presenter.signin(email, password);
-        
-        // Verify SignInAuth is called with trimmed values
-        verify(mockModel).SignInAuth(eq("test@example.com"), eq("password123"), any());
-    }
 }
-
