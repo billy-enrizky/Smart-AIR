@@ -17,6 +17,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.ChildInhalerLogs;
+import com.example.myapplication.LogHistoryActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
@@ -94,6 +96,8 @@ public class PEFHistoryActivity extends AppCompatActivity {
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(PEFHistoryActivity.this, LogHistoryActivity.class);
+                startActivity(intent);
                 finish();
             }
         });

@@ -45,7 +45,7 @@ public class ChildInhalerLogs extends AppCompatActivity {
             findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(ChildInhalerLogs.this, ChildInhalerMenu.class));
+                    startActivity(new Intent(ChildInhalerLogs.this, LogHistoryActivity.class));
                 }
             });
             ID = UserManager.currentUser.getID();
