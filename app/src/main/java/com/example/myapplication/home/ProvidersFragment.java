@@ -24,7 +24,7 @@ import com.example.myapplication.providermanaging.InvitationCreateActivity;
 import com.example.myapplication.providermanaging.Permission;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
-import com.google.android.material.chip.Chip;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +36,13 @@ public class ProvidersFragment extends Fragment {
     private RecyclerView recyclerViewChildren;
     private ChildAccount currentChild;
     private TextView textView33;
-    private Chip rescueLogsCB;
-    private Chip controllerAdherenceSummaryCB;
-    private Chip symptomsCB;
-    private Chip triggersCB;
-    private Chip peakFlowCB;
-    private Chip triageIncidentsCB;
-    private Chip summaryChartsCB;
+    private Switch rescueLogsCB;
+    private Switch controllerAdherenceSummaryCB;
+    private Switch symptomsCB;
+    private Switch triggersCB;
+    private Switch peakFlowCB;
+    private Switch triageIncidentsCB;
+    private Switch summaryChartsCB;
     private ChildAdapter childAdapter;
     private List<ChildAccount> childrenList;
 

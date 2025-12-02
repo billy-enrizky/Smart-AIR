@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,13 +35,13 @@ public class ProviderManagerActivity extends AppCompatActivity {
     RecyclerView recyclerViewChildren;
     ChildAccount currentChild;
     TextView textView33;
-    CheckBox rescueLogsCB;
-    CheckBox controllerAdherenceSummaryCB;
-    CheckBox symptomsCB;
-    CheckBox triggersCB;
-    CheckBox peakFlowCB;
-    CheckBox triageIncidentsCB;
-    CheckBox summaryChartsCB;
+    Switch rescueLogsCB;
+    Switch controllerAdherenceSummaryCB;
+    Switch symptomsCB;
+    Switch triggersCB;
+    Switch peakFlowCB;
+    Switch triageIncidentsCB;
+    Switch summaryChartsCB;
     ChildAdapter childAdapter;
     List<ChildAccount> childrenList;
 
