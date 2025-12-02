@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.ChildActivity;
+import com.example.myapplication.ParentActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
@@ -48,7 +49,9 @@ public class CheckInView extends AppCompatActivity {
 
     public void goBack (android.view.View view) {
         if (UserManager.currentUser.getAccount().equals(AccountType.PARENT)) {
-            Intent intent = new Intent(this, SignInChildProfileActivity.class);
+            Intent intent = new Intent(this, ParentActivity.class);
+            intent.putExtra("defaultTab", "children");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, ChildActivity.class);

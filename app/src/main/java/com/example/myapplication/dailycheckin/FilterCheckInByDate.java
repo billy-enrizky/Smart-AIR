@@ -1,16 +1,15 @@
 package com.example.myapplication.dailycheckin;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.applandeo.materialcalendarview.CalendarView;
+import com.example.myapplication.ParentActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.providers.AccessInfoActivity;
@@ -35,9 +34,17 @@ public class FilterCheckInByDate extends AppCompatActivity {
         this.goToSymptoms = (Button)findViewById(R.id.go_to_filter_by_symptoms);
         goBackChild = (Button)findViewById(R.id.back_to_sign_in_child);
         goBackProvider = (Button)findViewById(R.id.providerback);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("isProvider")) {
+            goBackChild.setVisibility(View.GONE);
+            goBackProvider.setVisibility(View.VISIBLE);
+        } else {
+            goBackChild.setVisibility(View.VISIBLE);
+            goBackProvider.setVisibility(View.GONE);
+        }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     public void filterBySymptomsButton(View view) {
         List<Calendar> selectedDates = range.getSelectedDates();
         if (selectedDates.isEmpty()) {
@@ -66,19 +73,16 @@ public class FilterCheckInByDate extends AppCompatActivity {
             intent.putExtra("permissionToSymptoms", thisintent.getStringExtra("permissionToSymptoms"));
         }
         if(thisintent.hasExtra("isProvider")){
-            goBackChild.setVisibility(View.GONE);
-            goBackProvider.setVisibility(View.VISIBLE);
             intent.putExtra("isProvider", thisintent.getStringExtra("isProvider"));
             intent.putExtra("childName", thisintent.getStringExtra("childName"));
-          }else{
-            goBackChild.setVisibility(View.VISIBLE);
-            goBackProvider.setVisibility(View.GONE);
         }
         startActivity(intent);
     }
 
     public void backToChildSignIn (View view) {
-        Intent intent = new Intent(FilterCheckInByDate.this, SignInChildProfileActivity.class);
+        Intent intent = new Intent(FilterCheckInByDate.this, ParentActivity.class);
+        intent.putExtra("defaultTab", "children");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
     }

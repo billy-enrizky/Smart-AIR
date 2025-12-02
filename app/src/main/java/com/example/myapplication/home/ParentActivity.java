@@ -83,10 +83,22 @@ public class ParentActivity extends AppCompatActivity {
         });
         
         if (savedInstanceState == null) {
+            String defaultTab = getIntent().getStringExtra("defaultTab");
+            Fragment initialFragment;
+            int initialItemId;
+            
+            if ("children".equals(defaultTab)) {
+                initialFragment = new ChildrenFragment();
+                initialItemId = R.id.nav_children;
+            } else {
+                initialFragment = new DashboardFragment();
+                initialItemId = R.id.nav_dashboard;
+            }
+            
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new DashboardFragment())
+                    .replace(R.id.fragmentContainer, initialFragment)
                     .commit();
-            bottomNavigationView.setSelectedItemId(R.id.nav_dashboard);
+            bottomNavigationView.setSelectedItemId(initialItemId);
         }
     }
 
