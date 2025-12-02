@@ -46,7 +46,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         emailEditText = findViewById(R.id.editTextTextEmailAddress);
         resetButton = findViewById(R.id.signupbutton);
-        backToSignIn = findViewById(R.id.textView7);
+        backToSignIn = findViewById(R.id.backbutton);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
