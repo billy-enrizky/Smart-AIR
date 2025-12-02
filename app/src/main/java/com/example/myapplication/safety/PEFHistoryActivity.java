@@ -21,6 +21,7 @@ import com.example.myapplication.ChildInhalerLogs;
 import com.example.myapplication.LogHistoryActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.userdata.ChildAccount;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -65,6 +66,11 @@ public class PEFHistoryActivity extends AppCompatActivity {
             ChildAccount childAccount = (ChildAccount) UserManager.currentUser;
             childId = childAccount.getID();
             parentId = childAccount.getParent_id();
+        } else if (SignInChildProfileActivity.currentChild != null) {
+            // When logged in via children manager
+            ChildAccount currentChild = SignInChildProfileActivity.currentChild;
+            childId = currentChild.getID();
+            parentId = currentChild.getParent_id();
         } else {
             Log.e(TAG, "No childId/parentId provided and current user is not a ChildAccount");
             finish();
@@ -97,6 +103,8 @@ public class PEFHistoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PEFHistoryActivity.this, LogHistoryActivity.class);
+                intent.putExtra("childId", childId);
+                intent.putExtra("parentId", parentId);
                 startActivity(intent);
                 finish();
             }
