@@ -30,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        com.example.myapplication.UserManager.initialization();
+        Log.d(TAG, "MainActivity onCreate - currentUser: " + com.example.myapplication.UserManager.currentUser);
 
-        Log.d(TAG, "MainActivity onCreate - currentUser: " + UserManager.currentUser);
-
-        if (UserManager.currentUser == null) {
+        if (com.example.myapplication.UserManager.currentUser == null) {
             Log.w(TAG, "No user logged in, redirecting to SignIn");
             // If no user is logged in, redirect to sign in
             Intent intent = new Intent(MainActivity.this, SignInView.class);
@@ -42,29 +42,29 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        AccountType accountType = UserManager.currentUser.getAccount();
+        AccountType accountType = com.example.myapplication.UserManager.currentUser.getAccount();
         Log.d(TAG, "Account type: " + accountType);
 
         if (accountType == AccountType.CHILD) {
             Log.d(TAG, "Redirecting to ChildActivity");
-            ChildAccount child = (ChildAccount) UserManager.currentUser;
+            ChildAccount child = (ChildAccount) com.example.myapplication.UserManager.currentUser;
             String parentID = child.getParent_id();
             String username = child.getID();
-            UserManager.ChildUserListener(parentID, username);
+            com.example.myapplication.UserManager.ChildUserListener(parentID, username);
             Intent intent1 = new Intent(MainActivity.this, ChildActivity.class);
             startActivity(intent1);
             finish();
         } else if (accountType == AccountType.PARENT) {
             Log.d(TAG, "Redirecting to ParentActivity");
-            String uid = UserManager.currentUser.getID();
-            UserManager.UserListener(uid, AccountType.PARENT);
-            Intent intent1 = new Intent(MainActivity.this, ParentActivity.class);
+            String uid = com.example.myapplication.UserManager.currentUser.getID();
+            com.example.myapplication.UserManager.UserListener(uid, AccountType.PARENT);
+            Intent intent1 = new Intent(MainActivity.this, com.example.myapplication.ParentActivity.class);
             startActivity(intent1);
             finish();
         } else if (accountType == AccountType.PROVIDER) {
             Log.d(TAG, "Redirecting to ProviderActivity");
-            String uid = UserManager.currentUser.getID();
-            UserManager.UserListener(uid, AccountType.PROVIDER);
+            String uid = com.example.myapplication.UserManager.currentUser.getID();
+            com.example.myapplication.UserManager.UserListener(uid, AccountType.PROVIDER);
             Intent intent1 = new Intent(MainActivity.this, ProviderActivity.class);
             startActivity(intent1);
             finish();
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         myRef.setValue("Hello, World!");
     }
     public void GoToSignUp(android.view.View view) {
-        Intent intent = new Intent(this, SignUpActivity.class);
+        Intent intent = new Intent(this, com.example.myapplication.SignUpActivity.class);
         startActivity(intent);
     }
     public void GoToSignIn(android.view.View view) {
