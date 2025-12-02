@@ -22,6 +22,16 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/textViewSharedWithProvider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="* Shared with Provider"
+            android:textSize="12sp"
+            android:textColor="#F44336"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/textViewNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
