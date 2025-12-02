@@ -10,6 +10,7 @@
         android:id="@+id/textViewRescueQuestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/happy_monkey"
         android:text="Have you used rescue medication in the last 3 hours?"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -49,6 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/happy_monkey"
         android:text="How many times?"
         android:textSize="16sp"
         android:visibility="gone" />
@@ -58,6 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/happy_monkey"
         android:hint="Enter number (1-10)"
         android:inputType="number"
         android:visibility="gone" />

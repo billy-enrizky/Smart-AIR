@@ -10,6 +10,7 @@
         android:id="@+id/textViewPEFTriageQuestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/happy_monkey"
         android:text="Enter current PEF reading (optional)"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -19,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/happy_monkey"
         android:hint="Enter PEF value"
         android:inputType="number" />
 
