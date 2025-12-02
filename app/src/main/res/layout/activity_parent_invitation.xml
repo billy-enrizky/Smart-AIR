@@ -5,13 +5,15 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".invitation.ParentInvitationActivity">
+    tools:context=".invitation.ParentInvitationActivity"
+    android:background="#99D9EA">
 
     <Button
         android:id="@+id/button5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="73dp"
+        android:backgroundTint="#6E8CA0"
         android:onClick="GenerateCode"
         android:text="Generate/Regenerate code"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
+        android:backgroundTint="#6E8CA0"
         android:onClick="RevokeCode"
         android:text="Revoke code"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="26dp"
         android:layout_marginTop="26dp"
+        android:backgroundTint="#6E8CA0"
         android:onClick="GoBackToHome"
         android:text="Back to Home"
         app:layout_constraintStart_toStartOf="parent"

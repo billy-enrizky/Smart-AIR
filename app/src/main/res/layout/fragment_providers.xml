@@ -5,19 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".providermanaging.ProviderManagerActivity">
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="4dp"
-        android:backgroundTint="#6E8CA0"
-        android:onClick="GoBackToHome"
-        android:text="Back To Home"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    tools:context=".home.ProvidersFragment">
 
     <Button
         android:id="@+id/buttonLinkProvider"
@@ -26,7 +14,6 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="1dp"
         android:backgroundTint="#6E8CA0"
-        android:onClick="CreateInvitation"
         android:text="Link to new Provider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +29,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewChildren"
@@ -145,7 +132,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:backgroundTint="#6E8CA0"
-        android:onClick="ApplyChange"
         android:text="Apply Change"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView26" />
