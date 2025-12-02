@@ -1,6 +1,6 @@
 package com.example.myapplication.SignIn;
 
-import android.util.Patterns;
+import androidx.core.util.PatternsCompat;
 
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.UserManager;
@@ -92,7 +92,7 @@ public class SignInPresenter {
         });
     }
     public Boolean isEmail(String Input){
-        return Patterns.EMAIL_ADDRESS.matcher(Input).matches();
+        return PatternsCompat.EMAIL_ADDRESS.matcher(Input).matches();
     }
 
     public Boolean isNull(String Input){
