@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".providermanaging.AccessPermissionActivity">
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/T"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        app:layout_constraintStart_toStartOf="@+id/S"
+        app:layout_constraintTop_toBottomOf="@+id/S" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/CAS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        app:layout_constraintStart_toEndOf="@+id/textView25"
+        app:layout_constraintTop_toTopOf="@+id/textView25" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/S"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        app:layout_constraintStart_toStartOf="@+id/CAS"
+        app:layout_constraintTop_toBottomOf="@+id/CAS" />
+
+    <TextView
+        android:id="@+id/textView24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rescue logs"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/RL"
+        app:layout_constraintTop_toTopOf="@+id/RL" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/PEF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        app:layout_constraintBottom_toTopOf="@+id/TI"
+        app:layout_constraintStart_toStartOf="@+id/TI" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/TI"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        app:layout_constraintBottom_toTopOf="@+id/SC"
+        app:layout_constraintStart_toStartOf="@+id/SC" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/SC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/textView32"
+        app:layout_constraintEnd_toEndOf="@+id/T"
+        app:layout_constraintStart_toStartOf="@+id/T" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/RL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        app:layout_constraintBottom_toTopOf="@+id/textView25"
+        app:layout_constraintStart_toEndOf="@+id/textView25" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="4dp"
+        android:onClick="GoBackToHome"
+        android:text="Back To Home"
+        app:layout_constraintStart_toStartOf="@+id/ChildList2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/ChildList2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="49dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/RL"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/button">
+
+        <TextView
+            android:id="@+id/textView33"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current Child: \nClick name to switch"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginBottom="35dp"
+        android:text="Controller adherence summary"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView27"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Symptoms"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/CAS"
+        app:layout_constraintTop_toBottomOf="@+id/CAS" />
+
+    <TextView
+        android:id="@+id/textView26"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Triggers"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/S"
+        app:layout_constraintTop_toBottomOf="@+id/S" />
+
+    <TextView
+        android:id="@+id/textView30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Peak-flow (PEF)"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/PEF"
+        app:layout_constraintTop_toTopOf="@+id/PEF" />
+
+    <TextView
+        android:id="@+id/textView32"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="46dp"
+        android:text="                   Summary charts\n(dashboard/report visuals)"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/SC" />
+
+    <TextView
+        android:id="@+id/textView31"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Triage incidents"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/TI"
+        app:layout_constraintTop_toTopOf="@+id/TI" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="36dp"
+        android:onClick="ApplyChange"
+        android:text="Apply Change"
+        app:layout_constraintBottom_toTopOf="@+id/textView30"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
