@@ -88,14 +88,13 @@ public class SignUpActivity extends AppCompatActivity {
                                 FirebaseUser currentUser = mAuth.getCurrentUser();
                                 // structurize data of current user
                                 if (currentUser != null) {
-                                    UserData CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim()); // I instantiate the object with a dummy PARENT to avoid nullPointerExceptions later
-                                    switch(((Button)v).getText().toString()) {
-                                        case "Parent":
-                                            CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
-                                            break;
-                                        case "Provider":
-                                            CurrentUserData = new ProviderAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
-                                            break;
+                                    UserData CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
+                                    if (v.getId() == R.id.choose_parent) {
+                                        CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
+                                    } else if (v.getId() == R.id.choose_provider) {
+                                        CurrentUserData = new ProviderAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
+                                    } else {
+                                            Toast.makeText(SignUpActivity.this, "Sign up major malfunction in buttons.", Toast.LENGTH_SHORT).show();
                                     }
                                     CurrentUserData.WriteIntoDatabase(new com.example.myapplication.CallBack() {
                                         @Override

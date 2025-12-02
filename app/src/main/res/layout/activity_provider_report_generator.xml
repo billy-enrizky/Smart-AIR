@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="#99D9EA"
     tools:context=".reports.ProviderReportGeneratorActivity">
 
     <Button
@@ -16,6 +17,8 @@
         android:layout_marginTop="16dp"
         android:backgroundTint="#6E8CA0"
         android:text="Back"
+        android:textColor="#FFFFFF"
+        app:cornerRadius="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,7 +67,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="#6E8CA0"
-                android:text="Start Date" />
+                android:text="Start Date"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
 
             <Button
                 android:id="@+id/buttonEndDate"
@@ -72,7 +77,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="#6E8CA0"
-                android:text="End Date" />
+                android:text="End Date"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -193,7 +200,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Generate and Share PDF" />
+                android:backgroundTint="#6E8CA0"
+                android:text="Generate and Share PDF"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
 
         </LinearLayout>
 
