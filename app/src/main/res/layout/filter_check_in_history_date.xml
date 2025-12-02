@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#99D9EA">
 
     <TextView
         android:id="@+id/selectDateRangeTitle"
@@ -41,6 +42,7 @@
         android:layout_marginStart="109dp"
         android:layout_marginTop="84dp"
         android:layout_marginEnd="132dp"
+        android:backgroundTint="#6E8CA0"
         android:onClick="filterBySymptomsButton"
         android:text="Filter by Symptoms"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,6 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="19dp"
         android:layout_marginTop="38dp"
+        android:backgroundTint="#6E8CA0"
         android:onClick="backToProviderSignIn"
         android:text="Back"
         app:layout_constraintStart_toStartOf="parent"

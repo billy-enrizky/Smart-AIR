@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#99D9EA">
 
 
     <com.google.android.material.chip.ChipGroup
@@ -190,6 +191,7 @@
         android:layout_marginStart="120dp"
         android:layout_marginTop="31dp"
         android:layout_marginEnd="163dp"
+        android:backgroundTint="#6E8CA0"
         android:onClick="viewHistoryButton"
         android:text="View History"
         app:layout_constraintEnd_toEndOf="parent"
@@ -203,6 +205,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="301dp"
+        android:backgroundTint="#6E8CA0"
         android:onClick="goBackToDateButton"
         android:text="Back"
         app:layout_constraintEnd_toEndOf="parent"
