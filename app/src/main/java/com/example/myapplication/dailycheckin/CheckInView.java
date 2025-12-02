@@ -3,9 +3,7 @@ package com.example.myapplication.dailycheckin;
 import static android.view.View.VISIBLE;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.myapplication.ChildActivity;
@@ -45,7 +43,6 @@ public class CheckInView extends AppCompatActivity {
     private Button checkinButton;
     CheckInPresenter presenter;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,17 +65,12 @@ public class CheckInView extends AppCompatActivity {
             dailyCheckinTitle.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
             nightWakingCheck.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
             activityLimitsChipsTitle.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
-            for (int i = 0; i < activityLimitsChips.getChildCount(); i++) {
-                Chip chip = (Chip)activityLimitsChips.getChildAt(i);
-                chip.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
-            }
+            setChipGroupFont(activityLimitsChips, happyMonkeyFamily);
             coughWheezeTitle.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
-            for (int i = 0; i < triggersChips.getChildCount(); i++) {
-                Chip chip = (Chip)triggersChips.getChildAt(i);
-                chip.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
-            }
-            backButton.setBackgroundColor(Color.rgb(89, 179, 0));
-            checkinButton.setBackgroundColor(Color.rgb(89, 179, 0));
+            setChipGroupFont(triggersChips, happyMonkeyFamily);
+            int childCheckinButtonGreen = ContextCompat.getColor(this, R.color.child_checkin_button_green);
+            backButton.setBackgroundColor(childCheckinButtonGreen);
+            checkinButton.setBackgroundColor(childCheckinButtonGreen);
 
         } else {
             this.username = SignInChildProfileActivity.getCurrentChildUsername();
@@ -123,5 +115,11 @@ public class CheckInView extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    private void setChipGroupFont(ChipGroup chipGroup, Typeface typeface) {
+        for (int i = 0; i < chipGroup.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroup.getChildAt(i);
+            chip.setTypeface(typeface, Typeface.NORMAL);
+        }
+    }
 
 }

@@ -1,7 +1,5 @@
 package com.example.myapplication.dailycheckin;
 
-import android.os.Build;
-
 import androidx.annotation.NonNull;
 
 import com.example.myapplication.CallBack;
@@ -13,17 +11,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.time.LocalDate;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class CheckInModel {
     public CheckInModel() {
     }
     public static String getDate(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return LocalDate.now().toString();
-        }
-        return null;
+        // Use SimpleDateFormat for backward compatibility with all API levels
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(new Date());
     }
 
     //Below are severall few methods for your use.
