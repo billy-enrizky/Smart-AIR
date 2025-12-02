@@ -39,7 +39,6 @@
         android:layout_width="385dp"
         android:layout_height="0dp"
         android:layout_marginStart="3dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="23dp"
         app:chipSpacingHorizontal="100dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,20 +71,6 @@
     </com.google.android.material.chip.ChipGroup>
 
     <TextView
-        android:id="@+id/activity_limits_filter_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="27dp"
-        android:layout_marginTop="248dp"
-        android:layout_marginEnd="148dp"
-        android:text="Filter by Activity Level"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/night_waking_filter_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -98,6 +83,20 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/activity_limits_filter_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="148dp"
+        android:text="Filter by Activity Limits"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/night_waking_filter" />
 
     <com.google.android.material.slider.Slider
         android:id="@+id/cough_wheeze_slider_filter"

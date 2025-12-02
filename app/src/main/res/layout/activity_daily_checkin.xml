@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:background="#E8D65D">
 
+    <ImageView
+        android:id="@+id/daily_checkin_child_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/activity_r3_instructions" />
+
     <TextView
         android:id="@+id/daily_checkin_title"
         android:layout_width="wrap_content"
@@ -44,7 +56,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.176"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_limits_filter_title"
+        app:layout_constraintTop_toBottomOf="@+id/activity_limits_title"
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
@@ -71,7 +83,7 @@
     </com.google.android.material.chip.ChipGroup>
 
     <TextView
-        android:id="@+id/activity_limits_filter_title"
+        android:id="@+id/activity_limits_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="27dp"
@@ -107,7 +119,7 @@
         android:layout_marginTop="48dp"
         android:layout_marginEnd="116dp"
         android:text="Level of Coughing/Wheezing"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
