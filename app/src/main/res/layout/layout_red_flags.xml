@@ -10,6 +10,7 @@
         android:id="@+id/textViewQuestionTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/happy_monkey"
         android:text="Please answer these questions:"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -19,6 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/happy_monkey"
         android:text="Can you speak in full sentences?"
         android:textSize="16sp" />
 
@@ -57,6 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/happy_monkey"
         android:text="Is your chest pulling in or retracting?"
         android:textSize="16sp" />
 
@@ -95,6 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/happy_monkey"
         android:text="Are your lips or nails blue or gray?"
         android:textSize="16sp" />
 

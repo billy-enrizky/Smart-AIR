@@ -19,7 +19,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.SignIn.SignInView;
-import com.example.myapplication.userdata.*;
+import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.userdata.ProviderAccount;
+import com.example.myapplication.userdata.UserData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -43,6 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        com.example.myapplication.UserManager.initialization();
         // get the instance of Email Text
         EditText userEmailView = findViewById(R.id.editTextTextEmailAddress);
         // get the instance of Password Text
@@ -85,16 +88,15 @@ public class SignUpActivity extends AppCompatActivity {
                                 FirebaseUser currentUser = mAuth.getCurrentUser();
                                 // structurize data of current user
                                 if (currentUser != null) {
-                                    UserData CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim()); // I instantiate the object with a dummy PARENT to avoid nullPointerExceptions later
-                                    switch(((Button)v).getText().toString()) {
-                                        case "Parent":
-                                            CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
-                                            break;
-                                        case "Provider":
-                                            CurrentUserData = new ProviderAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
-                                            break;
+                                    UserData CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
+                                    if (v.getId() == R.id.choose_parent) {
+                                        CurrentUserData = new ParentAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
+                                    } else if (v.getId() == R.id.choose_provider) {
+                                        CurrentUserData = new ProviderAccount(currentUser.getUid(), userEmailView.getText().toString().trim());
+                                    } else {
+                                            Toast.makeText(SignUpActivity.this, "Sign up major malfunction in buttons.", Toast.LENGTH_SHORT).show();
                                     }
-                                    CurrentUserData.WriteIntoDatabase(new CallBack() {
+                                    CurrentUserData.WriteIntoDatabase(new com.example.myapplication.CallBack() {
                                         @Override
                                         public void onComplete() {
                                             Toast.makeText(SignUpActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
@@ -130,7 +132,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        UserManager.currentUser = new UserData();
+        com.example.myapplication.UserManager.currentUser = new UserData();
         if(currentUser != null) {
             currentUser.reload();
         }

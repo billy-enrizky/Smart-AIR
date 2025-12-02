@@ -32,12 +32,17 @@ public class UserManager {
     I found it redundant repeating getInstance() each time we use Authentication and Database,
     which is the reason I made them static so that we don't need to create new instance each time.
      */
-    public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    public static DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    //public static FirebaseAuth mAuth;
+    public static FirebaseAuth mAuth;
+    //public static DatabaseReference mDatabase;
+    public static DatabaseReference mDatabase;
     private static ValueEventListener userListener;
 
     //Below are some methods that is probably would be frequently used, use them if they help.
-
+    public static void initialization(){
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
     public static void checkUserNull(AppCompatActivity activity){
         if(mAuth.getCurrentUser() == null) {
             backToLogin(activity);

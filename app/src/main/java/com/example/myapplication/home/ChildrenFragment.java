@@ -405,8 +405,8 @@ public class ChildrenFragment extends Fragment {
         // triageIncidents → Incident History
         updateButtonSharingIndicator(buttonIncidentHistory, "Incident History", Boolean.TRUE.equals(permission.getTriageIncidents()));
         
-        // summaryCharts → Generate Report
-        updateButtonSharingIndicator(buttonGenerateReport, "Generate Report", Boolean.TRUE.equals(permission.getSummaryCharts()));
+        // summaryCharts → Trend Snippet (in DashboardFragment, not here)
+        // Note: summaryCharts permission is linked to Trend Snippet button in DashboardFragment, not Generate Report
         
         // controllerAdherenceSummary → Controller Schedule
         updateButtonSharingIndicator(buttonControllerSchedule, "Controller Schedule", Boolean.TRUE.equals(permission.getControllerAdherenceSummary()));
@@ -444,7 +444,7 @@ public class ChildrenFragment extends Fragment {
     private void resetAllButtonTexts() {
         updateButtonSharingIndicator(buttonPEFHistory, "PEF History", false);
         updateButtonSharingIndicator(buttonIncidentHistory, "Incident History", false);
-        updateButtonSharingIndicator(buttonGenerateReport, "Generate Report", false);
+        // Note: Generate Report is not linked to summaryCharts permission
         updateButtonSharingIndicator(buttonControllerSchedule, "Controller Schedule", false);
         updateButtonSharingIndicator(buttonDailyCheckin, "Check-in", false);
         updateButtonSharingIndicator(buttonDailyCheckinHistory, "Checkin History", false);
