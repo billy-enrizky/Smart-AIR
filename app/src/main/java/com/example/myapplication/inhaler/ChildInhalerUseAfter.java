@@ -127,7 +127,6 @@ public class ChildInhalerUseAfter extends AppCompatActivity {
                                                         achievement.calculateStreakFromSchedule(new ResultCallBack<Integer>() {
                                                             @Override
                                                             public void onComplete(Integer streak) {
-                                                                // Streak has been updated, now check for badge and save
                                                                 if (!achievement.badges.get(0)) {
                                                                     if (achievement.checkBadge1()) {
                                                                         Toast.makeText(ChildInhalerUseAfter.this, "You've earned a new badge!", Toast.LENGTH_SHORT).show();
