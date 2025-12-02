@@ -16,6 +16,8 @@ A kid-friendly Android application designed to help children (ages 6-16) underst
 - [Project Structure](#project-structure)
 - [Firebase Configuration](#firebase-configuration)
 - [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments and Contact](#acknowledgments-and-contact)
 
 ## Overview
 
@@ -978,9 +980,13 @@ Calculates controller medication adherence percentage based on schedule and logs
 
 ## License
 
-[Add your license information here]
+MIT License
 
-## Contact
+##  Acknowledgments and Contact
 
-[Add contact information here]
+- billy.suharno@gmail.com (Muhammad Enrizky Brillian)
+- pe.zhao@mail.utoronto.ca (Yipeng Zhao)
+- kingsleyy.chan@mail.utoronto.ca (Kingsley Chan)
+- terry.gao@mail.utoronto.ca (Terry Gao)
+- minhanh.dong@mail.utoronto.ca (Minh Anh Dong Nguyen)
 
