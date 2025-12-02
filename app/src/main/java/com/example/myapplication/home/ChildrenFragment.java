@@ -1,13 +1,17 @@
 package com.example.myapplication.home;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -123,6 +127,7 @@ public class ChildrenFragment extends Fragment {
         buttonActionPlan = buttonsLayout.findViewById(R.id.buttonActionPlan);
         buttonPEFHistory = buttonsLayout.findViewById(R.id.buttonPEFHistory);
         
+        setupButtonIcons();
         setupButtons();
         updateButtonsVisibility(false);
         
@@ -373,6 +378,44 @@ public class ChildrenFragment extends Fragment {
         }
         
         textViewCurrentChild.setText("Current Child: " + selectedChildInfo.child.getName());
+    }
+
+    private void setupButtonIcons() {
+        if (getContext() == null) {
+            return;
+        }
+        
+        // Set icons for buttons with corresponding drawable resources
+        setButtonIcon(buttonSignIn, R.drawable.childrenmanager_login);
+        setButtonIcon(buttonDailyCheckin, R.drawable.childrenmanager_checkin);
+        setButtonIcon(buttonSetPersonalBest, R.drawable.childrenmanager_setpb);
+        setButtonIcon(buttonModifyNotes, R.drawable.childrenmanager_modifynotes);
+        setButtonIcon(buttonBadges, R.drawable.childrenmanager_configurebadges);
+        setButtonIcon(buttonInhaler, R.drawable.childrenmanager_inhaler);
+        setButtonIcon(buttonControllerSchedule, R.drawable.childrenmanager_controllerschedule);
+        setButtonIcon(buttonGenerateReport, R.drawable.childrenmanager_generatereport);
+        setButtonIcon(buttonIncidentHistory, R.drawable.childrenmanager_incidenthistory);
+        setButtonIcon(buttonDailyCheckinHistory, R.drawable.childenmanager_checkinhistory);
+        setButtonIcon(buttonDeleteChild, R.drawable.childrenmanager_deletechild);
+    }
+    
+    private void setButtonIcon(Button button, int drawableResId) {
+        if (button == null || getContext() == null) {
+            return;
+        }
+        Drawable drawable = ContextCompat.getDrawable(getContext(), drawableResId);
+        if (drawable != null) {
+            // Scale icon to 24dp size to fit within button alongside text
+            int iconSizeDp = 24;
+            int iconSizePx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 
+                iconSizeDp, 
+                getContext().getResources().getDisplayMetrics()
+            );
+            drawable.setBounds(0, 0, iconSizePx, iconSizePx);
+            button.setCompoundDrawables(drawable, null, null, null);
+            button.setCompoundDrawablePadding(8); // 8dp padding between icon and text
+        }
     }
 
     private void setupButtons() {
