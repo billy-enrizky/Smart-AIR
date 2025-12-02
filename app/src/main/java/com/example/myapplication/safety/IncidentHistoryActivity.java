@@ -71,7 +71,13 @@ public class IncidentHistoryActivity extends AppCompatActivity {
         recyclerViewIncidents = findViewById(R.id.recyclerViewIncidents);
         textViewEmpty = findViewById(R.id.textViewEmpty);
         android.widget.Button buttonBack = findViewById(R.id.buttonBack);
-        buttonBack.setOnClickListener(v -> finish());
+        buttonBack.setOnClickListener(v -> {
+            Intent parentIntent = new Intent(IncidentHistoryActivity.this, com.example.myapplication.ParentActivity.class);
+            parentIntent.putExtra("defaultTab", "children");
+            parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(parentIntent);
+            finish();
+        });
         incidents = new ArrayList<>();
         adapter = new IncidentAdapter(incidents);
         recyclerViewIncidents.setLayoutManager(new LinearLayoutManager(this));
