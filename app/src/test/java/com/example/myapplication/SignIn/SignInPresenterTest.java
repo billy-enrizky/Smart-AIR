@@ -32,6 +32,9 @@ public class SignInPresenterTest {
 
     @Test
     public void testInitialize() {
+        // Set a non-null user to verify initialize() resets it
+        UserManager.currentUser = new ParentAccount();
+        
         // Test initialize method
         presenter.initialize();
         

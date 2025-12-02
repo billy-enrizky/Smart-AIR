@@ -75,6 +75,7 @@ public class SignInChildProfileActivity extends AppCompatActivity {
             dobCalendar.set(selectedYear, selectedMonth, selectedDay);
             editChildDob.setText(formatDob(dobCalendar));
         }, year, month, day);
+        pickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         pickerDialog.show();
     }
 
@@ -130,9 +131,12 @@ public class SignInChildProfileActivity extends AppCompatActivity {
                 int m = Integer.parseInt(parts[1]) - 1;
                 int d = Integer.parseInt(parts[2]);
                 dobCalendar.set(y, m, d);
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException e) {
+                android.util.Log.w("SignInChildProfileActivity", "Failed to parse DOB string: " + dob, e);
                 dobCalendar = Calendar.getInstance();
             }
+        } else {
+            dobCalendar = Calendar.getInstance();
         }
     }
 
@@ -171,6 +175,16 @@ public class SignInChildProfileActivity extends AppCompatActivity {
         }
         if(TextUtils.isEmpty(age)){
             editChildAge.setError("Age required");
+            return;
+        }
+        try {
+            int ageInt = Integer.parseInt(age);
+            if (ageInt < 0 || ageInt > 150) {
+                editChildAge.setError("Please enter a valid age (0-150)");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            editChildAge.setError("Please enter a valid number");
             return;
         }
         if(TextUtils.isEmpty(dob)){
