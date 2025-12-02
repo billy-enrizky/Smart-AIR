@@ -54,7 +54,8 @@ public class PEFHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pef_history);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            // Only apply horizontal padding, not vertical to avoid white space at top and bottom
+            v.setPadding(systemBars.left, 0, systemBars.right, 0);
             return insets;
         });
 
@@ -80,7 +81,6 @@ public class PEFHistoryActivity extends AppCompatActivity {
         recyclerViewPEF = findViewById(R.id.recyclerViewPEF);
         textViewEmpty = findViewById(R.id.textViewEmpty);
         Button buttonBack = findViewById(R.id.buttonBack);
-        Button buttonEnterPEF = findViewById(R.id.buttonEnterPEF);
         Button buttonRemoveAll = findViewById(R.id.buttonRemoveAll);
 
         if (buttonBack == null) {
@@ -91,9 +91,6 @@ public class PEFHistoryActivity extends AppCompatActivity {
 
         if (intent != null && intent.hasExtra("isProvider")) {
             isProvider = true;
-            if (buttonEnterPEF != null) {
-                buttonEnterPEF.setVisibility(View.GONE);
-            }
             if (buttonRemoveAll != null) {
                 buttonRemoveAll.setVisibility(View.GONE);
             }
@@ -109,18 +106,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
                 finish();
             }
         });
-        
-        if (buttonEnterPEF != null) {
-            buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(PEFHistoryActivity.this, PEFEntryActivity.class);
-                    intent.putExtra("childId", childId);
-                    intent.putExtra("parentId", parentId);
-                    startActivity(intent);
-                }
-            });
-        }
+
         
         if (buttonRemoveAll != null) {
             buttonRemoveAll.setOnClickListener(new View.OnClickListener() {
