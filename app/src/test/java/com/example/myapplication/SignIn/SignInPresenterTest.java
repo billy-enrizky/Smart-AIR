@@ -4,9 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.userdata.UserData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
@@ -47,18 +46,15 @@ public class SignInPresenterTest {
         assertEquals(presenter.model, model);
     }
     @Test
-    public void testInitialize_ResetsCurrentUserToNull() {
-        com.example.myapplication.UserManager.currentUser = new ParentAccount();
+    public void testInitialize1() {
+        com.example.myapplication.UserManager.currentUser = new UserData();
         SignInPresenter presenter = new SignInPresenter(view, model);
-        model.mAuth = mAuth;
-        model.mDatabase = mDatabase;
-        when(mAuth.getCurrentUser()).thenReturn(null);
         presenter.initialize();
         assertNull(com.example.myapplication.UserManager.currentUser);
     }
 
     @Test
-    public void testInitialize_CallsReloadUserAuth() {
+    public void testInitialize2() {
         SignInPresenter presenter = new SignInPresenter(view, model);
         presenter.initialize();
         verify(model).ReloadUserAuth();
