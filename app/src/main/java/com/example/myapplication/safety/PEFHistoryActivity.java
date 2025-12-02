@@ -99,11 +99,27 @@ public class PEFHistoryActivity extends AppCompatActivity {
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PEFHistoryActivity.this, LogHistoryActivity.class);
-                intent.putExtra("childId", childId);
-                intent.putExtra("parentId", parentId);
-                startActivity(intent);
-                finish();
+                // For provider view, just return to the previous screen (AccessInfoActivity)
+                if (isProvider) {
+                    finish();
+                    return;
+                }
+
+                // If a parent is logged in, go back to ParentActivity with the Children tab selected
+                if (UserManager.currentUser instanceof com.example.myapplication.userdata.ParentAccount) {
+                    Intent parentIntent = new Intent(PEFHistoryActivity.this, com.example.myapplication.ParentActivity.class);
+                    parentIntent.putExtra("defaultTab", "children");
+                    parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(parentIntent);
+                    finish();
+                } else {
+                    // Child context: return to the log history menu
+                    Intent logHistoryIntent = new Intent(PEFHistoryActivity.this, LogHistoryActivity.class);
+                    logHistoryIntent.putExtra("childId", childId);
+                    logHistoryIntent.putExtra("parentId", parentId);
+                    startActivity(logHistoryIntent);
+                    finish();
+                }
             }
         });
 

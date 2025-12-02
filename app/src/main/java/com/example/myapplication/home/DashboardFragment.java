@@ -604,6 +604,15 @@ public class DashboardFragment extends Fragment {
                 holder.textViewLastPEF.setVisibility(View.GONE);
             }
             
+            // Check if summaryCharts permission is enabled and highlight Trend Snippet button
+            com.example.myapplication.providermanaging.Permission permission = info.child.getPermission();
+            boolean isSummaryChartsShared = permission != null && Boolean.TRUE.equals(permission.getSummaryCharts());
+            if (isSummaryChartsShared) {
+                holder.buttonTrendSnippet.setTextColor(0xFFF44336); // Red color
+            } else {
+                holder.buttonTrendSnippet.setTextColor(0xFFFFFFFF); // White color (default)
+            }
+            
             holder.buttonTrendSnippet.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), TrendSnippetActivity.class);
                 intent.putExtra("parentId", info.child.getParent_id());

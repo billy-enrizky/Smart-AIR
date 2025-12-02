@@ -21,8 +21,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewZone"
-        android:layout_width="346dp"
-        android:layout_height="96dp"
+        android:layout_width="350dp"
+        android:layout_height="112dp"
         android:layout_marginBottom="570dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.53">
+        app:layout_constraintVertical_bias="0.43">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -289,7 +289,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/imageView12"
@@ -311,15 +311,16 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/happy_monkey"
         android:text="Current Zone Status"
+        android:textAlignment="viewStart"
         android:textColor="#006157"
-        android:textSize="30dp"
+        android:textSize="25dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.397"
+        app:layout_constraintHorizontal_bias="0.102"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.096" />
+        app:layout_constraintVertical_bias="0.07" />
 
     <ImageView
         android:id="@+id/imageView29"
@@ -424,7 +425,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.018"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/exit" />
 
 
