@@ -54,7 +54,8 @@ public class PEFHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pef_history);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            // Only apply horizontal padding, not vertical to avoid white space at top and bottom
+            v.setPadding(systemBars.left, 0, systemBars.right, 0);
             return insets;
         });
 
