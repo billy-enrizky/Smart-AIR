@@ -5,108 +5,31 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:background="#99D9EA"
     tools:context=".ParentActivity">
 
-    <ScrollView
+
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:backgroundTint="#00A2E8"
+        app:itemIconTint="@android:color/black"
+        app:itemTextColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
-
-                <Button
-                    android:id="@+id/button17"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:onClick="Signout"
-                    android:text="Sign out" />
-
-                <FrameLayout
-                    android:id="@+id/buttonNotifications"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:clickable="true"
-                    android:focusable="true">
-
-                    <Button
-                        android:id="@+id/buttonNotificationButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Alerts" />
-
-                    <TextView
-                        android:id="@+id/textViewNotificationBadge"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="top|end"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:background="@android:drawable/presence_online"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:visibility="gone" />
-
-                </FrameLayout>
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/textViewChildrenTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Children Status"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewChildren"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:nestedScrollingEnabled="false" />
-
-    <Button
-        android:id="@+id/button12"
-                android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-        android:onClick="SignInChildrenProfile"
-                android:text="Children Manager" />
-
-            <Button
-                android:id="@+id/button19"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:onClick="ProviderManager"
-                android:text="Provider Manager" />
-
-            <Button
-                android:id="@+id/buttonActionPlan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:onClick="OpenActionPlan"
-                android:text="Action Plan" />
-        </LinearLayout>
-    </ScrollView>
+        app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

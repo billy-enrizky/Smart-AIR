@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/navigationbar_home"
+        android:title="Dashboard" />
+    <item
+        android:id="@+id/nav_children"
+        android:icon="@drawable/navigationbar_childrenmanager"
+        android:title="Children" />
+    <item
+        android:id="@+id/nav_providers"
+        android:icon="@drawable/navigationbar_providermanager"
+        android:title="Providers" />
+</menu>
+

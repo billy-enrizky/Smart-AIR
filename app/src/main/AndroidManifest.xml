@@ -95,6 +95,9 @@
             android:name=".childmanaging.CreateChildActivity"
             android:exported="false" />
         <activity
+            android:name=".childmanaging.EditNotesActivity"
+            android:exported="false" />
+        <activity
             android:name=".OnBoardingActivity"
             android:exported="false" />
         <activity
@@ -139,9 +142,6 @@
         <activity
             android:name=".reports.ProviderReportGeneratorActivity"
             android:exported="true" />
-        <activity
-            android:name=".reports.ChildDashboardActivity"
-            android:exported="false" />
         <activity
             android:name=".reports.TrendSnippetActivity"
             android:exported="false" />

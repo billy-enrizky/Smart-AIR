@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewCurrentChild"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Child"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonSignIn"
+                android:layout_width="1dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Sign in"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+            <Button
+                android:id="@+id/buttonDailyCheckin"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Check-in"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+            <Button
+                android:id="@+id/buttonSetPersonalBest"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Set PB"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonModifyNotes"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Notes"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+            <Button
+                android:id="@+id/buttonBadges"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Badges"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+            <Button
+                android:id="@+id/buttonInhaler"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Inhaler"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonControllerSchedule"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Controller Schedule"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+            <Button
+                android:id="@+id/buttonActionPlan"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Action Plan"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+            <Button
+                android:id="@+id/buttonGenerateReport"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Generate Report"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonIncidentHistory"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Incident History"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+            <Button
+                android:id="@+id/buttonPEFHistory"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="PEF History"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+
+            <Button
+                android:id="@+id/buttonDailyCheckinHistory"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6E8CA0"
+                android:text="Checkin History"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonDeleteChild"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:backgroundTint="#6E8CA0"
+                android:text="Delete Child"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="5dp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+

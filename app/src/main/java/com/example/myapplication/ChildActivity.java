@@ -60,7 +60,7 @@ public class ChildActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         // Register for activity results BEFORE any async operations
         // This must be done in onCreate() before the activity is STARTED
         pefEntryLauncher = registerForActivityResult(
@@ -71,7 +71,7 @@ public class ChildActivity extends AppCompatActivity {
                         // Zone will update automatically via real-time listener
                     }
                 });
-        
+
         // Try to get childId and parentId from intent extras first
         Intent intent = getIntent();
         String childId = null;
@@ -80,7 +80,7 @@ public class ChildActivity extends AppCompatActivity {
             childId = intent.getStringExtra("childId");
             parentId = intent.getStringExtra("parentId");
         }
-        
+
         // Check if user is properly set up
         if (UserManager.currentUser == null) {
             // If we have childId/parentId, try to restore child context
@@ -94,7 +94,7 @@ public class ChildActivity extends AppCompatActivity {
             finish();
             return;
         }
-        
+
         if (!(UserManager.currentUser instanceof ChildAccount)) {
             // If we have childId/parentId, try to restore child context
             if (childId != null && parentId != null) {
@@ -115,9 +115,9 @@ public class ChildActivity extends AppCompatActivity {
             finish();
             return;
         }
-        
+
         childAccount = (ChildAccount) UserManager.currentUser;
-        
+
         if (childAccount.getID() == null || childAccount.getID().isEmpty()) {
             Log.e(TAG, "ChildAccount ID is null or empty, redirecting to sign in");
             Intent signInIntent = new Intent(this, SignInView.class);
@@ -125,7 +125,7 @@ public class ChildActivity extends AppCompatActivity {
             finish();
             return;
         }
-        
+
         initializeActivity();
     }
 
@@ -142,14 +142,14 @@ public class ChildActivity extends AppCompatActivity {
                     finish();
                     return;
                 }
-                
+
                 // Restore child context
                 childAccount = tempChild;
                 UserManager.currentUser = childAccount;
                 SignInChildProfileActivity.currentChild = childAccount;
-                
+
                 Log.d(TAG, "Child context restored successfully");
-                
+
                 // Continue with normal initialization
                 initializeActivity();
             }
