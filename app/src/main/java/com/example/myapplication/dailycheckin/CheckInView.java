@@ -1,12 +1,22 @@
 package com.example.myapplication.dailycheckin;
 
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.myapplication.ChildActivity;
 import com.example.myapplication.ParentActivity;
@@ -22,23 +32,54 @@ import com.google.android.material.slider.Slider;
 import java.util.ArrayList;
 
 public class CheckInView extends AppCompatActivity {
-    private CheckBox nightWakingCheck;
     private String username;
+    private ImageView dailyCheckinChildBackground;
+    private TextView dailyCheckinTitle;
+    private CheckBox nightWakingCheck;
+    private TextView activityLimitsChipsTitle;
     private ChipGroup activityLimitsChips;
+    private TextView coughWheezeTitle;
     private Slider coughWheezeLevelSlider;
     private ChipGroup triggersChips;
+    private Button backButton;
+    private Button checkinButton;
     CheckInPresenter presenter;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily_checkin);
+        dailyCheckinChildBackground = (ImageView) findViewById(R.id.daily_checkin_child_background);
+        dailyCheckinTitle = (TextView) findViewById(R.id.daily_checkin_title);
         nightWakingCheck = (CheckBox) findViewById(R.id.night_waking);
+        activityLimitsChipsTitle = (TextView) findViewById(R.id.activity_limits_title);
         activityLimitsChips = (ChipGroup) findViewById(R.id.activity_limits);
+        coughWheezeTitle = (TextView) findViewById(R.id.cough_wheeze_title);
         coughWheezeLevelSlider = (Slider) findViewById(R.id.cough_wheeze_slider_filter);
         triggersChips = (ChipGroup) findViewById(R.id.triggers);
+        backButton = (Button) findViewById(R.id.leaveCheckIn);
+        checkinButton = (Button) findViewById(R.id.log_checkin);
         if (UserManager.currentUser.getAccount().equals(AccountType.CHILD)) {
+
             this.username = ((ChildAccount)UserManager.currentUser).getID();
+            dailyCheckinChildBackground.setVisibility(View.VISIBLE);
+            Typeface happyMonkeyFamily = ResourcesCompat.getFont(this, R.font.happy_monkey);
+            dailyCheckinTitle.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
+            nightWakingCheck.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
+            activityLimitsChipsTitle.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
+            for (int i = 0; i < activityLimitsChips.getChildCount(); i++) {
+                Chip chip = (Chip)activityLimitsChips.getChildAt(i);
+                chip.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
+            }
+            coughWheezeTitle.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
+            for (int i = 0; i < triggersChips.getChildCount(); i++) {
+                Chip chip = (Chip)triggersChips.getChildAt(i);
+                chip.setTypeface(happyMonkeyFamily, Typeface.NORMAL);
+            }
+            backButton.setBackgroundColor(Color.rgb(89, 179, 0));
+            checkinButton.setBackgroundColor(Color.rgb(89, 179, 0));
+
         } else {
             this.username = SignInChildProfileActivity.getCurrentChildUsername();
         }
