@@ -84,8 +84,8 @@
 
     <ImageView
         android:id="@+id/rescueLogButtonImage"
-        android:layout_width="241dp"
-        android:layout_height="116dp"
+        android:layout_width="247dp"
+        android:layout_height="88dp"
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="@+id/rescueLogButton"
         app:layout_constraintStart_toStartOf="@+id/rescueLogButton"
@@ -94,8 +94,8 @@
 
     <ImageView
         android:id="@+id/PEFLogButtonImage"
-        android:layout_width="176dp"
-        android:layout_height="116dp"
+        android:layout_width="178dp"
+        android:layout_height="87dp"
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="@+id/PEFLogButton"
         app:layout_constraintStart_toStartOf="@+id/PEFLogButton"
