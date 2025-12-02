@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="#99D9EA"
     tools:context=".reports.ProviderReportGeneratorActivity">
 
     <Button
@@ -14,7 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:backgroundTint="#6E8CA0"
         android:text="Back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -63,7 +63,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:backgroundTint="#6E8CA0"
                 android:text="Start Date" />
 
             <Button
@@ -71,7 +70,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:backgroundTint="#6E8CA0"
                 android:text="End Date" />
 
             <TextView
@@ -97,7 +95,7 @@
                 android:layout_marginTop="8dp"
                 android:text="No data is currently shared with provider"
                 android:textSize="14sp"
-                android:textColor="#9E9E9E"
+                android:textColor="#99D9EA"
                 android:visibility="gone" />
 
             <TextView
@@ -200,4 +198,3 @@
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

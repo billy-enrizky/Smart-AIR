@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="#6E8CA0"
+                android:backgroundTint="#99D9EA"
                 android:text="Add Date" />
 
             <Button

@@ -39,7 +39,7 @@
         android:id="@+id/addbutton"
         android:layout_width="86dp"
         android:layout_height="93dp"
-        android:backgroundTint="#000F92"
+        android:backgroundTint="#99D9EA"
         android:fontFamily="@font/happy_monkey"
         android:gravity="bottom|center_horizontal"
         android:paddingLeft="12dp"
