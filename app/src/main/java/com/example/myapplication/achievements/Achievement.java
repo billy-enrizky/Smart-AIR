@@ -243,9 +243,6 @@ public class Achievement {
      * Fallback method when we only have username (not parentId/childId).
      */
     private void loadChildAccountAndCalculateStreak(String username, ResultCallBack<Integer> callback) {
-        // This is a fallback - we'd need to search for the child
-        // For now, return 0 or keep current streak
-        Log.w("Achievement", "Cannot calculate streak without parentId");
         if (callback != null) {
             callback.onComplete(0);
         }
@@ -271,7 +268,7 @@ public class Achievement {
         
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String today = dateFormat.format(new Date());
-        
+
         // Filter scheduled dates to only include past dates (up to today)
         List<String> pastScheduledDates = new ArrayList<>();
         for (String scheduledDate : scheduledDates) {
@@ -294,12 +291,9 @@ public class Achievement {
             if (daysWithLogs.contains(scheduledDate)) {
                 streak++;
             } else {
-                // Break on first missing log (going backwards)
-                // Streak must be consecutive - any gap breaks it
                 break;
             }
         }
-        
         return streak;
     }
 
@@ -347,7 +341,6 @@ public class Achievement {
      * @return true if consecutive scheduled days with logs >= requirement
      */
     public boolean checkBadge1() {
-        // Use current streak (which is calculated from ControllerSchedule)
         return currentStreak >= badgeRequirements.get(0);
     }
 
