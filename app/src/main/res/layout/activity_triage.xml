@@ -7,13 +7,34 @@
     android:layout_height="match_parent"
     tools:context=".safety.TriageActivity">
 
+    <ImageView
+        android:id="@+id/imageViewBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/activity_r3_template" />
+
     <Button
         android:id="@+id/buttonBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:backgroundTint="#01A829"
+        android:fontFamily="@font/happy_monkey"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:text="Back"
+        android:textColor="#FFFFFF"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:cornerRadius="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,8 +57,10 @@
                 android:id="@+id/textViewTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/happy_monkey"
                 android:text="Breathing Assessment"
-                android:textSize="24sp"
+                android:textColor="#006157"
+                android:textSize="30dp"
                 android:textStyle="bold" />
 
             <FrameLayout
@@ -52,12 +75,13 @@
         android:id="@+id/textViewSafetyNote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#E0E0E0"
+        android:background="#A7FFE3"
         android:padding="12dp"
         android:text="This is guidance, not a diagnosis. If in doubt, call emergency."
-        android:textColor="#D32F2F"
+        android:textColor="#006157"
         android:textSize="14sp"
         android:textStyle="bold"
+        android:fontFamily="@font/happy_monkey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
