@@ -21,12 +21,16 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewZone"
-        android:layout_width="261dp"
-        android:layout_height="wrap_content"
+        android:layout_width="346dp"
+        android:layout_height="96dp"
+        android:layout_marginBottom="570dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="85dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.53">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -285,7 +289,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.056" />
+        app:layout_constraintVertical_bias="0.019" />
 
     <ImageView
         android:id="@+id/imageView12"
@@ -304,18 +308,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="48dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/happy_monkey"
         android:text="Current Zone Status"
         android:textColor="#006157"
         android:textSize="30dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/cardViewZone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.397"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.096" />
 
     <ImageView
         android:id="@+id/imageView29"
@@ -420,7 +424,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.057"
+        app:layout_constraintVertical_bias="0.018"
         app:srcCompat="@drawable/exit" />
 
 

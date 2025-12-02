@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 public class Achievement {
     String username;
@@ -130,8 +131,27 @@ public class Achievement {
         }
     }
 
+    //Hardest streak to code now.
+    //Also change what the parent sees when configurating. Alright. We need to
+    //check the database for Billy's times and track the dates. This is literally O(NXM) so its very inefficient, but check
+    //all controller logs to see how many in a row are satisfied. Sort billy's array if needed. Then, check if the count of
+    //satisfied ones in a row exceeds requirement 1. If it does, gg you've done it!
     public boolean checkBadge1() {
-        return currentStreak >= badgeRequirements.get(0);
+        int count = 0;
+        long currentTime = System.currentTimeMillis();
+        ArrayList<String> controllerDates = new ArrayList<>();
+        ArrayList<ControllerLog> controllerLogs = new ArrayList<>(); //I need this later
+        ArrayList<String> controllerLogsDates = getDates(controllerLogs); // Ill need helper ethod
+        Collections.sort(controllerDates);
+        for (String s : controllerDates){
+            if (currentTime > s) //current time is greater
+                break;
+            if (controllerDates.contains(s))
+                count++;
+            else
+                count = 1;
+        }
+        return count > badgeRequirements.get(0);
     }
 
     public boolean checkBadge2() {
