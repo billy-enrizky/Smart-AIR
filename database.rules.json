@@ -1,0 +1,33 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$userId": {
+        ".read": "$userId === auth.uid",
+        ".write": "$userId === auth.uid",
+        "children": {
+          "$childId": {
+            ".read": true,
+            ".write": "$userId === auth.uid"
+          }
+        },
+        "fcmToken": {
+          ".read": "$userId === auth.uid",
+          ".write": "$userId === auth.uid"
+        }
+      }
+    },
+    "notifications": {
+      "$parentId": {
+        ".read": "$parentId === auth.uid",
+        ".write": true,
+        "$notificationId": {
+          ".read": "$parentId === auth.uid",
+          ".write": true
+        }
+      }
+    }
+  }
+}
+

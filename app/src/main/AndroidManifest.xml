@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,7 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
-            android:name=".providermanaging.AccessPermissionActivity"
+            android:name=".reports.AdherenceSummaryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".providers.AccessInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".providermanaging.ProviderManagerActivity"
             android:exported="false" />
         <activity
             android:name=".childmanaging.ScrollingActivity"
@@ -35,13 +44,58 @@
             android:name=".providermanaging.InvitationCreateActivity"
             android:exported="false" />
         <activity
-            android:name=".ProviderActivity"
+            android:name=".providers.ProviderActivity"
             android:exported="false" />
         <activity
             android:name=".ParentActivity"
             android:exported="false" />
         <activity
+            android:name=".ChildInhalerInstructions"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerLogs"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerBadge"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerDailyStreak"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUse"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseReady"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseAfter"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseRescue"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerUseController"
+            android:exported="false" />
+        <activity
+            android:name=".ChildInhalerVideo"
+            android:exported="false" />
+        <activity
+            android:name=".LogHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ParentInhalerCreate"
+            android:exported="false" />
+        <activity
+            android:name=".ParentInhalerMenu"
+            android:exported="false" />
+        <activity
+            android:name=".ParentBadge"
+            android:exported="false" />
+        <activity
             android:name=".childmanaging.CreateChildActivity"
+            android:exported="false" />
+        <activity
+            android:name=".childmanaging.EditNotesActivity"
             android:exported="false" />
         <activity
             android:name=".OnBoardingActivity"
@@ -54,9 +108,6 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SignIn.SignInView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,6 +115,74 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".dailycheckin.CheckInView"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.FilterCheckInByDate"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.FilterCheckInBySymptoms"
+            android:exported="false" />
+        <activity
+            android:name=".dailycheckin.ViewCheckInHistory"
+            android:exported="false" />
+        <activity
+            android:name=".SignIn.SignInView"
+            android:exported="true" />
+        <activity
+            android:name=".SignInActivity"
+            android:exported="true" />
+        <activity
+            android:name=".notifications.NotificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".medication.ControllerScheduleActivity"
+            android:exported="true" />
+        <activity
+            android:name=".reports.ProviderReportGeneratorActivity"
+            android:exported="true" />
+        <activity
+            android:name=".reports.TrendSnippetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".reports.ProviderReportViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.PEFEntryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.PEFHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.SetPersonalBestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.TriageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.IncidentHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.ProviderReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.ActionPlanActivity"
+            android:exported="false" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
