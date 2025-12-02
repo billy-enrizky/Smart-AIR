@@ -34,7 +34,7 @@ public class ChildInhalerDailyStreak extends AppCompatActivity {
 
                 if (achievement == null) {
                     Toast.makeText(ChildInhalerDailyStreak.this,"Somehow no achievement.",Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(ChildInhalerDailyStreak.this, ChildInhalerMenu.class));}
+                    startActivity(new Intent(ChildInhalerDailyStreak.this, ChildActivity.class));}
                 else {
                     if (achievement.badges.get(0))
                         badge1.setImageResource(R.drawable.badge1);
@@ -50,7 +50,7 @@ public class ChildInhalerDailyStreak extends AppCompatActivity {
         donebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ChildInhalerDailyStreak.this, ChildInhalerMenu.class));
+                startActivity(new Intent(ChildInhalerDailyStreak.this, ChildActivity.class));
             }
         });
 

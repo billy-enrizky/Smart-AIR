@@ -105,7 +105,7 @@
         app:layout_constraintStart_toEndOf="@+id/button20" />
 
     <Button
-        android:id="@+id/logEntry"
+        android:id="@+id/dailyCheckInButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="75dp"

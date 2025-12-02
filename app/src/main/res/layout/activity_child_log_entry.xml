@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/LogHistoryBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/activity_r3_logs" />
+
+    <Button
+        android:id="@+id/backToChildActivity"
+        android:layout_width="107dp"
+        android:layout_height="91dp"
+        android:layout_marginEnd="288dp"
+        android:backgroundTint="#FFFFFF"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:text="Back"
+        android:textColor="#000000"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.041" />
+
+    <Button
+        android:id="@+id/PEFLogButton"
+        android:layout_width="290dp"
+        android:layout_height="177dp"
+        android:layout_marginEnd="59dp"
+        android:backgroundTint="#00B9D5"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingBottom="15dp"
+        android:text="PEF"
+        android:textAlignment="gravity"
+        android:textColor="#041AC3"
+        android:textSize="34dp"
+        android:textStyle="bold"
+        app:cornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.967"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.771" />
+
+    <Button
+        android:id="@+id/rescueLogButton"
+        android:layout_width="285dp"
+        android:layout_height="211dp"
+        android:layout_marginStart="59dp"
+        android:layout_marginEnd="59dp"
+        android:layout_marginBottom="38dp"
+        android:backgroundTint="#A81401"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingBottom="15dp"
+        android:text="Rescue/Controller"
+        android:textAlignment="gravity"
+        android:textSize="34dp"
+        android:textStyle="bold"
+        app:cornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.398" />
+
+    <ImageView
+        android:id="@+id/rescueLogButtonImage"
+        android:layout_width="247dp"
+        android:layout_height="88dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/rescueLogButton"
+        app:layout_constraintStart_toStartOf="@+id/rescueLogButton"
+        app:layout_constraintTop_toTopOf="@+id/rescueLogButton"
+        app:srcCompat="@drawable/rescue" />
+
+    <ImageView
+        android:id="@+id/PEFLogButtonImage"
+        android:layout_width="178dp"
+        android:layout_height="87dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/PEFLogButton"
+        app:layout_constraintStart_toStartOf="@+id/PEFLogButton"
+        app:layout_constraintTop_toTopOf="@+id/PEFLogButton"
+        app:srcCompat="@drawable/air" />
+
+    <TextView
+        android:id="@+id/logHistoryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="148dp"
+        android:fontFamily="@font/happy_monkey"
+        android:text="Log History"
+        android:textSize="64sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/backToChildActivityButton"
+        android:layout_width="45dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="11dp"
+        app:layout_constraintEnd_toEndOf="@+id/backToChildActivity"
+        app:layout_constraintStart_toStartOf="@+id/backToChildActivity"
+        app:layout_constraintTop_toTopOf="@+id/backToChildActivity"
+        app:srcCompat="@drawable/leftarrow" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
