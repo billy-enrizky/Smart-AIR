@@ -90,12 +90,35 @@ public class SignInPresenterTest {
         // Test signin with email (should call signInForParentAndProvider)
         String email = "test@example.com";
         String password = "password123";
+        String userId = "user123";
+        
+        // Set up mocks to execute full callback chain
+        when(mockModel.GetCurrentUIDAuth()).thenReturn(userId);
+        ParentAccount parentAccount = new ParentAccount();
+        parentAccount.setFirstTime(false);
+        parentAccount.setID(userId);
+        
+        final ResultCallBack<UserData>[] queryCallbackHolder = new ResultCallBack[1];
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) {
+                queryCallbackHolder[0] = invocation.getArgument(1);
+                return null;
+            }
+        }).when(mockModel).QueryDBforNonChildren(eq(userId), any(ResultCallBack.class));
         
         presenter.signin(email, password);
         
         // Verify SignInAuth is called with email
         ArgumentCaptor<ResultCallBack<Boolean>> authCallback = ArgumentCaptor.forClass(ResultCallBack.class);
         verify(mockModel).SignInAuth(eq(email), eq(password), authCallback.capture());
+        
+        // Execute the full callback chain to cover all lines
+        authCallback.getValue().onComplete(true);
+        verify(mockModel).GetCurrentUIDAuth();
+        verify(mockModel).QueryDBforNonChildren(eq(userId), any(ResultCallBack.class));
+        assertNotNull("QueryDBforNonChildren callback should be captured", queryCallbackHolder[0]);
+        queryCallbackHolder[0].onComplete(parentAccount);
         
         // Verify usernameExists is NOT called
         verify(mockModel, never()).usernameExists(anyString(), any());
@@ -106,12 +129,34 @@ public class SignInPresenterTest {
         // Test signin with username (should call signInForChild)
         String username = "testuser";
         String password = "password123";
+        String parentId = "parent123";
+        
+        // Set up mocks to execute full callback chain
+        ChildAccount childAccount = new ChildAccount();
+        childAccount.setPassword(password);
+        childAccount.setID(username);
+        childAccount.setFirstTime(false);
+        
+        final ResultCallBack<UserData>[] queryCallbackHolder = new ResultCallBack[1];
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) {
+                queryCallbackHolder[0] = invocation.getArgument(2);
+                return null;
+            }
+        }).when(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
         
         presenter.signin(username, password);
         
         // Verify usernameExists is called
         ArgumentCaptor<ResultCallBack<String>> usernameCallback = ArgumentCaptor.forClass(ResultCallBack.class);
         verify(mockModel).usernameExists(eq(username), usernameCallback.capture());
+        
+        // Execute the full callback chain to cover all lines
+        usernameCallback.getValue().onComplete(parentId);
+        verify(mockModel).QueryDBforChildren(eq(parentId), eq(username), any(ResultCallBack.class));
+        assertNotNull("QueryDBforChildren callback should be captured", queryCallbackHolder[0]);
+        queryCallbackHolder[0].onComplete(childAccount);
         
         // Verify SignInAuth is NOT called
         verify(mockModel, never()).SignInAuth(anyString(), anyString(), any());
