@@ -24,7 +24,7 @@
         android:id="@+id/controllerinhaler"
         android:layout_width="226dp"
         android:layout_height="133dp"
-        android:text="Recieve this badge when streak of \n\n is reached."
+        android:text="Recieve this badge\nwhen completing\n\nof controller days."
         android:textSize="26dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

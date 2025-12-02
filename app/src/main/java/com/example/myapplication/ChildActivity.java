@@ -6,8 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,6 +18,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
+import com.example.myapplication.dailycheckin.CheckInView;
 import com.example.myapplication.safety.PEFEntryActivity;
 import com.example.myapplication.safety.PEFHistoryActivity;
 import com.example.myapplication.safety.PEFReading;
@@ -31,24 +34,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import android.graphics.Color;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class ChildActivity extends AppCompatActivity {
     private static final String TAG = "ChildActivity";
-    
+
+    private Achievement achievementData;
     private TextView textViewZoneName;
     private TextView textViewZonePercentage;
     private TextView textViewLastPEF;
     private CardView cardViewZone;
-    private Button buttonEnterPEF;
-    private Button buttonViewPEFHistory;
-    private Button buttonTriage;
-    
     private ChildAccount childAccount;
     private ActivityResultLauncher<Intent> pefEntryLauncher;
-    
+
     private DatabaseReference pefReadingsRef;
     private DatabaseReference childAccountRef;
     private Query latestPEFQuery;
@@ -58,31 +60,9 @@ public class ChildActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_child);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        if (!(com.example.myapplication.UserManager.currentUser instanceof ChildAccount)) {
-            Log.e(TAG, "Current user is not a ChildAccount");
-            finish();
-            return;
-        }
-
-        childAccount = (ChildAccount) com.example.myapplication.UserManager.currentUser;
-
-        textViewZoneName = findViewById(R.id.textViewZoneName);
-        textViewZonePercentage = findViewById(R.id.textViewZonePercentage);
-        textViewLastPEF = findViewById(R.id.textViewLastPEF);
-        cardViewZone = findViewById(R.id.cardViewZone);
-        buttonEnterPEF = findViewById(R.id.buttonEnterPEF);
-        buttonViewPEFHistory = findViewById(R.id.buttonViewPEFHistory);
-        buttonTriage = findViewById(R.id.buttonTriage);
-
-
+        // Register for activity results BEFORE any async operations
+        // This must be done in onCreate() before the activity is STARTED
         pefEntryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -92,45 +72,188 @@ public class ChildActivity extends AppCompatActivity {
                     }
                 });
 
-        buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
+        // Try to get childId and parentId from intent extras first
+        Intent intent = getIntent();
+        String childId = null;
+        String parentId = null;
+        if (intent != null && intent.hasExtra("childId") && intent.hasExtra("parentId")) {
+            childId = intent.getStringExtra("childId");
+            parentId = intent.getStringExtra("parentId");
+        }
+
+        // Check if user is properly set up
+        if (UserManager.currentUser == null) {
+            // If we have childId/parentId, try to restore child context
+            if (childId != null && parentId != null) {
+                restoreChildContext(childId, parentId);
+                return;
+            }
+            Log.e(TAG, "UserManager.currentUser is null, redirecting to sign in");
+            Intent signInIntent = new Intent(this, SignInView.class);
+            startActivity(signInIntent);
+            finish();
+            return;
+        }
+
+        if (!(UserManager.currentUser instanceof ChildAccount)) {
+            // If we have childId/parentId, try to restore child context
+            if (childId != null && parentId != null) {
+                restoreChildContext(childId, parentId);
+                return;
+            }
+            // Also check SignInChildProfileActivity.currentChild as fallback
+            if (SignInChildProfileActivity.currentChild != null) {
+                ChildAccount currentChild = SignInChildProfileActivity.currentChild;
+                if (currentChild.getID() != null && !currentChild.getID().isEmpty()) {
+                    restoreChildContext(currentChild.getID(), currentChild.getParent_id());
+                    return;
+                }
+            }
+            Log.e(TAG, "UserManager.currentUser is not a ChildAccount, redirecting to sign in");
+            Intent signInIntent = new Intent(this, SignInView.class);
+            startActivity(signInIntent);
+            finish();
+            return;
+        }
+
+        childAccount = (ChildAccount) UserManager.currentUser;
+
+        if (childAccount.getID() == null || childAccount.getID().isEmpty()) {
+            Log.e(TAG, "ChildAccount ID is null or empty, redirecting to sign in");
+            Intent signInIntent = new Intent(this, SignInView.class);
+            startActivity(signInIntent);
+            finish();
+            return;
+        }
+
+        initializeActivity();
+    }
+
+    private void restoreChildContext(String childId, String parentId) {
+        Log.d(TAG, "Restoring child context: childId=" + childId + ", parentId=" + parentId);
+        ChildAccount tempChild = new ChildAccount();
+        tempChild.ReadFromDatabase(parentId, childId, new CallBack() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ChildActivity.this, PEFEntryActivity.class);
-                intent.putExtra("childId", childAccount.getID());
-                intent.putExtra("parentId", childAccount.getParent_id());
-                pefEntryLauncher.launch(intent);
+            public void onComplete() {
+                if (tempChild.getID() == null || tempChild.getID().isEmpty()) {
+                    Log.e(TAG, "Failed to load child account from Firebase");
+                    Intent signInIntent = new Intent(ChildActivity.this, SignInView.class);
+                    startActivity(signInIntent);
+                    finish();
+                    return;
+                }
+
+                // Restore child context
+                childAccount = tempChild;
+                UserManager.currentUser = childAccount;
+                SignInChildProfileActivity.currentChild = childAccount;
+
+                Log.d(TAG, "Child context restored successfully");
+
+                // Continue with normal initialization
+                initializeActivity();
             }
         });
+    }
 
-        buttonViewPEFHistory.setOnClickListener(new View.OnClickListener() {
+    private void initializeActivity() {
+        setContentView(R.layout.activity_child);
+        Button techniqueButton = findViewById(R.id.techniquebutton);
+        Button streakButton = findViewById(R.id.streakbutton);
+        Button useButton = findViewById(R.id.usebutton);
+        Button logsButton = findViewById(R.id.logsButton);
+        Button dailycheck = findViewById(R.id.dailycheckinbutton);
+        Button signout = findViewById(R.id.signOutButton);
+
+        streakButton.setEnabled(false);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            // Only apply horizontal padding, not vertical to avoid white space at top and bottom
+            v.setPadding(systemBars.left, 0, systemBars.right, 0);
+            return insets;
+        });
+        AchievementsModel.readFromDB(childAccount.getID(), new ResultCallBack<Achievement>() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ChildActivity.this, PEFHistoryActivity.class);
-                intent.putExtra("childId", childAccount.getID());
-                intent.putExtra("parentId", childAccount.getParent_id());
-                startActivity(intent);
+            public void onComplete(Achievement achievement) {
+                if (achievement == null) {
+                    if (childAccount == null || childAccount.getID() == null) {
+                        Log.e(TAG, "Cannot create achievement: childAccount or ID is null");
+                        return;
+                    }
+                    Achievement newAch = new Achievement(childAccount.getID());
+                    AchievementsModel.writeIntoDB(newAch, new CallBack() {
+                        @Override
+                        public void onComplete() {
+                            achievementData = newAch;
+                            streakButton.setEnabled(true);
+                        }
+                    });
+                    return;
+                }
+
+                achievementData = achievement;
+
+                if (!achievementData.badges.get(2)) {
+                    if (achievementData.checkBadge3()) {
+                        Toast.makeText(ChildActivity.this, "You've earned a new badge!", Toast.LENGTH_SHORT).show();
+                        achievementData.badges.set(2, true);
+                        AchievementsModel.writeIntoDB(achievementData, new CallBack() {
+                            @Override
+                            public void onComplete() {
+                                streakButton.setEnabled(true);
+                            }
+                        });
+                        return;
+                    }
+                }
+
+                streakButton.setEnabled(true);
             }
         });
+        textViewZoneName = findViewById(R.id.textViewZoneName);
+        textViewZonePercentage = findViewById(R.id.textViewZonePercentage);
+        textViewLastPEF = findViewById(R.id.textViewLastPEF);
+        cardViewZone = findViewById(R.id.cardViewZone);
+        Button pefButton = findViewById(R.id.pefButton);
+        Button emergencyButton = findViewById(R.id.emergencyButton);
 
-        buttonTriage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        emergencyButton.setOnClickListener(v -> {
                 Intent intent = new Intent(ChildActivity.this, TriageActivity.class);
                 intent.putExtra("childId", childAccount.getID());
                 intent.putExtra("parentId", childAccount.getParent_id());
                 startActivity(intent);
-            }
+        });
+        pefButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ChildActivity.this, PEFEntryActivity.class);
+            intent.putExtra("childId", childAccount.getID());
+            intent.putExtra("parentId", childAccount.getParent_id());
+            startActivity(intent);
+        });
+        techniqueButton.setOnClickListener(v -> {
+            startActivity(new Intent(ChildActivity.this, ChildInhalerInstructions.class));
         });
 
-        //DEBUG
-        findViewById(R.id.debugButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ChildActivity.this, com.example.myapplication.ChildInhalerMenu.class);
-                intent.putExtra("childId", childAccount.getID());
-                intent.putExtra("parentId", childAccount.getParent_id());
-                startActivity(intent);
-            }
+        dailycheck.setOnClickListener(v -> {
+            startActivity(new Intent(ChildActivity.this, CheckInView.class));
+        });
+
+        signout.setOnClickListener(v -> {
+            UserManager.backToLogin(this);
+        });
+
+        logsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ChildActivity.this, LogHistoryActivity.class);
+            intent.putExtra("childId", childAccount.getID());
+            intent.putExtra("parentId", childAccount.getParent_id());
+            startActivity(intent);
+        });
+
+        useButton.setOnClickListener(v -> {
+            startActivity(new Intent(ChildActivity.this, ChildInhalerUse.class));
+        });
+
+        streakButton.setOnClickListener(v -> {
+            startActivity(new Intent(ChildActivity.this, ChildInhalerDailyStreak.class));
         });
 
         attachZoneListeners();
@@ -140,8 +263,8 @@ public class ChildActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Update childAccount from UserManager in case it changed
-        if (com.example.myapplication.UserManager.currentUser instanceof ChildAccount) {
-            childAccount = (ChildAccount) com.example.myapplication.UserManager.currentUser;
+        if (UserManager.currentUser instanceof ChildAccount) {
+            childAccount = (ChildAccount) UserManager.currentUser;
         }
         attachZoneListeners();
     }
@@ -170,7 +293,7 @@ public class ChildActivity extends AppCompatActivity {
         detachZoneListeners();
 
         // Attach listener for PEF readings (real-time updates)
-        pefReadingsRef = com.example.myapplication.UserManager.mDatabase
+        pefReadingsRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
@@ -195,11 +318,11 @@ public class ChildActivity extends AppCompatActivity {
                 });
             }
         };
-        
+
         latestPEFQuery.addValueEventListener(pefReadingsListener);
 
         // Attach listener for child account (to catch personalBest updates)
-        childAccountRef = com.example.myapplication.UserManager.mDatabase
+        childAccountRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
@@ -234,21 +357,20 @@ public class ChildActivity extends AppCompatActivity {
                 Log.e(TAG, "Error loading child account", error.toException());
             }
         };
-        
+
         childAccountRef.addValueEventListener(childAccountListener);
     }
-
     private void detachZoneListeners() {
         if (latestPEFQuery != null && pefReadingsListener != null) {
             latestPEFQuery.removeEventListener(pefReadingsListener);
             pefReadingsListener = null;
         }
-        
+
         if (childAccountRef != null && childAccountListener != null) {
             childAccountRef.removeEventListener(childAccountListener);
             childAccountListener = null;
         }
-        
+
         // Reset query references so they're recreated on next attach
         latestPEFQuery = null;
         pefReadingsRef = null;
@@ -268,7 +390,7 @@ public class ChildActivity extends AppCompatActivity {
                     textViewZoneName.setText("Zone Not Available");
                     textViewZonePercentage.setText("Personal Best not set");
                     textViewLastPEF.setText("");
-                    cardViewZone.setCardBackgroundColor(Zone.UNKNOWN.getColorResource());
+                    cardViewZone.setCardBackgroundColor(getZoneColor(Zone.UNKNOWN));
                 }
             });
             return;
@@ -291,12 +413,12 @@ public class ChildActivity extends AppCompatActivity {
                     if (!isFinishing() && !isDestroyed()) {
                         textViewZoneName.setText(zone.getDisplayName());
                         textViewZonePercentage.setText(String.format(Locale.getDefault(), "%.1f%% of Personal Best", percentage));
-                        
+
                         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
                         String dateStr = sdf.format(new Date(finalReading.getTimestamp()));
                         textViewLastPEF.setText("Last PEF: " + dateStr);
-                        
-                        cardViewZone.setCardBackgroundColor(zone.getColorResource());
+
+                        cardViewZone.setCardBackgroundColor(getZoneColor(zone));
                     }
                 });
             } else {
@@ -319,6 +441,20 @@ public class ChildActivity extends AppCompatActivity {
         textViewZoneName.setText("Zone Not Available");
         textViewZonePercentage.setText("No PEF readings yet");
         textViewLastPEF.setText("");
-        cardViewZone.setCardBackgroundColor(Zone.UNKNOWN.getColorResource());
+        cardViewZone.setCardBackgroundColor(getZoneColor(Zone.UNKNOWN));
+    }
+
+    private int getZoneColor(Zone zone) {
+        switch (zone) {
+            case GREEN:
+                return Color.parseColor("#4CAF50"); // Material Green
+            case YELLOW:
+                return Color.parseColor("#FFC107"); // Material Amber
+            case RED:
+                return Color.parseColor("#F44336"); // Material Red
+            case UNKNOWN:
+            default:
+                return Color.parseColor("#9E9E9E"); // Material Grey
+        }
     }
 }

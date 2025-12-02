@@ -10,6 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="GoToDailyCheckIn"
-        android:text="Log Entry" />
+        android:text="Daily Check-in" />
 
 </FrameLayout>

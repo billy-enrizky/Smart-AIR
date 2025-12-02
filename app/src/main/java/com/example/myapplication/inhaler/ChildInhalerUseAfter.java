@@ -117,13 +117,29 @@ public class ChildInhalerUseAfter extends AppCompatActivity {
 
                                                     if (achievement == null) {
                                                         Toast.makeText(ChildInhalerUseAfter.this, "Warning: Achievement Error.", Toast.LENGTH_SHORT).show();
-                                                        startActivity(new Intent(ChildInhalerUseAfter.this, ChildInhalerMenu.class));
+                                                        startActivity(new Intent(ChildInhalerUseAfter.this, ChildActivity.class));
                                                     } else {
-                                                        achievement.updateStreak();
-                                                        AchievementsModel.writeIntoDB(achievement, new CallBack() {
+                                                        // Update timeOfLastDose for backward compatibility
+                                                        achievement.setTimeOfLastDose(System.currentTimeMillis());
+                                                        
+                                                        // Update streak (async - based on ControllerSchedule dates)
+                                                        // calculateStreakFromSchedule will update currentStreak in its callback
+                                                        achievement.calculateStreakFromSchedule(new ResultCallBack<Integer>() {
                                                             @Override
-                                                            public void onComplete() {
-                                                                startActivity(new Intent(ChildInhalerUseAfter.this, ChildInhalerMenu.class));
+                                                            public void onComplete(Integer streak) {
+                                                                if (!achievement.badges.get(0)) {
+                                                                    if (achievement.checkBadge1()) {
+                                                                        Toast.makeText(ChildInhalerUseAfter.this, "You've earned a new badge!", Toast.LENGTH_SHORT).show();
+                                                                        achievement.badges.set(0, true);
+                                                                    }
+                                                                }
+                                                                
+                                                                AchievementsModel.writeIntoDB(achievement, new CallBack() {
+                                                                    @Override
+                                                                    public void onComplete() {
+                                                                        startActivity(new Intent(ChildInhalerUseAfter.this, ChildActivity.class));
+                                                                    }
+                                                                });
                                                             }
                                                         });
                                                     }

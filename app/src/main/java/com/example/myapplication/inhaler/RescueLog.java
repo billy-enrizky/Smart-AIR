@@ -41,7 +41,10 @@ public class RescueLog implements Comparable<RescueLog>{
     public void setExtraInfo(String extraInfo){this.extraInfo = extraInfo;}
     public String getExtraInfo(){return this.extraInfo;}
     public String getInfo(){
-        return "After: \n\tBreath Rating: "+this.getRating()+"\n\tFeeling: "+this.getFeeling()+"\n"+this.getExtraInfo();
+        if (this.getExtraInfo().isEmpty()){
+            return "After: \n\tBreath Rating: "+this.getRating()+"/10\n\tFeeling: "+this.getFeeling();
+        }
+        return "After: \n\tBreath Rating: "+this.getRating()+"/10\n\tFeeling: "+this.getFeeling()+"\n"+this.getExtraInfo();
     }
     @Override
     public int compareTo(RescueLog other){

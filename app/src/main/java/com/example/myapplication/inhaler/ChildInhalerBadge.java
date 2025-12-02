@@ -27,7 +27,7 @@ public class ChildInhalerBadge extends AppCompatActivity {
                     startActivity(new Intent(ChildInhalerBadge.this, ChildInhalerDailyStreak.class));
                 }
                 else {
-                    badge1Text.setText("Gain this badge by reaching a streak of " + String.valueOf(achievement.badgeRequirements.get(0)) + ".");
+                    badge1Text.setText("Gain this badge by taking controllers on time for " + String.valueOf(achievement.badgeRequirements.get(0)) + " days straight.");
                     badge2Text.setText("Gain this badge by practicing technique " + String.valueOf(achievement.badgeRequirements.get(1)) + " times every "+String.valueOf(achievement.badgeRequirements.get(2))+" days.");
                     badge3Text.setText("Gain this badge by " + String.valueOf(achievement.badgeRequirements.get(3)) + " or less rescues in " + String.valueOf(achievement.badgeRequirements.get(4)) + " days.");
                 }

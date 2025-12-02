@@ -17,8 +17,11 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.ChildInhalerLogs;
+import com.example.myapplication.LogHistoryActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.userdata.ChildAccount;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,6 +66,11 @@ public class PEFHistoryActivity extends AppCompatActivity {
             ChildAccount childAccount = (ChildAccount) UserManager.currentUser;
             childId = childAccount.getID();
             parentId = childAccount.getParent_id();
+        } else if (SignInChildProfileActivity.currentChild != null) {
+            // When logged in via children manager
+            ChildAccount currentChild = SignInChildProfileActivity.currentChild;
+            childId = currentChild.getID();
+            parentId = currentChild.getParent_id();
         } else {
             Log.e(TAG, "No childId/parentId provided and current user is not a ChildAccount");
             finish();
@@ -75,35 +83,53 @@ public class PEFHistoryActivity extends AppCompatActivity {
         Button buttonEnterPEF = findViewById(R.id.buttonEnterPEF);
         Button buttonRemoveAll = findViewById(R.id.buttonRemoveAll);
 
-        if(intent.hasExtra("isProvider")){
+        if (buttonBack == null) {
+            Log.e(TAG, "buttonBack not found in layout");
+            finish();
+            return;
+        }
+
+        if (intent != null && intent.hasExtra("isProvider")) {
             isProvider = true;
-            buttonEnterPEF.setVisibility(View.GONE);
-            buttonRemoveAll.setVisibility(View.GONE);
+            if (buttonEnterPEF != null) {
+                buttonEnterPEF.setVisibility(View.GONE);
+            }
+            if (buttonRemoveAll != null) {
+                buttonRemoveAll.setVisibility(View.GONE);
+            }
         }
 
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(PEFHistoryActivity.this, LogHistoryActivity.class);
+                intent.putExtra("childId", childId);
+                intent.putExtra("parentId", parentId);
+                startActivity(intent);
                 finish();
             }
         });
         
-        buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PEFHistoryActivity.this, PEFEntryActivity.class);
-                intent.putExtra("childId", childId);
-                intent.putExtra("parentId", parentId);
-                startActivity(intent);
-            }
-        });
+        if (buttonEnterPEF != null) {
+            buttonEnterPEF.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(PEFHistoryActivity.this, PEFEntryActivity.class);
+                    intent.putExtra("childId", childId);
+                    intent.putExtra("parentId", parentId);
+                    startActivity(intent);
+                }
+            });
+        }
         
-        buttonRemoveAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeAllHistory();
-            }
-        });
+        if (buttonRemoveAll != null) {
+            buttonRemoveAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeAllHistory();
+                }
+            });
+        }
         
         historyItems = new ArrayList<>();
         adapter = new HistoryAdapter(historyItems, parentId, childId, this);
