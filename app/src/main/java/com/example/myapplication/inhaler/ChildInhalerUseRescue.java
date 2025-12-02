@@ -115,13 +115,13 @@ public class ChildInhalerUseRescue extends AppCompatActivity {
                                                 public void onComplete(Achievement achievement) {
                                                     if (achievement == null) {
                                                         Toast.makeText(ChildInhalerUseRescue.this, "Warning: Achievement Error.", Toast.LENGTH_SHORT).show();
-                                                        startActivity(new Intent(ChildInhalerUseRescue.this, ChildInhalerMenu.class));
+                                                        startActivity(new Intent(ChildInhalerUseRescue.this, ChildActivity.class));
                                                     } else {
                                                         achievement.usedRescue();
                                                         AchievementsModel.writeIntoDB(achievement, new CallBack() {
                                                             @Override
                                                             public void onComplete() {
-                                                                startActivity(new Intent(ChildInhalerUseRescue.this, ChildInhalerMenu.class));
+                                                                startActivity(new Intent(ChildInhalerUseRescue.this, ChildActivity.class));
                                                             }
                                                         });
                                                     }

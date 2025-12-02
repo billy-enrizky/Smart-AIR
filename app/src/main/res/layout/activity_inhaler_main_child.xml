@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,37 +10,118 @@
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
         app:srcCompat="@drawable/activity_r3_template" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewZone"
+        android:layout_width="346dp"
+        android:layout_height="96dp"
+        android:layout_marginBottom="570dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.53">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/textViewZoneName"
+                android:layout_width="208dp"
+                android:layout_height="wrap_content"
+                android:text="Zone Not Available"
+                android:textColor="#FFFFFF"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewZonePercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textViewLastPEF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/usebutton"
-        android:layout_width="290dp"
-        android:layout_height="177dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="20dp"
         android:layout_marginEnd="59dp"
         android:backgroundTint="#00B9D5"
         android:fontFamily="@font/happy_monkey"
         android:gravity="bottom|center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:paddingBottom="15dp"
-        android:text="Use Inhaler!!!!"
+        android:text="Use Inhaler"
         android:textAlignment="gravity"
         android:textColor="#041AC3"
-        android:textSize="24dp"
+        android:textSize="20dp"
         android:textStyle="bold"
         app:cornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.537" />
+
+    <Button
+        android:id="@+id/dailycheckinbutton"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="#FF9C6B"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="15dp"
+        android:text="Daily Check In"
+        android:textAlignment="gravity"
+        android:textColor="#A01005"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:cornerRadius="30dp"
+        app:iconPadding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.861" />
+        app:layout_constraintVertical_bias="0.537" />
 
     <Button
         android:id="@+id/techniquebutton"
-        android:layout_width="285dp"
-        android:layout_height="211dp"
-        android:layout_marginStart="59dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="20dp"
         android:layout_marginEnd="59dp"
         android:layout_marginBottom="38dp"
         android:backgroundTint="#01A829"
@@ -49,22 +130,22 @@
         android:paddingBottom="15dp"
         android:text="Technique and Video"
         android:textAlignment="gravity"
-        android:textSize="23dp"
+        android:textSize="16dp"
         android:textStyle="bold"
         app:cornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.169" />
+        app:layout_constraintVertical_bias="0.325" />
 
     <Button
         android:id="@+id/streakbutton"
-        android:layout_width="297dp"
-        android:layout_height="190dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginStart="59dp"
-        android:layout_marginEnd="59dp"
-        android:layout_marginBottom="341dp"
+        android:layout_marginEnd="20dp"
         android:backgroundTint="#FFF752"
         android:fontFamily="@font/happy_monkey"
         android:gravity="bottom|center_horizontal"
@@ -72,54 +153,59 @@
         android:text="Streak and Badges"
         android:textAlignment="gravity"
         android:textColor="#000000"
-        android:textSize="22dp"
+        android:textSize="16dp"
         android:textStyle="bold"
         app:cornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.309" />
 
     <ImageView
         android:id="@+id/imageView7"
-        android:layout_width="111dp"
-        android:layout_height="155dp"
+        android:layout_width="75dp"
+        android:layout_height="105dp"
         android:layout_marginBottom="279dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.181"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.238"
+        app:layout_constraintVertical_bias="0.451"
         app:srcCompat="@drawable/inhaler" />
 
     <ImageView
         android:id="@+id/imageView5"
-        android:layout_width="152dp"
-        android:layout_height="141dp"
+        android:layout_width="88dp"
+        android:layout_height="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.839"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.48"
+        app:layout_constraintVertical_bias="0.302"
         app:srcCompat="@drawable/star" />
 
     <ImageView
         android:id="@+id/imageView14"
-        android:layout_width="112dp"
-        android:layout_height="147dp"
+        android:layout_width="76dp"
+        android:layout_height="88dp"
         android:layout_marginBottom="128dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.182"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.623"
         app:srcCompat="@drawable/inhaler_object" />
 
     <Button
         android:id="@+id/logsButton"
-        android:layout_width="86dp"
-        android:layout_height="93dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="20dp"
         android:backgroundTint="#FFFFFF"
         android:fontFamily="@font/happy_monkey"
         android:gravity="bottom|center_horizontal"
@@ -130,22 +216,216 @@
         android:textColor="#000000"
         android:textSize="25dp"
         android:textStyle="bold"
-        app:cornerRadius="20dp"
+        app:cornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02" />
+        app:layout_constraintVertical_bias="0.769" />
+
+    <Button
+        android:id="@+id/pefButton"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="#A7FFE3"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:text="PEF Entry"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:cornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.77" />
+
+    <Button
+        android:id="@+id/emergencyButton"
+        android:layout_width="279dp"
+        android:layout_height="136dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#FF3333"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:text="Having Trouble Breathing"
+        android:textColor="#000000"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:cornerRadius="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="74dp"
+        android:layout_height="71dp"
+        android:backgroundTint="#FFA9A9"
+        android:fontFamily="@font/happy_monkey"
+        android:gravity="bottom|center_horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="10dp"
+        android:textColor="#000000"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.019" />
 
     <ImageView
         android:id="@+id/imageView12"
-        android:layout_width="84dp"
-        android:layout_height="60dp"
+        android:layout_width="103dp"
+        android:layout_height="87dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.951"
+        app:layout_constraintHorizontal_bias="0.159"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019"
+        app:layout_constraintVertical_bias="0.736"
         app:srcCompat="@drawable/script" />
+
+    <TextView
+        android:id="@+id/textView44"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/happy_monkey"
+        android:text="Current Zone Status"
+        android:textColor="#006157"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.397"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.096" />
+
+    <ImageView
+        android:id="@+id/imageView29"
+        android:layout_width="78dp"
+        android:layout_height="85dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.843"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.522"
+        app:srcCompat="@drawable/planner" />
+
+    <ImageView
+        android:id="@+id/imageView32"
+        android:layout_width="153dp"
+        android:layout_height="151dp"
+        app:layout_constraintBottom_toBottomOf="@+id/techniquebutton"
+        app:layout_constraintEnd_toEndOf="@+id/techniquebutton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/techniquebutton"
+        app:srcCompat="@drawable/button_border" />
+
+    <ImageView
+        android:id="@+id/imageView33"
+        android:layout_width="153dp"
+        android:layout_height="151dp"
+        app:layout_constraintBottom_toBottomOf="@+id/streakbutton"
+        app:layout_constraintStart_toStartOf="@+id/streakbutton"
+        app:srcCompat="@drawable/button_border" />
+
+    <ImageView
+        android:id="@+id/imageView34"
+        android:layout_width="153dp"
+        android:layout_height="151dp"
+        app:layout_constraintBottom_toBottomOf="@+id/usebutton"
+        app:layout_constraintStart_toStartOf="@+id/usebutton"
+        app:srcCompat="@drawable/button_border" />
+
+    <ImageView
+        android:id="@+id/imageView36"
+        android:layout_width="153dp"
+        android:layout_height="151dp"
+        app:layout_constraintStart_toStartOf="@+id/dailycheckinbutton"
+        app:layout_constraintTop_toTopOf="@+id/dailycheckinbutton"
+        app:srcCompat="@drawable/button_border" />
+
+    <ImageView
+        android:id="@+id/imageView37"
+        android:layout_width="153dp"
+        android:layout_height="151dp"
+        app:layout_constraintBottom_toBottomOf="@+id/logsButton"
+        app:layout_constraintStart_toStartOf="@+id/logsButton"
+        app:srcCompat="@drawable/button_border" />
+
+    <ImageView
+        android:id="@+id/imageView39"
+        android:layout_width="153dp"
+        android:layout_height="151dp"
+        app:layout_constraintBottom_toBottomOf="@+id/pefButton"
+        app:layout_constraintStart_toStartOf="@+id/pefButton"
+        app:srcCompat="@drawable/button_border" />
+
+    <ImageView
+        android:id="@+id/imageView40"
+        android:layout_width="282dp"
+        android:layout_height="134dp"
+        app:layout_constraintBottom_toBottomOf="@+id/emergencyButton"
+        app:layout_constraintStart_toStartOf="@+id/emergencyButton"
+        app:srcCompat="@drawable/button_border" />
+
+    <ImageView
+        android:id="@+id/imageView38"
+        android:layout_width="126dp"
+        android:layout_height="94dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.87"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.734"
+        app:srcCompat="@drawable/air" />
+
+    <ImageView
+        android:id="@+id/imageView41"
+        android:layout_width="106dp"
+        android:layout_height="118dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.945"
+        app:srcCompat="@drawable/threat" />
+
+    <ImageView
+        android:id="@+id/imageView43"
+        android:layout_width="60dp"
+        android:layout_height="72dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.018"
+        app:srcCompat="@drawable/exit" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

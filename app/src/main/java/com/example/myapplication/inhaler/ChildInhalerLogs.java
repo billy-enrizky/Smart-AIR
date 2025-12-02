@@ -45,7 +45,7 @@ public class ChildInhalerLogs extends AppCompatActivity {
             findViewById(R.id.logsbackbutton).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(ChildInhalerLogs.this, LogHistoryActivity.class));
+                    startActivity(new Intent(ChildInhalerLogs.this, ChildActivity.class));
                 }
             });
             ID = UserManager.currentUser.getID();
@@ -88,6 +88,7 @@ public class ChildInhalerLogs extends AppCompatActivity {
         }
     }
     private void addControllerLogs(ArrayList<ControllerLog> logs) {
+        Collections.sort(logs);
         for (ControllerLog log : logs) {
             LinearLayout logItem = new LinearLayout(this);
             logItem.setOrientation(LinearLayout.VERTICAL);
@@ -99,11 +100,11 @@ public class ChildInhalerLogs extends AppCompatActivity {
             TextView title = new TextView(this);
             TextView content = new TextView(this);
             title.setText(log.getDate());
-            title.setTextSize(TypedValue.COMPLEX_UNIT_DIP,18);
+            title.setTextSize(TypedValue.COMPLEX_UNIT_DIP,15);
             title.setTextColor(0xFF000000);
             logItem.addView(title);
             content.setText(log.getInfo());
-            content.setTextSize(TypedValue.COMPLEX_UNIT_DIP,14);
+            content.setTextSize(TypedValue.COMPLEX_UNIT_DIP,12);
             content.setTextColor(0xFF000000);
             logItem.addView(content);
             ((LinearLayout)findViewById(R.id.linearlayout2)).addView(logItem);
