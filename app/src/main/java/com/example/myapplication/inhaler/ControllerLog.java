@@ -50,7 +50,10 @@ public class ControllerLog implements Comparable<ControllerLog>{
     public void setExtraInfo(String extraInfo){this.extraInfo = extraInfo;}
     public String getExtraInfo(){return this.extraInfo;}
     public String getInfo(){
-        return "Before: \n\tBreath Rating: "+this.getRatingB()+"\n\tFeeling: "+this.getFeelingB()+"\nAfter: \n\tBreath Rating: "+this.getRatingA()+"\n\tFeeling: "+this.getFeelingA()+"\n"+this.getExtraInfo();
+        if (this.getExtraInfo().isEmpty()){
+            return "Before: \n\tBreath Rating: "+this.getRatingB()+"/10\n\tFeeling: "+this.getFeelingB()+"\nAfter: \n\tBreath Rating: "+this.getRatingA()+"/10\n\tFeeling: "+this.getFeelingA();
+        }
+        return "Before: \n\tBreath Rating: "+this.getRatingB()+"/10\n\tFeeling: "+this.getFeelingB()+"\nAfter: \n\tBreath Rating: "+this.getRatingA()+"/10\n\tFeeling: "+this.getFeelingA()+"\n"+this.getExtraInfo();
     }
     @Override
     public int compareTo(ControllerLog other){

@@ -53,9 +53,6 @@
             android:name=".ChildInhalerInstructions"
             android:exported="false" />
         <activity
-            android:name=".ChildInhalerMenu"
-            android:exported="false" />
-        <activity
             android:name=".ChildInhalerLogs"
             android:exported="false" />
         <activity

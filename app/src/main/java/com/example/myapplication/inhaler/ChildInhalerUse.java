@@ -20,7 +20,7 @@ public class ChildInhalerUse extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ChildInhalerUse.this, ChildInhalerMenu.class);
+                Intent intent = new Intent(ChildInhalerUse.this, ChildActivity.class);
                 startActivity(intent);
             }
         });
