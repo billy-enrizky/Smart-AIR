@@ -62,8 +62,11 @@ public class LogHistoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LogHistoryActivity.this, ChildInhalerLogs.class);
+                if (childId != null && parentId != null) {
+                    intent.putExtra("childId", childId);
+                    intent.putExtra("parentId", parentId);
+                }
                 startActivity(intent);
-                finish();
             }
         });
         viewPEFLog = (Button)findViewById(R.id.PEFLogButton);
@@ -82,6 +85,10 @@ public class LogHistoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LogHistoryActivity.this, ChildActivity.class);
+                if (childId != null && parentId != null) {
+                    intent.putExtra("childId", childId);
+                    intent.putExtra("parentId", parentId);
+                }
                 startActivity(intent);
                 finish();
             }

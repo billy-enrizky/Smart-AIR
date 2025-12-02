@@ -18,6 +18,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.dailycheckin.CheckInView;
 import com.example.myapplication.safety.PEFEntryActivity;
 import com.example.myapplication.safety.PEFHistoryActivity;
@@ -58,6 +60,103 @@ public class ChildActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Register for activity results BEFORE any async operations
+        // This must be done in onCreate() before the activity is STARTED
+        pefEntryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        // Zone will update automatically via real-time listener
+                    }
+                });
+        
+        // Try to get childId and parentId from intent extras first
+        Intent intent = getIntent();
+        String childId = null;
+        String parentId = null;
+        if (intent != null && intent.hasExtra("childId") && intent.hasExtra("parentId")) {
+            childId = intent.getStringExtra("childId");
+            parentId = intent.getStringExtra("parentId");
+        }
+        
+        // Check if user is properly set up
+        if (UserManager.currentUser == null) {
+            // If we have childId/parentId, try to restore child context
+            if (childId != null && parentId != null) {
+                restoreChildContext(childId, parentId);
+                return;
+            }
+            Log.e(TAG, "UserManager.currentUser is null, redirecting to sign in");
+            Intent signInIntent = new Intent(this, SignInView.class);
+            startActivity(signInIntent);
+            finish();
+            return;
+        }
+        
+        if (!(UserManager.currentUser instanceof ChildAccount)) {
+            // If we have childId/parentId, try to restore child context
+            if (childId != null && parentId != null) {
+                restoreChildContext(childId, parentId);
+                return;
+            }
+            // Also check SignInChildProfileActivity.currentChild as fallback
+            if (SignInChildProfileActivity.currentChild != null) {
+                ChildAccount currentChild = SignInChildProfileActivity.currentChild;
+                if (currentChild.getID() != null && !currentChild.getID().isEmpty()) {
+                    restoreChildContext(currentChild.getID(), currentChild.getParent_id());
+                    return;
+                }
+            }
+            Log.e(TAG, "UserManager.currentUser is not a ChildAccount, redirecting to sign in");
+            Intent signInIntent = new Intent(this, SignInView.class);
+            startActivity(signInIntent);
+            finish();
+            return;
+        }
+        
+        childAccount = (ChildAccount) UserManager.currentUser;
+        
+        if (childAccount.getID() == null || childAccount.getID().isEmpty()) {
+            Log.e(TAG, "ChildAccount ID is null or empty, redirecting to sign in");
+            Intent signInIntent = new Intent(this, SignInView.class);
+            startActivity(signInIntent);
+            finish();
+            return;
+        }
+        
+        initializeActivity();
+    }
+
+    private void restoreChildContext(String childId, String parentId) {
+        Log.d(TAG, "Restoring child context: childId=" + childId + ", parentId=" + parentId);
+        ChildAccount tempChild = new ChildAccount();
+        tempChild.ReadFromDatabase(parentId, childId, new CallBack() {
+            @Override
+            public void onComplete() {
+                if (tempChild.getID() == null || tempChild.getID().isEmpty()) {
+                    Log.e(TAG, "Failed to load child account from Firebase");
+                    Intent signInIntent = new Intent(ChildActivity.this, SignInView.class);
+                    startActivity(signInIntent);
+                    finish();
+                    return;
+                }
+                
+                // Restore child context
+                childAccount = tempChild;
+                UserManager.currentUser = childAccount;
+                SignInChildProfileActivity.currentChild = childAccount;
+                
+                Log.d(TAG, "Child context restored successfully");
+                
+                // Continue with normal initialization
+                initializeActivity();
+            }
+        });
+    }
+
+    private void initializeActivity() {
         setContentView(R.layout.activity_child);
         Button techniqueButton = findViewById(R.id.techniquebutton);
         Button streakButton = findViewById(R.id.streakbutton);
@@ -73,11 +172,15 @@ public class ChildActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, 0, systemBars.right, 0);
             return insets;
         });
-        AchievementsModel.readFromDB(UserManager.currentUser.getID(), new ResultCallBack<Achievement>() {
+        AchievementsModel.readFromDB(childAccount.getID(), new ResultCallBack<Achievement>() {
             @Override
             public void onComplete(Achievement achievement) {
                 if (achievement == null) {
-                    Achievement newAch = new Achievement(UserManager.currentUser.getID());
+                    if (childAccount == null || childAccount.getID() == null) {
+                        Log.e(TAG, "Cannot create achievement: childAccount or ID is null");
+                        return;
+                    }
+                    Achievement newAch = new Achievement(childAccount.getID());
                     AchievementsModel.writeIntoDB(newAch, new CallBack() {
                         @Override
                         public void onComplete() {
@@ -107,23 +210,12 @@ public class ChildActivity extends AppCompatActivity {
                 streakButton.setEnabled(true);
             }
         });
-        childAccount = (ChildAccount) UserManager.currentUser;
         textViewZoneName = findViewById(R.id.textViewZoneName);
         textViewZonePercentage = findViewById(R.id.textViewZonePercentage);
         textViewLastPEF = findViewById(R.id.textViewLastPEF);
         cardViewZone = findViewById(R.id.cardViewZone);
         Button pefButton = findViewById(R.id.pefButton);
         Button emergencyButton = findViewById(R.id.emergencyButton);
-
-
-        pefEntryLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        // Zone will update automatically via real-time listener
-                    }
-                });
 
         emergencyButton.setOnClickListener(v -> {
                 Intent intent = new Intent(ChildActivity.this, TriageActivity.class);
@@ -150,7 +242,10 @@ public class ChildActivity extends AppCompatActivity {
         });
 
         logsButton.setOnClickListener(v -> {
-            startActivity(new Intent(ChildActivity.this, LogHistoryActivity.class));
+            Intent intent = new Intent(ChildActivity.this, LogHistoryActivity.class);
+            intent.putExtra("childId", childAccount.getID());
+            intent.putExtra("parentId", childAccount.getParent_id());
+            startActivity(intent);
         });
 
         useButton.setOnClickListener(v -> {
