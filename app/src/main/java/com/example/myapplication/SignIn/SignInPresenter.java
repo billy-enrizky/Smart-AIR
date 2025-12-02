@@ -9,20 +9,20 @@ import com.example.myapplication.userdata.UserData;
 
 public class SignInPresenter {
 
-    SignInView view;
-    SignInModel model;
+    public SignInView view;
+    public SignInModel model;
 
     public SignInPresenter(SignInView view, SignInModel model) {
         this.view = view;
         this.model = model;
     }
 
-    void initialize(){
+    public void initialize(){
         UserManager.currentUser = null;
         model.ReloadUserAuth();
     }
 
-    void signin(String input1, String input2) {
+    public void signin(String input1, String input2) {
         if(isNull(input1)||isNull(input2)){
             view.showShortMessage("input cannot be empty");
             return;
@@ -37,7 +37,7 @@ public class SignInPresenter {
         }
     }
 
-    void signInForParentAndProvider(String email, String password){
+    public void signInForParentAndProvider(String email, String password){
         model.SignInAuth(email, password, new ResultCallBack<Boolean>() {
             @Override
             public void onComplete(Boolean result) {
@@ -62,7 +62,7 @@ public class SignInPresenter {
         });
     }
 
-    void signInForChild(String username, String password){
+    public void signInForChild(String username, String password){
         model.usernameExists(username, new ResultCallBack<String>() {
             @Override
             public void onComplete(String result){
@@ -91,11 +91,11 @@ public class SignInPresenter {
             }
         });
     }
-    Boolean isEmail(String Input){
+    public Boolean isEmail(String Input){
         return Patterns.EMAIL_ADDRESS.matcher(Input).matches();
     }
 
-    Boolean isNull(String Input){
+    public Boolean isNull(String Input){
         if( Input == null || Input.equals("")){
             return true;
         }else{
