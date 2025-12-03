@@ -13,7 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.myapplication.ChildActivity;
+import com.example.myapplication.home.ChildActivity;
 import com.example.myapplication.ChildInhalerLogs;
 import com.example.myapplication.ParentBadge;
 import com.example.myapplication.R;

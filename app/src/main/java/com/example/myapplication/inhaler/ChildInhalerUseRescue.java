@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.home.ChildActivity;
 import com.example.myapplication.userdata.ChildAccount;
 
 public class ChildInhalerUseRescue extends AppCompatActivity {
