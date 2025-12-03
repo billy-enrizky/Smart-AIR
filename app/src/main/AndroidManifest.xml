@@ -32,7 +32,7 @@
             android:name=".childmanaging.SignInChildProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ChildActivity"
+            android:name=".home.ChildActivity"
             android:exported="false" />
         <activity
             android:name=".selector.SelectorActivity"
