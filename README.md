@@ -817,8 +817,8 @@ classDiagram
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd CSCB07Project
+   git clone https://github.com/billy-enrizky/Fall2025CSCB07Group7
+   cd Fall2025CSCB07Group7
    ```
 
 2. **Configure Firebase**
@@ -984,7 +984,7 @@ MIT License
 
 ##  Acknowledgments and Contact
 
-- billy.suharno@gmail.com (Muhammad Enrizky Brillian)
+- billy.suharno@mail.utoronto.ca (Muhammad Enrizky Brillian)
 - pe.zhao@mail.utoronto.ca (Yipeng Zhao)
 - kingsleyy.chan@mail.utoronto.ca (Kingsley Chan)
 - terry.gao@mail.utoronto.ca (Terry Gao)
