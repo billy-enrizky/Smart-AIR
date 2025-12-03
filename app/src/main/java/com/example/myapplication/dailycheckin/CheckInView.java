@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
-import com.example.myapplication.ChildActivity;
+import com.example.myapplication.home.ChildActivity;
 import com.example.myapplication.ParentActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;

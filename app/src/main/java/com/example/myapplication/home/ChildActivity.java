@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +18,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.Achievement;
+import com.example.myapplication.AchievementsModel;
+import com.example.myapplication.CallBack;
+import com.example.myapplication.ChildInhalerDailyStreak;
+import com.example.myapplication.ChildInhalerInstructions;
+import com.example.myapplication.ChildInhalerUse;
+import com.example.myapplication.LogHistoryActivity;
+import com.example.myapplication.R;
+import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.SignIn.SignInView;
+import com.example.myapplication.UserManager;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.dailycheckin.CheckInView;
 import com.example.myapplication.safety.PEFEntryActivity;
@@ -193,10 +203,10 @@ public class ChildActivity extends AppCompatActivity {
 
                 achievementData = achievement;
 
-                if (!achievementData.badges.get(2)) {
+                if (!achievementData.getBadgeAt(2)) {
                     if (achievementData.checkBadge3()) {
                         Toast.makeText(ChildActivity.this, "You've earned a new badge!", Toast.LENGTH_SHORT).show();
-                        achievementData.badges.set(2, true);
+                        achievementData.setBadgeAt(2, true);
                         AchievementsModel.writeIntoDB(achievementData, new CallBack() {
                             @Override
                             public void onComplete() {
@@ -458,3 +468,4 @@ public class ChildActivity extends AppCompatActivity {
         }
     }
 }
+

@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.home.ChildActivity;
+
 public class ChildInhalerDailyStreak extends AppCompatActivity {
 
     @Override

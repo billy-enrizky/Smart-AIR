@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.home.ChildActivity;
+
 public class ChildInhalerInstructions extends AppCompatActivity {
 
     @Override
