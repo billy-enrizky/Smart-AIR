@@ -58,17 +58,12 @@ graph TB
     subgraph "Firebase Backend"
         N[Firebase Auth]
         O[Realtime Database]
-        P[Cloud Functions]
-        Q[FCM Notifications]
     end
     
     A --> N
     C --> O
     D --> O
     E --> O
-    O --> P
-    P --> Q
-    Q --> D
 ```
 
 ### User Role Architecture
@@ -119,7 +114,7 @@ graph LR
 **Key Features:**
 - Manage multiple children
 - View dashboard with real-time status for each child
-- Receive push notifications for:
+- Receive in-app notifications for:
   - Red zone days
   - Rapid rescue repeats (≥3 in 3 hours)
   - Triage escalations
@@ -167,8 +162,6 @@ graph LR
 ### Backend
 - **Authentication**: Firebase Authentication
 - **Database**: Firebase Realtime Database
-- **Cloud Functions**: Firebase Cloud Functions (Node.js)
-- **Notifications**: Firebase Cloud Messaging (FCM) V1 API
 - **File Storage**: Android File System (PDF generation)
 
 ### Key Libraries
@@ -322,7 +315,7 @@ flowchart TD
 - `TriageActivity` with multi-step flow
 - `TriageSession` and `TriageIncident` models
 - `AlertDetector` for safety alerts
-- `NotificationManager` for FCM push notifications
+- `NotificationManager` for in-app notifications
 
 **Zone Thresholds:**
 - Green: ≥80% of Personal Best
@@ -389,7 +382,7 @@ graph TB
 - `DashboardFragment` with real-time statistics
 - `TrendSnippetActivity` with chart visualization
 - `ProviderReportGeneratorActivity` for PDF generation
-- `NotificationManager` and `AlertDetector` for alerts
+- `NotificationManager` and `AlertDetector` for in-app alerts
 - `ChartComponent` for data visualization
 
 **Report Contents:**
@@ -432,8 +425,6 @@ graph TB
     subgraph "Firebase Services"
         D1[Firebase Auth]
         D2[Realtime Database]
-        D3[Cloud Functions]
-        D4[FCM]
     end
     
     A1 --> B1
@@ -448,9 +439,7 @@ graph TB
     C2 --> D2
     C3 --> D2
     
-    B4 --> D3
-    D3 --> D4
-    D4 --> A2
+    B4 --> D2
 ```
 
 ### Notification Flow
@@ -460,16 +449,12 @@ sequenceDiagram
     participant Child
     participant App
     participant Database
-    participant CloudFunction
-    participant FCM
     participant Parent
     
     Child->>App: Triggers Triage/Alert
     App->>Database: Write Notification Event
-    Database->>CloudFunction: Trigger onWrite
-    CloudFunction->>Database: Read FCM Token
-    CloudFunction->>FCM: Send Push Notification
-    FCM->>Parent: Deliver Notification
+    Database->>Parent: Real-time Listener Detects
+    Parent->>App: Show In-App Notification
     Parent->>App: Tap Notification
     App->>Parent: Show Notification Details
 ```
@@ -554,7 +539,7 @@ flowchart TD
     Continue --> Save
     Call911 --> Save
     
-    Save --> Alert[Alert Parent via FCM]
+    Save --> Alert[Alert Parent via In-App Notification]
     Alert --> History[Add to History]
     History --> End([Complete])
 ```
@@ -810,8 +795,6 @@ classDiagram
 - Firebase project with:
   - Authentication enabled
   - Realtime Database enabled
-  - Cloud Functions enabled
-  - Cloud Messaging (FCM) enabled
 
 ### Installation Steps
 
@@ -830,14 +813,7 @@ classDiagram
    ./gradlew build
    ```
 
-4. **Set up Cloud Functions** (optional, for notifications)
-   ```bash
-   cd functions
-   npm install
-   firebase deploy --only functions
-   ```
-
-5. **Build and run**
+4. **Build and run**
    - Open project in Android Studio
    - Sync Gradle files
    - Run on emulator or physical device
@@ -853,15 +829,7 @@ The app requires the following Firebase services:
 2. **Realtime Database**
    - Security rules configured in `database.rules.json`
    - Structure: `/users/{userId}/...`
-
-3. **Cloud Functions**
-   - Deployed functions in `functions/` directory
-   - FCM token management
-   - Notification triggers
-
-4. **Cloud Messaging**
-   - FCM V1 API enabled
-   - Android app registered with FCM
+   - In-app notifications stored at `users/{parentId}/notifications/{notificationId}`
 
 ## Project Structure
 
@@ -894,8 +862,6 @@ CSCB07Project/
 │   │   └── test/                          # Unit tests
 │   ├── build.gradle.kts
 │   └── google-services.json
-├── functions/                             # Firebase Cloud Functions
-├── docs/                                  # Documentation
 ├── build.gradle.kts
 ├── firebase.json
 ├── database.rules.json
@@ -915,7 +881,8 @@ CSCB07Project/
         /incidents/
         /rescueUsage/
         /history/
-    /fcmToken
+    /notifications/
+      /{notificationId}/
     /inviteCode
   /{providerId}/
     /LinkedParentsId
@@ -942,7 +909,7 @@ CSCB07Project/
 The database uses Firebase Realtime Database security rules:
 - Users can only read/write their own data
 - Children data is readable by authenticated users (for provider access)
-- Notifications can be written by anyone (for Cloud Functions)
+- Notifications can be written by authenticated users
 - Notifications are only readable by the parent
 
 ## Key Components
@@ -961,7 +928,7 @@ Detects safety conditions and triggers notifications:
 - Triage escalations
 
 ### NotificationManager
-Manages FCM push notifications to parents.
+Manages in-app notifications stored in Firebase Realtime Database for parents.
 
 ### ChartComponent
 Shared component for generating charts (line, bar, pie) used in reports and dashboards.
