@@ -802,8 +802,8 @@ classDiagram
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/billy-enrizky/Fall2025CSCB07Group7
-   cd Fall2025CSCB07Group7
+   git clone https://github.com/billy-enrizky/Smart-AIR/
+   cd Smart-AIR
    ```
 
 2. **Configure Firebase**
