@@ -8,7 +8,8 @@
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
     android:paddingBottom="24dp"
-    tools:context=".OnBoardingFragment1">
+    tools:context=".OnBoardingFragment1"
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/iconImageView"

@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".providermanaging.AccessPermissionActivity">
+    tools:context=".providermanaging.AccessPermissionActivity"
+    android:background="@color/white">
 
     <com.google.android.material.chip.Chip
         android:id="@+id/T"

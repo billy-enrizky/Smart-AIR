@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".reports.AdherenceSummaryActivity">
+    tools:context=".reports.AdherenceSummaryActivity"
+    android:background="@color/white">
     <ImageView
         android:id="@+id/imageView22"
         android:layout_width="wrap_content"
