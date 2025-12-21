@@ -3,137 +3,206 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <Button
         android:id="@+id/backbutton"
-        android:layout_width="164dp"
-        android:layout_height="66dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="#9C27B0"
         android:text="Back"
+        android:textColor="#000000"
         android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:cornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView37"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="Inhaler creation menu"
+        android:textColor="#000000"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.071"  android:textColor="#000000"/>
+        app:layout_constraintTop_toBottomOf="@+id/backbutton" />
+
+    <TextView
+        android:id="@+id/labelDatePurchased"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="Date Purchased:"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView37" />
+
+    <EditText
+        android:id="@+id/datePurchased"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_field_background"
+        android:clickable="true"
+        android:focusable="false"
+        android:hint="YYYY/MM/DD"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:textColor="#000000"
+        android:textColorHint="#B0B0B0"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/labelDatePurchased"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/labelDatePurchased"
+        app:layout_constraintTop_toTopOf="@+id/labelDatePurchased" />
+
+    <TextView
+        android:id="@+id/labelDateExpiry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Date Expiry:"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelDatePurchased" />
+
+    <EditText
+        android:id="@+id/dateExpiry"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_field_background"
+        android:clickable="true"
+        android:focusable="false"
+        android:hint="YYYY/MM/DD"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:textColor="#000000"
+        android:textColorHint="#B0B0B0"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/labelDateExpiry"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/labelDateExpiry"
+        app:layout_constraintTop_toTopOf="@+id/labelDateExpiry" />
+
+    <TextView
+        android:id="@+id/labelTotalCapacity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Total Capacity:"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelDateExpiry" />
+
+    <EditText
+        android:id="@+id/maxcapacity"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_field_background"
+        android:hint="in mLs"
+        android:inputType="number"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:textColor="#000000"
+        android:textColorHint="#B0B0B0"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/labelTotalCapacity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/labelTotalCapacity"
+        app:layout_constraintTop_toTopOf="@+id/labelTotalCapacity" />
+
+    <TextView
+        android:id="@+id/labelDosesUsed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Doses used:"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelTotalCapacity" />
+
+    <EditText
+        android:id="@+id/dosecount"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/input_field_background"
+        android:inputType="number"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:text="0"
+        android:textColor="#000000"
+        android:textColorHint="#B0B0B0"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="@+id/labelDosesUsed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/labelDosesUsed"
+        app:layout_constraintTop_toTopOf="@+id/labelDosesUsed" />
+
+    <TextView
+        android:id="@+id/labelRescueController"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Rescue|Controller:"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelDosesUsed" />
+
+    <Switch
+        android:id="@+id/isrescue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:scaleX="2"
+        android:scaleY="2"
+        android:thumbTint="#FF6060"
+        android:trackTint="#88A5FF"
+        app:layout_constraintBottom_toBottomOf="@+id/labelRescueController"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/labelRescueController"
+        app:layout_constraintTop_toTopOf="@+id/labelRescueController" />
 
     <Button
         android:id="@+id/confirmbutton"
         android:layout_width="218dp"
         android:layout_height="75dp"
+        android:layout_marginBottom="32dp"
         android:backgroundTint="#0D7E00"
         android:text="Confirm"
+        android:textColor="#000000"
         android:textSize="30dp"
+        app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.799"  android:textColor="#000000"/>
-
-    <TextView
-        android:id="@+id/textView36"
-        android:layout_width="169dp"
-        android:layout_height="252dp"
-        android:text="Date Purchased: \n\nDate Expiry: \n\nTotal Capacity: \n\nDoses used: \n\nRescue|Controller"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.066"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.461"  android:textColor="#000000"/>
-
-    <EditText
-        android:id="@+id/datePurchased"
-        android:layout_width="142dp"
-        android:layout_height="40dp"
-        android:background="@drawable/input_field_background"
-        android:hint="YYYY/MM/DD"
-        android:textColorHint="#B0B0B0"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.609"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.344" />
-
-    <EditText
-        android:id="@+id/dateExpiry"
-        android:layout_width="142dp"
-        android:layout_height="40dp"
-        android:background="@drawable/input_field_background"
-        android:hint="YYYY/MM/DD"
-        android:textColorHint="#B0B0B0"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.392" />
-
-    <EditText
-        android:id="@+id/dosecount"
-        android:layout_width="142dp"
-        android:layout_height="40dp"
-        android:background="@drawable/input_field_background"
-        android:textColorHint="#B0B0B0"
-        android:inputType="number"
-        android:text="0"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.507" />
-
-    <EditText
-        android:id="@+id/maxcapacity"
-        android:layout_width="142dp"
-        android:layout_height="40dp"
-        android:background="@drawable/input_field_background"
-        android:hint="in mLs"
-        android:textColorHint="#B0B0B0"
-        android:inputType="number"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.579"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.452" />
-
-    <Switch
-        android:id="@+id/isrescue"
-        android:layout_width="73dp"
-        android:layout_height="39dp"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:thumbTint="#FF6060"
-        android:trackTint="#88A5FF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.485"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.562"  android:textColor="#000000"/>
-
-    <TextView
-        android:id="@+id/textView37"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Inhaler creation menu"
-        android:textSize="35dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.264"  android:textColor="#000000"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
