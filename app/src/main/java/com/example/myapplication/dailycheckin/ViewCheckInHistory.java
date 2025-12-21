@@ -31,9 +31,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class ViewCheckInHistory extends AppCompatActivity {
     private static final String TAG = "ViewCheckInHistory";
@@ -49,6 +52,7 @@ public class ViewCheckInHistory extends AppCompatActivity {
     private ValueEventListener checkInListenerEncoded;
     private ValueEventListener checkInListenerRaw;
     // Separate result maps for encoded and raw paths (encoded takes precedence)
+    // Keys are timestamps (as strings) to allow multiple entries per day
     private HashMap<String, DailyCheckin> encodedResults = new HashMap<>();
     private HashMap<String, DailyCheckin> rawResults = new HashMap<>();
     // Handler for debouncing UI updates and ensuring main thread execution
@@ -127,19 +131,34 @@ public class ViewCheckInHistory extends AppCompatActivity {
                     if (snapshot.exists()) {
                         int totalEntries = 0;
                         int filteredEntries = 0;
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                         for (DataSnapshot s : snapshot.getChildren()) {
                             totalEntries++;
-                            String date = s.getKey();
+                            String key = s.getKey();
                             DailyCheckin record = s.getValue(DailyCheckin.class);
                             if (record != null) {
+                                // Determine entry date from timestamp or key (for backward compatibility)
+                                String entryDate;
+                                long timestamp;
+                                if (record.getTimestamp() != 0) {
+                                    timestamp = record.getTimestamp();
+                                    entryDate = dateFormat.format(new Date(timestamp));
+                                } else {
+                                    // Backward compatibility: key might be a date string
+                                    entryDate = key;
+                                    timestamp = System.currentTimeMillis(); // Fallback timestamp
+                                }
+                                
                                 // Apply date range filter
                                 String startDate = filters.getStartDate();
                                 String endDate = filters.getEndDate();
-                                if ((startDate == null || date.compareTo(startDate) >= 0) &&
-                                    (endDate == null || date.compareTo(endDate) <= 0)) {
-                                    encodedResults.put(date, record);
+                                if ((startDate == null || entryDate.compareTo(startDate) >= 0) &&
+                                    (endDate == null || entryDate.compareTo(endDate) <= 0)) {
+                                    // Use timestamp as key to allow multiple entries per day
+                                    String mapKey = String.valueOf(timestamp);
+                                    encodedResults.put(mapKey, record);
                                     filteredEntries++;
-                                    Log.d(TAG, "Added check-in from encoded path: date=" + date + ", loggedBy=" + record.getLoggedBy());
+                                    Log.d(TAG, "Added check-in from encoded path: date=" + entryDate + ", timestamp=" + timestamp + ", loggedBy=" + record.getLoggedBy());
                                 }
                             }
                         }
@@ -176,19 +195,34 @@ public class ViewCheckInHistory extends AppCompatActivity {
                         if (snapshot.exists()) {
                             int totalEntries = 0;
                             int filteredEntries = 0;
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                             for (DataSnapshot s : snapshot.getChildren()) {
                                 totalEntries++;
-                                String date = s.getKey();
+                                String key = s.getKey();
                                 DailyCheckin record = s.getValue(DailyCheckin.class);
                                 if (record != null) {
+                                    // Determine entry date from timestamp or key (for backward compatibility)
+                                    String entryDate;
+                                    long timestamp;
+                                    if (record.getTimestamp() != 0) {
+                                        timestamp = record.getTimestamp();
+                                        entryDate = dateFormat.format(new Date(timestamp));
+                                    } else {
+                                        // Backward compatibility: key might be a date string
+                                        entryDate = key;
+                                        timestamp = System.currentTimeMillis(); // Fallback timestamp
+                                    }
+                                    
                                     // Apply date range filter
                                     String startDate = filters.getStartDate();
                                     String endDate = filters.getEndDate();
-                                    if ((startDate == null || date.compareTo(startDate) >= 0) &&
-                                        (endDate == null || date.compareTo(endDate) <= 0)) {
-                                        rawResults.put(date, record);
+                                    if ((startDate == null || entryDate.compareTo(startDate) >= 0) &&
+                                        (endDate == null || entryDate.compareTo(endDate) <= 0)) {
+                                        // Use timestamp as key to allow multiple entries per day
+                                        String mapKey = String.valueOf(timestamp);
+                                        rawResults.put(mapKey, record);
                                         filteredEntries++;
-                                        Log.d(TAG, "Added check-in from raw path: date=" + date + ", loggedBy=" + record.getLoggedBy());
+                                        Log.d(TAG, "Added check-in from raw path: date=" + entryDate + ", timestamp=" + timestamp + ", loggedBy=" + record.getLoggedBy());
                                     }
                                 }
                             }
@@ -236,12 +270,13 @@ public class ViewCheckInHistory extends AppCompatActivity {
     
     private void mergeAndDisplayResults() {
         // Merge encoded and raw results (encoded takes precedence for duplicates)
+        // Keys are timestamps, so encoded overwrites raw for same timestamps
         HashMap<String, DailyCheckin> merged = new HashMap<>();
         synchronized (rawResults) {
             merged.putAll(rawResults);
         }
         synchronized (encodedResults) {
-            merged.putAll(encodedResults); // Encoded overwrites raw for same dates
+            merged.putAll(encodedResults); // Encoded overwrites raw for same timestamps
         }
         
         Log.d(TAG, "Merged results: " + merged.size() + " total check-ins (encoded: " + encodedResults.size() + ", raw: " + rawResults.size() + ")");
@@ -256,19 +291,54 @@ public class ViewCheckInHistory extends AppCompatActivity {
         }
         
         CheckInHistoryFilters filters = CheckInHistoryFilters.getInstance();
-        // Process and display history
-        ArrayList<String> datesInOrder = new ArrayList<>(result.keySet());
-        Collections.sort(datesInOrder, Collections.reverseOrder()); // Newest first
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        
+        // Group entries by date, then sort by timestamp within each date
+        HashMap<String, ArrayList<DailyCheckin>> entriesByDate = new HashMap<>();
+        for (DailyCheckin entry : result.values()) {
+            if (entry != null && filters.matchFilters(entry)) {
+                String entryDate;
+                if (entry.getTimestamp() != 0) {
+                    entryDate = dateFormat.format(new Date(entry.getTimestamp()));
+                } else {
+                    // Fallback for entries without timestamp
+                    entryDate = "Unknown";
+                }
+                
+                if (!entriesByDate.containsKey(entryDate)) {
+                    entriesByDate.put(entryDate, new ArrayList<>());
+                }
+                entriesByDate.get(entryDate).add(entry);
+            }
+        }
+        
+        // Sort dates (newest first)
+        ArrayList<String> datesInOrder = new ArrayList<>(entriesByDate.keySet());
+        Collections.sort(datesInOrder, Collections.reverseOrder());
         
         history = "";
         int datesProcessed = 0;
         int totalEntries = result.size();
         
-        for (String date: datesInOrder) {
-            DailyCheckin entry = result.get(date);
-            if (entry != null && filters.matchFilters(entry)) {
+        for (String date : datesInOrder) {
+            ArrayList<DailyCheckin> entriesForDate = entriesByDate.get(date);
+            // Sort entries for this date by timestamp (newest first)
+            Collections.sort(entriesForDate, (a, b) -> Long.compare(
+                (b.getTimestamp() != 0 ? b.getTimestamp() : 0),
+                (a.getTimestamp() != 0 ? a.getTimestamp() : 0)
+            ));
+            
+            for (DailyCheckin entry : entriesForDate) {
                 datesProcessed++;
-                String message = "" + date + "\n";
+                String message = date;
+                
+                // Add time if timestamp is available
+                if (entry.getTimestamp() != 0) {
+                    message = message + " " + timeFormat.format(new Date(entry.getTimestamp()));
+                }
+                message = message + "\n";
+                
                 // Show who logged the check-in (PARENT or CHILD)
                 message = message + "Logged by: " + entry.getLoggedBy() + "\n";
                 

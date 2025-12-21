@@ -12,12 +12,14 @@ public class CheckInEntry {
     String activityLimits;
     double coughWheezeLevel = -1;
     ArrayList<String> triggers = new ArrayList<>();
+    long timestamp; // Timestamp to allow multiple entries per day
     public CheckInEntry(String username, boolean nightWaking, String activityLimits, double coughWheezeLevel, ArrayList<String>triggers) {
         this.username = username;
         this.nightWaking = nightWaking;
         this.activityLimits = activityLimits;
         this.coughWheezeLevel = coughWheezeLevel;
         this.triggers = triggers;
+        this.timestamp = System.currentTimeMillis(); // Set timestamp to current time
     }
     public CheckInEntry() {
 
@@ -52,6 +54,12 @@ public class CheckInEntry {
     }
     public void setTriggers(ArrayList<String> triggers) {
         this.triggers = triggers;
+    }
+    public long getTimestamp() {
+        return this.timestamp;
+    }
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     /*@Override public boolean equals (Object o) {
