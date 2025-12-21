@@ -82,9 +82,8 @@ public class NotificationActivity extends AppCompatActivity {
                 .child(parentId)
                 .child("notifications");
 
-        Query query = notificationRef.orderByChild("timestamp");
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Use direct listener instead of orderByChild query to avoid index requirements
+        notificationRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 notifications.clear();
@@ -96,8 +95,12 @@ public class NotificationActivity extends AppCompatActivity {
                             notifications.add(notification);
                         }
                     }
+                    Log.d(TAG, "Loaded " + notifications.size() + " notifications from Firebase path: " + notificationRef.toString());
+                } else {
+                    Log.d(TAG, "No notifications found at Firebase path: " + notificationRef.toString());
                 }
-                Collections.reverse(notifications);
+                // Sort by timestamp descending (newest first)
+                Collections.sort(notifications, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
                 adapter.notifyDataSetChanged();
 
                 if (notifications.isEmpty()) {
@@ -111,7 +114,7 @@ public class NotificationActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading notifications", error.toException());
+                Log.e(TAG, "Error loading notifications from Firebase path: " + notificationRef.toString(), error.toException());
             }
         });
     }

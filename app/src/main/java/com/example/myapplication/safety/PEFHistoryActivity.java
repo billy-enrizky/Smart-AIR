@@ -164,16 +164,15 @@ public class PEFHistoryActivity extends AppCompatActivity {
                 .child(encodedChildId)
                 .child("history");
 
-        Query pefQuery = pefRef.orderByChild("timestamp");
-        Query historyQuery = historyRef.orderByKey();
-
+        // Use addListenerForSingleValueEvent directly instead of orderByChild query
+        // This ensures we get all PEF readings regardless of index requirements
         final int[] loadCount = {0};
         final int totalLoads = 2;
 
         final List<PEFReading> pefReadings = new ArrayList<>();
         final List<ZoneChangeEvent> zoneChanges = new ArrayList<>();
 
-        pefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        pefRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -183,6 +182,9 @@ public class PEFHistoryActivity extends AppCompatActivity {
                             pefReadings.add(reading);
                         }
                     }
+                    Log.d(TAG, "Loaded " + pefReadings.size() + " PEF readings from Firebase path: " + pefRef.toString());
+                } else {
+                    Log.d(TAG, "No PEF readings found at Firebase path: " + pefRef.toString());
                 }
                 loadCount[0]++;
                 if (loadCount[0] == totalLoads) {
@@ -192,7 +194,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading PEF history", error.toException());
+                Log.e(TAG, "Error loading PEF history from Firebase path: " + pefRef.toString(), error.toException());
                 loadCount[0]++;
                 if (loadCount[0] == totalLoads) {
                     combineAndDisplayHistory(pefReadings, zoneChanges);
@@ -200,7 +202,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
             }
         });
 
-        historyQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        historyRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -210,6 +212,9 @@ public class PEFHistoryActivity extends AppCompatActivity {
                             zoneChanges.add(event);
                         }
                     }
+                    Log.d(TAG, "Loaded " + zoneChanges.size() + " zone changes from Firebase path: " + historyRef.toString());
+                } else {
+                    Log.d(TAG, "No zone changes found at Firebase path: " + historyRef.toString());
                 }
                 loadCount[0]++;
                 if (loadCount[0] == totalLoads) {
@@ -219,7 +224,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading zone change history", error.toException());
+                Log.e(TAG, "Error loading zone change history from Firebase path: " + historyRef.toString(), error.toException());
                 loadCount[0]++;
                 if (loadCount[0] == totalLoads) {
                     combineAndDisplayHistory(pefReadings, zoneChanges);
