@@ -318,7 +318,47 @@ public class ChildActivity extends AppCompatActivity {
         pefReadingsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                updateZoneDisplayFromSnapshot(snapshot);
+                boolean foundData = snapshot.exists() && snapshot.hasChildren();
+                
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedChildId.equals(childId)) {
+                    Log.d(TAG, "Checking raw childId path for zone listener (backward compatibility): " + childId);
+                    DatabaseReference rawPefReadingsRef = UserManager.mDatabase
+                            .child("users")
+                            .child(parentId)
+                            .child("children")
+                            .child(childId)
+                            .child("pefReadings");
+                    
+                    Query rawLatestPEFQuery = rawPefReadingsRef.orderByChild("timestamp").limitToLast(1);
+                    rawLatestPEFQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            if (rawSnapshot.exists() && rawSnapshot.hasChildren()) {
+                                updateZoneDisplayFromSnapshot(rawSnapshot);
+                            } else {
+                                // No data found in either path
+                                runOnUiThread(() -> {
+                                    if (!isFinishing() && !isDestroyed()) {
+                                        setUnknownZone();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading PEF reading from raw path", error.toException());
+                            runOnUiThread(() -> {
+                                if (!isFinishing() && !isDestroyed()) {
+                                    setUnknownZone();
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    updateZoneDisplayFromSnapshot(snapshot);
+                }
             }
 
             @Override
@@ -346,7 +386,53 @@ public class ChildActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
                 // Update childAccount from snapshot
                 ChildAccount updatedAccount = snapshot.getValue(ChildAccount.class);
-                if (updatedAccount != null) {
+                boolean foundData = updatedAccount != null;
+                
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedChildId.equals(childId)) {
+                    Log.d(TAG, "Checking raw childId path for child account (backward compatibility): " + childId);
+                    DatabaseReference rawChildAccountRef = UserManager.mDatabase
+                            .child("users")
+                            .child(parentId)
+                            .child("children")
+                            .child(childId);
+                    
+                    rawChildAccountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            ChildAccount updatedAccount = rawSnapshot.getValue(ChildAccount.class);
+                            if (updatedAccount != null) {
+                                childAccount = updatedAccount;
+                                
+                                // Check raw path for PEF readings too
+                                DatabaseReference rawPefReadingsRef = UserManager.mDatabase
+                                        .child("users")
+                                        .child(parentId)
+                                        .child("children")
+                                        .child(childId)
+                                        .child("pefReadings");
+                                
+                                Query rawPefQuery = rawPefReadingsRef.orderByChild("timestamp").limitToLast(1);
+                                rawPefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot pefSnapshot) {
+                                        updateZoneDisplayFromSnapshot(pefSnapshot);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        Log.e(TAG, "Error refreshing zone after personalBest change from raw path", error.toException());
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading child account from raw path", error.toException());
+                        }
+                    });
+                } else if (updatedAccount != null) {
                     childAccount = updatedAccount;
                     // Trigger zone update by re-querying latest PEF
                     if (latestPEFQuery != null) {

@@ -102,11 +102,14 @@ public class ViewCheckInHistory extends AppCompatActivity {
         
         // Use addValueEventListener for realtime updates similar to personalBest
         // Apply date range and filters in code after loading
+        // Check encoded path first (current standard), then raw path for backward compatibility
         checkInListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 HashMap<String, DailyCheckin> result = new HashMap<>();
+                boolean foundData = false;
                 if (snapshot.exists()) {
+                    foundData = true;
                     for (DataSnapshot s : snapshot.getChildren()) {
                         String date = s.getKey();
                         DailyCheckin record = s.getValue(DailyCheckin.class);
@@ -125,38 +128,42 @@ public class ViewCheckInHistory extends AppCompatActivity {
                     Log.d(TAG, "No check-ins found at Firebase path: " + checkInRef.toString());
                 }
                 
-                // Process and display history
-                ArrayList<String> datesInOrder = new ArrayList<>(result.keySet());
-                Collections.sort(datesInOrder);
-                history = "";
-                int datesProcessed = 0;
-                for (String date: datesInOrder) {
-                    DailyCheckin entry = result.get(date);
-                    if (entry != null && filters.matchFilters(entry)) {
-                        datesProcessed++;
-                        String message = "" + date + "\n";
-                        message = message + "Logged by: " + entry.getLoggedBy() + "\n";
-                        if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*|| provider has permission to see symptoms*/) {
-                            message = message + "Night waking: " + entry.getNightWaking() + "\n";
-                            message = message + entry.getActivityLimits() + "\n";
-                            message = message + "Cough/Wheeze level: " + entry.getCoughWheezeLevel() + "\n";
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedUsername.equals(username)) {
+                    Log.d(TAG, "Checking raw username path for check-in history (backward compatibility): " + username);
+                    DatabaseReference rawCheckInRef = UserManager.mDatabase.child("CheckInManager").child(username);
+                    
+                    rawCheckInRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            if (rawSnapshot.exists()) {
+                                for (DataSnapshot s : rawSnapshot.getChildren()) {
+                                    String date = s.getKey();
+                                    DailyCheckin record = s.getValue(DailyCheckin.class);
+                                    if (record != null) {
+                                        // Apply date range filter
+                                        String startDate = filters.getStartDate();
+                                        String endDate = filters.getEndDate();
+                                        if ((startDate == null || date.compareTo(startDate) >= 0) &&
+                                            (endDate == null || date.compareTo(endDate) <= 0)) {
+                                            result.put(date, record);
+                                        }
+                                    }
+                                }
+                                Log.d(TAG, "Loaded " + result.size() + " check-ins from raw path (backward compatibility)");
+                            }
+                            processAndDisplayHistory(result);
                         }
 
-                        if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*|| provider has permission to see triggers*/) {
-                            message = message + "Triggers: ";
-                            for (String trigger : entry.getTriggers()) {
-                                message = message + trigger + ", ";
-                            }
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading check-in history from raw Firebase path: " + rawCheckInRef.toString(), error.toException());
+                            processAndDisplayHistory(result);
                         }
-                        message = message + "\n";
-                        history = history + message + "\n";
-                    }
+                    });
+                } else {
+                    processAndDisplayHistory(result);
                 }
-                if (history.isEmpty()) {
-                    history = "No data for selected filters.";
-                }
-                historyText.setText(history);
-                historyText.setTextSize(14);
             }
 
             @Override
@@ -166,6 +173,42 @@ public class ViewCheckInHistory extends AppCompatActivity {
         };
         
         checkInRef.addValueEventListener(checkInListener);
+    }
+    
+    private void processAndDisplayHistory(HashMap<String, DailyCheckin> result) {
+        CheckInHistoryFilters filters = CheckInHistoryFilters.getInstance();
+        // Process and display history
+        ArrayList<String> datesInOrder = new ArrayList<>(result.keySet());
+        Collections.sort(datesInOrder);
+        history = "";
+        int datesProcessed = 0;
+        for (String date: datesInOrder) {
+            DailyCheckin entry = result.get(date);
+            if (entry != null && filters.matchFilters(entry)) {
+                datesProcessed++;
+                String message = "" + date + "\n";
+                message = message + "Logged by: " + entry.getLoggedBy() + "\n";
+                if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*|| provider has permission to see symptoms*/) {
+                    message = message + "Night waking: " + entry.getNightWaking() + "\n";
+                    message = message + entry.getActivityLimits() + "\n";
+                    message = message + "Cough/Wheeze level: " + entry.getCoughWheezeLevel() + "\n";
+                }
+
+                if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*|| provider has permission to see triggers*/) {
+                    message = message + "Triggers: ";
+                    for (String trigger : entry.getTriggers()) {
+                        message = message + trigger + ", ";
+                    }
+                }
+                message = message + "\n";
+                history = history + message + "\n";
+            }
+        }
+        if (history.isEmpty()) {
+            history = "No data for selected filters.";
+        }
+        historyText.setText(history);
+        historyText.setTextSize(14);
     }
     
     private void detachCheckInListener() {

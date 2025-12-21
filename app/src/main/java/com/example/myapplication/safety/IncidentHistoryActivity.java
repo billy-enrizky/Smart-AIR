@@ -125,11 +125,14 @@ public class IncidentHistoryActivity extends AppCompatActivity {
 
         // Use direct listener instead of orderByChild query to avoid index requirements
         // Use addValueEventListener for realtime updates similar to personalBest
+        // Check encoded path first (current standard), then raw path for backward compatibility
         incidentListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 incidents.clear();
+                boolean foundData = false;
                 if (snapshot.exists()) {
+                    foundData = true;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         TriageIncident incident = child.getValue(TriageIncident.class);
                         if (incident != null) {
@@ -144,14 +147,65 @@ public class IncidentHistoryActivity extends AppCompatActivity {
                     Log.d(TAG, "No incidents found at Firebase path: " + incidentRef.toString());
                 }
                 
-                adapter.notifyDataSetChanged();
-                
-                if (incidents.isEmpty()) {
-                    textViewEmpty.setVisibility(View.VISIBLE);
-                    recyclerViewIncidents.setVisibility(View.GONE);
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedChildId.equals(childId)) {
+                    Log.d(TAG, "Checking raw childId path for incidents (backward compatibility): " + childId);
+                    DatabaseReference rawIncidentRef = UserManager.mDatabase
+                            .child("users")
+                            .child(parentId)
+                            .child("children")
+                            .child(childId)
+                            .child("incidents");
+                    
+                    rawIncidentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            if (rawSnapshot.exists()) {
+                                for (DataSnapshot child : rawSnapshot.getChildren()) {
+                                    TriageIncident incident = child.getValue(TriageIncident.class);
+                                    if (incident != null) {
+                                        incidents.add(incident);
+                                    }
+                                }
+                                // Sort by timestamp descending (newest first)
+                                Collections.sort(incidents, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
+                                Log.d(TAG, "Loaded " + incidents.size() + " incidents from raw path (backward compatibility): " + rawIncidentRef.toString());
+                            }
+                            adapter.notifyDataSetChanged();
+                            
+                            if (incidents.isEmpty()) {
+                                textViewEmpty.setVisibility(View.VISIBLE);
+                                recyclerViewIncidents.setVisibility(View.GONE);
+                            } else {
+                                textViewEmpty.setVisibility(View.GONE);
+                                recyclerViewIncidents.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading incidents from raw Firebase path: " + rawIncidentRef.toString(), error.toException());
+                            adapter.notifyDataSetChanged();
+                            
+                            if (incidents.isEmpty()) {
+                                textViewEmpty.setVisibility(View.VISIBLE);
+                                recyclerViewIncidents.setVisibility(View.GONE);
+                            } else {
+                                textViewEmpty.setVisibility(View.GONE);
+                                recyclerViewIncidents.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
                 } else {
-                    textViewEmpty.setVisibility(View.GONE);
-                    recyclerViewIncidents.setVisibility(View.VISIBLE);
+                    adapter.notifyDataSetChanged();
+                    
+                    if (incidents.isEmpty()) {
+                        textViewEmpty.setVisibility(View.VISIBLE);
+                        recyclerViewIncidents.setVisibility(View.GONE);
+                    } else {
+                        textViewEmpty.setVisibility(View.GONE);
+                        recyclerViewIncidents.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 

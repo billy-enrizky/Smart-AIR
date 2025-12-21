@@ -50,17 +50,52 @@ public class RescueLogModel {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         HashMap<String, RescueLog> map = new HashMap<>();
-                        for (DataSnapshot s : snapshot.getChildren()) {
-                            String date = s.getKey();
-                            RescueLog record = s.getValue(RescueLog.class);
-                            map.put(date, record);
+                        boolean foundData = false;
+                        if (snapshot.exists()) {
+                            foundData = true;
+                            for (DataSnapshot s : snapshot.getChildren()) {
+                                String date = s.getKey();
+                                RescueLog record = s.getValue(RescueLog.class);
+                                map.put(date, record);
+                            }
                         }
-                        if (callback != null){
-                            callback.onComplete(map);
+                        
+                        // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                        if (!foundData && !encodedUsername.equals(username)) {
+                            UserManager.mDatabase.child("RescueLogManager").child(username)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot rawSnapshot) {
+                                            if (rawSnapshot.exists()) {
+                                                for (DataSnapshot s : rawSnapshot.getChildren()) {
+                                                    String date = s.getKey();
+                                                    RescueLog record = s.getValue(RescueLog.class);
+                                                    map.put(date, record);
+                                                }
+                                            }
+                                            if (callback != null){
+                                                callback.onComplete(map);
+                                            }
+                                        }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            if (callback != null){
+                                                callback.onComplete(map);
+                                            }
+                                        }
+                                    });
+                        } else {
+                            if (callback != null){
+                                callback.onComplete(map);
+                            }
                         }
                     }
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        if (callback != null){
+                            callback.onComplete(new HashMap<>());
+                        }
+                    }
                 });
     }
 
@@ -100,17 +135,55 @@ public class RescueLogModel {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         HashMap<String, RescueLog> map = new HashMap<>();
-                        for (DataSnapshot s : snapshot.getChildren()) {
-                            String date = s.getKey();
-                            RescueLog record = s.getValue(RescueLog.class);
-                            map.put(date, record);
+                        boolean foundData = false;
+                        if (snapshot.exists()) {
+                            foundData = true;
+                            for (DataSnapshot s : snapshot.getChildren()) {
+                                String date = s.getKey();
+                                RescueLog record = s.getValue(RescueLog.class);
+                                map.put(date, record);
+                            }
                         }
-                        if (callback != null){
-                            callback.onComplete(map);
+                        
+                        // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                        if (!foundData && !encodedUsername.equals(username)) {
+                            UserManager.mDatabase.child("RescueLogManager").child(username)
+                                    .orderByKey()
+                                    .startAt(begin)
+                                    .endAt(end)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot rawSnapshot) {
+                                            if (rawSnapshot.exists()) {
+                                                for (DataSnapshot s : rawSnapshot.getChildren()) {
+                                                    String date = s.getKey();
+                                                    RescueLog record = s.getValue(RescueLog.class);
+                                                    map.put(date, record);
+                                                }
+                                            }
+                                            if (callback != null){
+                                                callback.onComplete(map);
+                                            }
+                                        }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            if (callback != null){
+                                                callback.onComplete(map);
+                                            }
+                                        }
+                                    });
+                        } else {
+                            if (callback != null){
+                                callback.onComplete(map);
+                            }
                         }
                     }
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        if (callback != null){
+                            callback.onComplete(new HashMap<>());
+                        }
+                    }
                 });
     }
 }

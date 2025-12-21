@@ -205,7 +205,9 @@ public class PEFHistoryActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 pefReadingsRef[0].clear();
+                boolean foundData = false;
                 if (snapshot.exists()) {
+                    foundData = true;
                     long oldestTimestamp = Long.MAX_VALUE;
                     long newestTimestamp = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
@@ -232,16 +234,73 @@ public class PEFHistoryActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "No PEF readings found at Firebase path: " + pefRef.toString());
                 }
-                pefLoaded[0] = true;
-                // Combine and display when both are loaded
-                if (pefLoaded[0] && historyLoaded[0]) {
-                    combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedChildId.equals(childId)) {
+                    Log.d(TAG, "Checking raw childId path for backward compatibility: " + childId);
+                    DatabaseReference rawPefRef = UserManager.mDatabase
+                            .child("users")
+                            .child(parentId)
+                            .child("children")
+                            .child(childId)
+                            .child("pefReadings");
+                    
+                    rawPefRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            if (rawSnapshot.exists()) {
+                                long oldestTimestamp = Long.MAX_VALUE;
+                                long newestTimestamp = 0;
+                                for (DataSnapshot child : rawSnapshot.getChildren()) {
+                                    PEFReading reading = child.getValue(PEFReading.class);
+                                    if (reading != null) {
+                                        pefReadingsRef[0].add(reading);
+                                        long timestamp = reading.getTimestamp();
+                                        if (timestamp < oldestTimestamp) {
+                                            oldestTimestamp = timestamp;
+                                        }
+                                        if (timestamp > newestTimestamp) {
+                                            newestTimestamp = timestamp;
+                                        }
+                                    }
+                                }
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                                if (pefReadingsRef[0].size() > 0) {
+                                    Log.d(TAG, "Loaded " + pefReadingsRef[0].size() + " PEF readings from raw path (backward compatibility): " + rawPefRef.toString());
+                                    Log.d(TAG, "PEF history date range: " + sdf.format(new Date(oldestTimestamp)) + " to " + sdf.format(new Date(newestTimestamp)));
+                                }
+                            }
+                            pefLoaded[0] = true;
+                            if (pefLoaded[0] && historyLoaded[0]) {
+                                combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading PEF history from raw Firebase path: " + rawPefRef.toString(), error.toException());
+                            pefLoaded[0] = true;
+                            if (pefLoaded[0] && historyLoaded[0]) {
+                                combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                            }
+                        }
+                    });
+                } else {
+                    pefLoaded[0] = true;
+                    // Combine and display when both are loaded
+                    if (pefLoaded[0] && historyLoaded[0]) {
+                        combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                    }
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.e(TAG, "Error loading PEF history from Firebase path: " + pefRef.toString(), error.toException());
+                pefLoaded[0] = true;
+                if (pefLoaded[0] && historyLoaded[0]) {
+                    combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                }
             }
         };
 
@@ -251,7 +310,9 @@ public class PEFHistoryActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 zoneChangesRef[0].clear();
+                boolean foundData = false;
                 if (snapshot.exists()) {
+                    foundData = true;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         ZoneChangeEvent event = child.getValue(ZoneChangeEvent.class);
                         if (event != null && event.getNewZone() != null) {
@@ -263,16 +324,60 @@ public class PEFHistoryActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "No zone changes found at Firebase path: " + historyRef.toString());
                 }
-                historyLoaded[0] = true;
-                // Combine and display when both are loaded
-                if (pefLoaded[0] && historyLoaded[0]) {
-                    combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedChildId.equals(childId)) {
+                    Log.d(TAG, "Checking raw childId path for zone change history (backward compatibility): " + childId);
+                    DatabaseReference rawHistoryRef = UserManager.mDatabase
+                            .child("users")
+                            .child(parentId)
+                            .child("children")
+                            .child(childId)
+                            .child("history");
+                    
+                    rawHistoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            if (rawSnapshot.exists()) {
+                                for (DataSnapshot child : rawSnapshot.getChildren()) {
+                                    ZoneChangeEvent event = child.getValue(ZoneChangeEvent.class);
+                                    if (event != null && event.getNewZone() != null) {
+                                        zoneChangesRef[0].add(event);
+                                    }
+                                }
+                                Log.d(TAG, "Loaded " + zoneChangesRef[0].size() + " zone changes from raw path (backward compatibility): " + rawHistoryRef.toString());
+                            }
+                            historyLoaded[0] = true;
+                            if (pefLoaded[0] && historyLoaded[0]) {
+                                combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading zone change history from raw Firebase path: " + rawHistoryRef.toString(), error.toException());
+                            historyLoaded[0] = true;
+                            if (pefLoaded[0] && historyLoaded[0]) {
+                                combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                            }
+                        }
+                    });
+                } else {
+                    historyLoaded[0] = true;
+                    // Combine and display when both are loaded
+                    if (pefLoaded[0] && historyLoaded[0]) {
+                        combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                    }
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.e(TAG, "Error loading zone change history from Firebase path: " + historyRef.toString(), error.toException());
+                historyLoaded[0] = true;
+                if (pefLoaded[0] && historyLoaded[0]) {
+                    combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
+                }
             }
         };
 

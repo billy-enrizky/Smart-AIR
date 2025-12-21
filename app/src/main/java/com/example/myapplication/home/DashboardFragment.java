@@ -430,7 +430,49 @@ public class DashboardFragment extends Fragment {
                 if (latestChild == null) {
                     latestChild = child;
                 }
-                updateChildZoneFromSnapshot(latestChild, snapshot);
+                boolean foundData = snapshot.exists() && snapshot.hasChildren();
+                
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedChildId.equals(childId)) {
+                    Log.d(TAG, "Checking raw childId path for zone listener (backward compatibility): " + childId);
+                    DatabaseReference rawPefRef = UserManager.mDatabase
+                            .child("users")
+                            .child(parentId)
+                            .child("children")
+                            .child(childId)
+                            .child("pefReadings");
+                    
+                    Query rawLatestPEFQuery = rawPefRef.orderByChild("timestamp").limitToLast(1);
+                    rawLatestPEFQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            ChildAccount latestChild = latestChildAccounts.get(childId);
+                            if (latestChild == null) {
+                                latestChild = child;
+                            }
+                            if (rawSnapshot.exists() && rawSnapshot.hasChildren()) {
+                                updateChildZoneFromSnapshot(latestChild, rawSnapshot);
+                            } else {
+                                // No data found in either path
+                                ChildZoneInfo info = new ChildZoneInfo(latestChild, Zone.UNKNOWN, 0.0, null, null);
+                                updateChildZoneInfo(info);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading child zone from raw path for " + childId, error.toException());
+                            ChildAccount latestChild = latestChildAccounts.get(childId);
+                            if (latestChild == null) {
+                                latestChild = child;
+                            }
+                            ChildZoneInfo info = new ChildZoneInfo(latestChild, Zone.UNKNOWN, 0.0, null, null);
+                            updateChildZoneInfo(info);
+                        }
+                    });
+                } else {
+                    updateChildZoneFromSnapshot(latestChild, snapshot);
+                }
             }
             
             @Override
@@ -460,7 +502,53 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 ChildAccount updatedChild = snapshot.getValue(ChildAccount.class);
-                if (updatedChild != null) {
+                boolean foundData = updatedChild != null;
+                
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedChildId.equals(childId)) {
+                    Log.d(TAG, "Checking raw childId path for child account (backward compatibility): " + childId);
+                    DatabaseReference rawChildAccountRef = UserManager.mDatabase
+                            .child("users")
+                            .child(parentId)
+                            .child("children")
+                            .child(childId);
+                    
+                    rawChildAccountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            ChildAccount updatedChild = rawSnapshot.getValue(ChildAccount.class);
+                            if (updatedChild != null) {
+                                latestChildAccounts.put(childId, updatedChild);
+                                
+                                // Check raw path for PEF readings too
+                                DatabaseReference rawPefRef = UserManager.mDatabase
+                                        .child("users")
+                                        .child(parentId)
+                                        .child("children")
+                                        .child(childId)
+                                        .child("pefReadings");
+                                
+                                Query rawPefQuery = rawPefRef.orderByChild("timestamp").limitToLast(1);
+                                rawPefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot pefSnapshot) {
+                                        updateChildZoneFromSnapshot(updatedChild, pefSnapshot);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        Log.e(TAG, "Error refreshing zone after personalBest change from raw path", error.toException());
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading child account from raw path for " + childId, error.toException());
+                        }
+                    });
+                } else if (updatedChild != null) {
                     latestChildAccounts.put(childId, updatedChild);
                     
                     Query pefQuery = childPEFQueries.get(childId);

@@ -143,12 +143,15 @@ public class ChildInhalerLogs extends AppCompatActivity {
         String encodedID = FirebaseKeyEncoder.encode(ID);
         
         // Attach realtime listener for rescue logs
+        // Check encoded path first (current standard), then raw path for backward compatibility
         rescueLogRef = UserManager.mDatabase.child("RescueLogManager").child(encodedID);
         rescueLogListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 ArrayList<RescueLog> logs = new ArrayList<>();
+                boolean foundData = false;
                 if (snapshot.exists()) {
+                    foundData = true;
                     for (DataSnapshot s : snapshot.getChildren()) {
                         RescueLog record = s.getValue(RescueLog.class);
                         if (record != null) {
@@ -157,11 +160,49 @@ public class ChildInhalerLogs extends AppCompatActivity {
                     }
                     Log.d(TAG, "Loaded " + logs.size() + " rescue logs with realtime updates");
                 }
-                // Clear and rebuild rescue log views
-                LinearLayout rescueLayout = findViewById(R.id.linearlayout1);
-                if (rescueLayout != null) {
-                    rescueLayout.removeAllViews();
-                    addRescueLogs(logs);
+                
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedID.equals(ID)) {
+                    Log.d(TAG, "Checking raw ID path for rescue logs (backward compatibility): " + ID);
+                    DatabaseReference rawRescueLogRef = UserManager.mDatabase.child("RescueLogManager").child(ID);
+                    rawRescueLogRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            if (rawSnapshot.exists()) {
+                                for (DataSnapshot s : rawSnapshot.getChildren()) {
+                                    RescueLog record = s.getValue(RescueLog.class);
+                                    if (record != null) {
+                                        logs.add(record);
+                                    }
+                                }
+                                Log.d(TAG, "Loaded " + logs.size() + " rescue logs from raw path (backward compatibility)");
+                            }
+                            // Clear and rebuild rescue log views
+                            LinearLayout rescueLayout = findViewById(R.id.linearlayout1);
+                            if (rescueLayout != null) {
+                                rescueLayout.removeAllViews();
+                                addRescueLogs(logs);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading rescue logs from raw path", error.toException());
+                            // Clear and rebuild rescue log views
+                            LinearLayout rescueLayout = findViewById(R.id.linearlayout1);
+                            if (rescueLayout != null) {
+                                rescueLayout.removeAllViews();
+                                addRescueLogs(logs);
+                            }
+                        }
+                    });
+                } else {
+                    // Clear and rebuild rescue log views
+                    LinearLayout rescueLayout = findViewById(R.id.linearlayout1);
+                    if (rescueLayout != null) {
+                        rescueLayout.removeAllViews();
+                        addRescueLogs(logs);
+                    }
                 }
             }
 
@@ -173,12 +214,15 @@ public class ChildInhalerLogs extends AppCompatActivity {
         rescueLogRef.addValueEventListener(rescueLogListener);
         
         // Attach realtime listener for controller logs
+        // Check encoded path first (current standard), then raw path for backward compatibility
         controllerLogRef = UserManager.mDatabase.child("ControllerLogManager").child(encodedID);
         controllerLogListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 ArrayList<ControllerLog> logs = new ArrayList<>();
+                boolean foundData = false;
                 if (snapshot.exists()) {
+                    foundData = true;
                     for (DataSnapshot s : snapshot.getChildren()) {
                         ControllerLog record = s.getValue(ControllerLog.class);
                         if (record != null) {
@@ -187,11 +231,49 @@ public class ChildInhalerLogs extends AppCompatActivity {
                     }
                     Log.d(TAG, "Loaded " + logs.size() + " controller logs with realtime updates");
                 }
-                // Clear and rebuild controller log views
-                LinearLayout controllerLayout = findViewById(R.id.linearlayout2);
-                if (controllerLayout != null) {
-                    controllerLayout.removeAllViews();
-                    addControllerLogs(logs);
+                
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                if (!foundData && !encodedID.equals(ID)) {
+                    Log.d(TAG, "Checking raw ID path for controller logs (backward compatibility): " + ID);
+                    DatabaseReference rawControllerLogRef = UserManager.mDatabase.child("ControllerLogManager").child(ID);
+                    rawControllerLogRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            if (rawSnapshot.exists()) {
+                                for (DataSnapshot s : rawSnapshot.getChildren()) {
+                                    ControllerLog record = s.getValue(ControllerLog.class);
+                                    if (record != null) {
+                                        logs.add(record);
+                                    }
+                                }
+                                Log.d(TAG, "Loaded " + logs.size() + " controller logs from raw path (backward compatibility)");
+                            }
+                            // Clear and rebuild controller log views
+                            LinearLayout controllerLayout = findViewById(R.id.linearlayout2);
+                            if (controllerLayout != null) {
+                                controllerLayout.removeAllViews();
+                                addControllerLogs(logs);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "Error loading controller logs from raw path", error.toException());
+                            // Clear and rebuild controller log views
+                            LinearLayout controllerLayout = findViewById(R.id.linearlayout2);
+                            if (controllerLayout != null) {
+                                controllerLayout.removeAllViews();
+                                addControllerLogs(logs);
+                            }
+                        }
+                    });
+                } else {
+                    // Clear and rebuild controller log views
+                    LinearLayout controllerLayout = findViewById(R.id.linearlayout2);
+                    if (controllerLayout != null) {
+                        controllerLayout.removeAllViews();
+                        addControllerLogs(logs);
+                    }
                 }
             }
 
