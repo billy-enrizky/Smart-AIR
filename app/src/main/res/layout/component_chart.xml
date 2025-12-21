@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
-    android:background="@color/white">
+    android:background="@android:color/transparent">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/lineChart"

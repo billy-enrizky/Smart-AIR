@@ -155,17 +155,17 @@ public class TrendSnippetActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Map<String, Integer> zoneCounts = new HashMap<>();
-                zoneCounts.put("Green", 0);
-                zoneCounts.put("Yellow", 0);
-                zoneCounts.put("Red", 0);
-                zoneCounts.put("Unknown", 0);
+                zoneCounts.put("green", 0);
+                zoneCounts.put("yellow", 0);
+                zoneCounts.put("red", 0);
+                zoneCounts.put("unknown", 0);
 
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         PEFReading reading = child.getValue(PEFReading.class);
                         if (reading != null) {
                             Zone zone = ZoneCalculator.calculateZone(reading.getValue(), personalBest);
-                            String zoneName = zone.getDisplayName();
+                            String zoneName = ChartComponent.normalizeZoneName(zone.getDisplayName());
                             zoneCounts.put(zoneName, zoneCounts.getOrDefault(zoneName, 0) + 1);
                         }
                     }
@@ -173,10 +173,10 @@ public class TrendSnippetActivity extends AppCompatActivity {
 
                 runOnUiThread(() -> {
                     frameLayoutZoneChart.removeAllViews();
-                    View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutZoneChart, ChartComponent.ChartType.PIE);
+                    View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutZoneChart, ChartComponent.ChartType.BAR);
                     frameLayoutZoneChart.addView(chartView);
-                    PieChart pieChart = chartView.findViewById(R.id.pieChart);
-                    ChartComponent.setupPieChart(pieChart, zoneCounts, "Zone Distribution");
+                    BarChart barChart = chartView.findViewById(R.id.barChart);
+                    ChartComponent.setupBarChart(barChart, zoneCounts, "Zone Distribution");
                 });
             }
 
