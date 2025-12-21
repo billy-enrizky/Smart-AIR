@@ -46,6 +46,7 @@ public class AccessInfoActivity extends AppCompatActivity {
     Button peakFlow;
     Button triageIncidents;
     Button summaryCharts;
+    TextView textViewClickChildFirst;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -72,6 +73,7 @@ public class AccessInfoActivity extends AppCompatActivity {
         triageIncidents.setVisibility(Button.GONE);
         summaryCharts = findViewById(R.id.sc);
         summaryCharts.setVisibility(Button.GONE);
+        textViewClickChildFirst = findViewById(R.id.textViewClickChildFirst);
         container = findViewById(R.id.childListContainer);
         textView = findViewById(R.id.textViewCurrentChild);
         textView.setText("Current Child: null\nClick name to switch");
@@ -80,6 +82,7 @@ public class AccessInfoActivity extends AppCompatActivity {
         LinkedParentsId = currentUser.getLinkedParentsId();
         LinkedChildren = new ArrayList<>();
         initialization();
+        SetButtonVisibility();
     }
     public void initialization(){
         for(int i = 0; i < LinkedParentsId.size(); i++) {
@@ -150,8 +153,10 @@ public class AccessInfoActivity extends AppCompatActivity {
             peakFlow.setVisibility(Button.GONE);
             triageIncidents.setVisibility(Button.GONE);
             summaryCharts.setVisibility(Button.GONE);
+            textViewClickChildFirst.setVisibility(TextView.VISIBLE);
             return;
         }
+        textViewClickChildFirst.setVisibility(TextView.GONE);
         if(!currentChild.getPermission().getPeakFlow()){//PEF
             peakFlow.setVisibility(Button.GONE);
         }else{
