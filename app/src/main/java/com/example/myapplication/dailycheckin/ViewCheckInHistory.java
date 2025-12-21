@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,9 +43,17 @@ public class ViewCheckInHistory extends AppCompatActivity {
     String history = "";
     Button exportButton;
     
-    // Realtime listener references
-    private DatabaseReference checkInRef;
-    private ValueEventListener checkInListener;
+    // Realtime listener references for both encoded and raw paths
+    private DatabaseReference checkInRefEncoded;
+    private DatabaseReference checkInRefRaw;
+    private ValueEventListener checkInListenerEncoded;
+    private ValueEventListener checkInListenerRaw;
+    // Separate result maps for encoded and raw paths (encoded takes precedence)
+    private HashMap<String, DailyCheckin> encodedResults = new HashMap<>();
+    private HashMap<String, DailyCheckin> rawResults = new HashMap<>();
+    // Handler for debouncing UI updates and ensuring main thread execution
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private Runnable pendingUpdate = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,103 +101,177 @@ public class ViewCheckInHistory extends AppCompatActivity {
         String username = filters.getUsername();
         
         if (username == null) {
+            Log.w(TAG, "Username is null, cannot attach check-in listener");
             return;
         }
         
-        // Detach existing listener first to prevent duplicates
+        // Detach existing listeners first to prevent duplicates
         detachCheckInListener();
         
+        // Clear result maps
+        encodedResults.clear();
+        rawResults.clear();
+        
         String encodedUsername = FirebaseKeyEncoder.encode(username);
-        checkInRef = UserManager.mDatabase.child("CheckInManager").child(encodedUsername);
+        checkInRefEncoded = UserManager.mDatabase.child("CheckInManager").child(encodedUsername);
         
         // Use addValueEventListener for realtime updates similar to personalBest
-        // Apply date range and filters in code after loading
-        // Check encoded path first (current standard), then raw path for backward compatibility
-        checkInListener = new ValueEventListener() {
+        // Attach listener to encoded path (current standard)
+        checkInListenerEncoded = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                HashMap<String, DailyCheckin> result = new HashMap<>();
-                boolean foundData = false;
-                if (snapshot.exists()) {
-                    foundData = true;
-                    for (DataSnapshot s : snapshot.getChildren()) {
-                        String date = s.getKey();
-                        DailyCheckin record = s.getValue(DailyCheckin.class);
-                        if (record != null) {
-                            // Apply date range filter
-                            String startDate = filters.getStartDate();
-                            String endDate = filters.getEndDate();
-                            if ((startDate == null || date.compareTo(startDate) >= 0) &&
-                                (endDate == null || date.compareTo(endDate) <= 0)) {
-                                result.put(date, record);
+                CheckInHistoryFilters filters = CheckInHistoryFilters.getInstance();
+                // Clear and rebuild encoded path results
+                synchronized (encodedResults) {
+                    encodedResults.clear();
+                    if (snapshot.exists()) {
+                        int totalEntries = 0;
+                        int filteredEntries = 0;
+                        for (DataSnapshot s : snapshot.getChildren()) {
+                            totalEntries++;
+                            String date = s.getKey();
+                            DailyCheckin record = s.getValue(DailyCheckin.class);
+                            if (record != null) {
+                                // Apply date range filter
+                                String startDate = filters.getStartDate();
+                                String endDate = filters.getEndDate();
+                                if ((startDate == null || date.compareTo(startDate) >= 0) &&
+                                    (endDate == null || date.compareTo(endDate) <= 0)) {
+                                    encodedResults.put(date, record);
+                                    filteredEntries++;
+                                    Log.d(TAG, "Added check-in from encoded path: date=" + date + ", loggedBy=" + record.getLoggedBy());
+                                }
                             }
                         }
+                        Log.d(TAG, "Loaded " + filteredEntries + " check-ins from encoded path (total: " + totalEntries + ", realtime update)");
+                    } else {
+                        Log.d(TAG, "No check-ins found at encoded Firebase path: " + checkInRefEncoded.toString());
                     }
-                    Log.d(TAG, "Loaded " + result.size() + " check-ins with realtime updates (after date filtering)");
-                } else {
-                    Log.d(TAG, "No check-ins found at Firebase path: " + checkInRef.toString());
                 }
                 
-                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
-                if (!foundData && !encodedUsername.equals(username)) {
-                    Log.d(TAG, "Checking raw username path for check-in history (backward compatibility): " + username);
-                    DatabaseReference rawCheckInRef = UserManager.mDatabase.child("CheckInManager").child(username);
-                    
-                    rawCheckInRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot rawSnapshot) {
-                            if (rawSnapshot.exists()) {
-                                for (DataSnapshot s : rawSnapshot.getChildren()) {
-                                    String date = s.getKey();
-                                    DailyCheckin record = s.getValue(DailyCheckin.class);
-                                    if (record != null) {
-                                        // Apply date range filter
-                                        String startDate = filters.getStartDate();
-                                        String endDate = filters.getEndDate();
-                                        if ((startDate == null || date.compareTo(startDate) >= 0) &&
-                                            (endDate == null || date.compareTo(endDate) <= 0)) {
-                                            result.put(date, record);
-                                        }
-                                    }
-                                }
-                                Log.d(TAG, "Loaded " + result.size() + " check-ins from raw path (backward compatibility)");
-                            }
-                            processAndDisplayHistory(result);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError error) {
-                            Log.e(TAG, "Error loading check-in history from raw Firebase path: " + rawCheckInRef.toString(), error.toException());
-                            processAndDisplayHistory(result);
-                        }
-                    });
-                } else {
-                    processAndDisplayHistory(result);
-                }
+                // Merge and display (encoded takes precedence) - debounced on main thread
+                scheduleMergeAndDisplay();
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading check-in history from Firebase path: " + checkInRef.toString(), error.toException());
+                Log.e(TAG, "Error loading check-in history from encoded Firebase path: " + checkInRefEncoded.toString(), error.toException());
             }
         };
         
-        checkInRef.addValueEventListener(checkInListener);
+        checkInRefEncoded.addValueEventListener(checkInListenerEncoded);
+        
+        // If encoded != raw, also attach listener to raw path for backward compatibility
+        if (!encodedUsername.equals(username)) {
+            Log.d(TAG, "Attaching realtime listener to raw username path for backward compatibility: " + username);
+            checkInRefRaw = UserManager.mDatabase.child("CheckInManager").child(username);
+            
+            checkInListenerRaw = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    CheckInHistoryFilters filters = CheckInHistoryFilters.getInstance();
+                    // Clear and rebuild raw path results
+                    synchronized (rawResults) {
+                        rawResults.clear();
+                        if (snapshot.exists()) {
+                            int totalEntries = 0;
+                            int filteredEntries = 0;
+                            for (DataSnapshot s : snapshot.getChildren()) {
+                                totalEntries++;
+                                String date = s.getKey();
+                                DailyCheckin record = s.getValue(DailyCheckin.class);
+                                if (record != null) {
+                                    // Apply date range filter
+                                    String startDate = filters.getStartDate();
+                                    String endDate = filters.getEndDate();
+                                    if ((startDate == null || date.compareTo(startDate) >= 0) &&
+                                        (endDate == null || date.compareTo(endDate) <= 0)) {
+                                        rawResults.put(date, record);
+                                        filteredEntries++;
+                                        Log.d(TAG, "Added check-in from raw path: date=" + date + ", loggedBy=" + record.getLoggedBy());
+                                    }
+                                }
+                            }
+                            Log.d(TAG, "Loaded " + filteredEntries + " check-ins from raw path (total: " + totalEntries + ", realtime update, backward compatibility)");
+                        } else {
+                            Log.d(TAG, "No check-ins found at raw Firebase path: " + checkInRefRaw.toString());
+                        }
+                    }
+                    
+                    // Merge and display (encoded takes precedence) - debounced on main thread
+                    scheduleMergeAndDisplay();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.e(TAG, "Error loading check-in history from raw Firebase path: " + checkInRefRaw.toString(), error.toException());
+                }
+            };
+            
+            checkInRefRaw.addValueEventListener(checkInListenerRaw);
+        } else {
+            Log.d(TAG, "Encoded username equals raw username, only attaching listener to encoded path");
+        }
+    }
+    
+    /**
+     * Schedule merge and display with debouncing to prevent rapid UI updates
+     * when both listeners fire simultaneously
+     */
+    private void scheduleMergeAndDisplay() {
+        // Cancel any pending update
+        if (pendingUpdate != null) {
+            mainHandler.removeCallbacks(pendingUpdate);
+        }
+        
+        // Schedule new update with small delay to debounce rapid updates
+        pendingUpdate = new Runnable() {
+            @Override
+            public void run() {
+                mergeAndDisplayResults();
+            }
+        };
+        mainHandler.postDelayed(pendingUpdate, 100); // 100ms debounce
+    }
+    
+    private void mergeAndDisplayResults() {
+        // Merge encoded and raw results (encoded takes precedence for duplicates)
+        HashMap<String, DailyCheckin> merged = new HashMap<>();
+        synchronized (rawResults) {
+            merged.putAll(rawResults);
+        }
+        synchronized (encodedResults) {
+            merged.putAll(encodedResults); // Encoded overwrites raw for same dates
+        }
+        
+        Log.d(TAG, "Merged results: " + merged.size() + " total check-ins (encoded: " + encodedResults.size() + ", raw: " + rawResults.size() + ")");
+        processAndDisplayHistory(merged);
     }
     
     private void processAndDisplayHistory(HashMap<String, DailyCheckin> result) {
+        // Ensure this runs on main thread for UI updates
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mainHandler.post(() -> processAndDisplayHistory(result));
+            return;
+        }
+        
         CheckInHistoryFilters filters = CheckInHistoryFilters.getInstance();
         // Process and display history
         ArrayList<String> datesInOrder = new ArrayList<>(result.keySet());
-        Collections.sort(datesInOrder);
+        Collections.sort(datesInOrder, Collections.reverseOrder()); // Newest first
+        
         history = "";
         int datesProcessed = 0;
+        int totalEntries = result.size();
+        
         for (String date: datesInOrder) {
             DailyCheckin entry = result.get(date);
             if (entry != null && filters.matchFilters(entry)) {
                 datesProcessed++;
                 String message = "" + date + "\n";
+                // Show who logged the check-in (PARENT or CHILD)
                 message = message + "Logged by: " + entry.getLoggedBy() + "\n";
+                
                 if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*|| provider has permission to see symptoms*/) {
                     message = message + "Night waking: " + entry.getNightWaking() + "\n";
                     message = message + entry.getActivityLimits() + "\n";
@@ -196,27 +280,60 @@ public class ViewCheckInHistory extends AppCompatActivity {
 
                 if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER) /*|| provider has permission to see triggers*/) {
                     message = message + "Triggers: ";
-                    for (String trigger : entry.getTriggers()) {
-                        message = message + trigger + ", ";
+                    if (entry.getTriggers() != null && !entry.getTriggers().isEmpty()) {
+                        for (String trigger : entry.getTriggers()) {
+                            message = message + trigger + ", ";
+                        }
+                        // Remove trailing comma and space
+                        message = message.substring(0, message.length() - 2);
+                    } else {
+                        message = message + "None";
                     }
                 }
                 message = message + "\n";
                 history = history + message + "\n";
             }
         }
+        
         if (history.isEmpty()) {
             history = "No data for selected filters.";
         }
+        
+        Log.d(TAG, "Displaying " + datesProcessed + " check-ins (filtered from " + totalEntries + " total entries)");
         historyText.setText(history);
         historyText.setTextSize(14);
     }
     
     private void detachCheckInListener() {
-        if (checkInRef != null && checkInListener != null) {
-            checkInRef.removeEventListener(checkInListener);
-            checkInListener = null;
+        // Cancel any pending UI updates
+        if (pendingUpdate != null) {
+            mainHandler.removeCallbacks(pendingUpdate);
+            pendingUpdate = null;
         }
-        checkInRef = null;
+        
+        // Detach encoded path listener
+        if (checkInRefEncoded != null && checkInListenerEncoded != null) {
+            checkInRefEncoded.removeEventListener(checkInListenerEncoded);
+            checkInListenerEncoded = null;
+            Log.d(TAG, "Detached encoded path listener");
+        }
+        checkInRefEncoded = null;
+        
+        // Detach raw path listener
+        if (checkInRefRaw != null && checkInListenerRaw != null) {
+            checkInRefRaw.removeEventListener(checkInListenerRaw);
+            checkInListenerRaw = null;
+            Log.d(TAG, "Detached raw path listener");
+        }
+        checkInRefRaw = null;
+        
+        // Clear result maps
+        synchronized (encodedResults) {
+            encodedResults.clear();
+        }
+        synchronized (rawResults) {
+            rawResults.clear();
+        }
     }
 
     public void returnToSymptoms(View view) {
