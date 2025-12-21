@@ -19,8 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:backgroundTint="#6E8CA0"
-            android:text="Sign out"  android:textColor="#000000"/>
+            android:backgroundTint="#000000"
+            android:text="Sign out"  android:textColor="#FFFFFF"/>
 
         <FrameLayout
             android:id="@+id/buttonNotifications"
@@ -34,8 +34,8 @@
                 android:id="@+id/buttonNotificationButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#6E8CA0"
-                android:text="Alerts"  android:textColor="#000000"/>
+                android:backgroundTint="#000000"
+                android:text="Alerts"  android:textColor="#FFFFFF"/>
 
             <TextView
                 android:id="@+id/textViewNotificationBadge"

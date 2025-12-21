@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="1dp"
-        android:backgroundTint="#6E8CA0"
+        android:backgroundTint="#000000"
         android:text="Link to new Provider"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#FFFFFF"/>
 
     <TextView
         android:id="@+id/textView33"
