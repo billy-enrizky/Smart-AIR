@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ import com.example.myapplication.safety.TriageActivity;
 import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -173,7 +175,7 @@ public class ChildActivity extends AppCompatActivity {
         Button useButton = findViewById(R.id.usebutton);
         Button logsButton = findViewById(R.id.logsButton);
         Button dailycheck = findViewById(R.id.dailycheckinbutton);
-        Button signout = findViewById(R.id.signOutButton);
+        ImageButton signout = findViewById(R.id.signOutButton);
 
         streakButton.setEnabled(false);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -303,11 +305,12 @@ public class ChildActivity extends AppCompatActivity {
         detachZoneListeners();
 
         // Attach listener for PEF readings (real-time updates)
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         pefReadingsRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         latestPEFQuery = pefReadingsRef.orderByChild("timestamp").limitToLast(1);
@@ -336,7 +339,7 @@ public class ChildActivity extends AppCompatActivity {
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childAccountListener = new ValueEventListener() {
             @Override

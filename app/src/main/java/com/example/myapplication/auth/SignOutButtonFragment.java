@@ -36,6 +36,10 @@ public class SignOutButtonFragment extends Fragment {
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Note: All data is persisted in Firebase and will remain after logout.
+                // Setting currentUser to null only clears the in-memory reference.
+                // All PEF readings, rescue usage, incidents, controller logs, etc. are saved
+                // in Firebase and will be available when you log back in.
                 if(UserManager.currentUser.getAccount() == AccountType.CHILD){
                     ChildAccount child = (ChildAccount) UserManager.currentUser;
                     UserManager.stopChildUserListener(child.getParent_id(),child.getID());

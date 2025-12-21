@@ -105,6 +105,21 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="8dp" />
 
+            <TextView
+                android:id="@+id/CM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Controller Medicine Use Per Day (Last 30 Days)"
+                android:textSize="16sp"
+                android:textStyle="bold"  android:textColor="#000000"/>
+
+            <FrameLayout
+                android:id="@+id/frameLayoutMedicineChart"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp" />
+
         </LinearLayout>
 
     </ScrollView>

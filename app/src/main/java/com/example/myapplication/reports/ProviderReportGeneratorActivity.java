@@ -25,6 +25,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.ControllerLog;
+import com.example.myapplication.ControllerLogModel;
+import com.example.myapplication.RescueLog;
+import com.example.myapplication.RescueLogModel;
 import com.example.myapplication.charts.ChartComponent;
 import com.example.myapplication.dailycheckin.CheckInEntry;
 import com.example.myapplication.medication.ControllerSchedule;
@@ -35,6 +39,7 @@ import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -70,6 +75,7 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     private FrameLayout frameLayoutTrendChart;
     private FrameLayout frameLayoutRescueChart;
     private FrameLayout frameLayoutSymptomsChart;
+    private FrameLayout frameLayoutMedicineChart;
 
     private LinearLayout linearLayoutSharedItems;
     private TextView textViewNoSharing;
@@ -136,6 +142,7 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         frameLayoutTrendChart = findViewById(R.id.frameLayoutTrendChart);
         frameLayoutRescueChart = findViewById(R.id.frameLayoutRescueChart);
         frameLayoutSymptomsChart = findViewById(R.id.frameLayoutSymptomsChart);
+        frameLayoutMedicineChart = findViewById(R.id.frameLayoutMedicineChart);
 
         linearLayoutSharedItems = findViewById(R.id.linearLayoutSharedItems);
         textViewNoSharing = findViewById(R.id.textViewNoSharing);
@@ -154,11 +161,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadChildPermissions() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -285,17 +293,19 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         loadPEFTrend();
         loadRescuePerDay();
         loadSymptomsPerDay();
+        loadMedicinePerDay();
         loadPersonalBest();
         loadTriageIncidents();
         loadTriggers();
     }
 
     private void loadRescueFrequency() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference rescueRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("rescueUsage");
 
         Query query = rescueRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -311,23 +321,56 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                         }
                     }
                 }
-                reportData.setRescueFrequency(count);
-                updateUI();
+                final int triageCount = count;
+
+                // Also count direct rescue inhaler usage
+                SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                String startDateStr = logDateFormat.format(new Date(startDate));
+                String endDateStr = logDateFormat.format(new Date(endDate));
+
+                RescueLogModel.readFromDB(childId, startDateStr + "_00:00:00", endDateStr + "_23:59:59", new com.example.myapplication.ResultCallBack<HashMap<String, RescueLog>>() {
+                    @Override
+                    public void onComplete(HashMap<String, RescueLog> logs) {
+                        int directCount = 0;
+                        if (logs != null) {
+                            directCount = logs.size(); // Each RescueLog entry is 1 dose
+                        }
+                        reportData.setRescueFrequency(triageCount + directCount);
+                        updateUI();
+                    }
+                });
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading rescue frequency", error.toException());
+                Log.e(TAG, "Error loading rescue frequency from triage sessions", error.toException());
+                // Still try to load from direct usage
+                SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                String startDateStr = logDateFormat.format(new Date(startDate));
+                String endDateStr = logDateFormat.format(new Date(endDate));
+
+                RescueLogModel.readFromDB(childId, startDateStr + "_00:00:00", endDateStr + "_23:59:59", new com.example.myapplication.ResultCallBack<HashMap<String, RescueLog>>() {
+                    @Override
+                    public void onComplete(HashMap<String, RescueLog> logs) {
+                        int directCount = 0;
+                        if (logs != null) {
+                            directCount = logs.size();
+                        }
+                        reportData.setRescueFrequency(directCount);
+                        updateUI();
+                    }
+                });
             }
         });
     }
 
     private void loadAdherence() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -350,11 +393,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadSymptomBurden() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -382,11 +426,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadZoneDistribution() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         Query query = pefRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -397,7 +442,7 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                         .child("users")
                         .child(parentId)
                         .child("children")
-                        .child(childId);
+                        .child(encodedChildId);
 
                 childRef.child("personalBest").get().addOnCompleteListener(pbTask -> {
                     Integer personalBest = null;
@@ -441,11 +486,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadPEFTrend() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         Query query = pefRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -512,11 +558,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadRescuePerDay() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference rescueRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("rescueUsage");
 
         Query query = rescueRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -537,12 +584,51 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                     }
                 }
 
-                updateRescueChart(dailyCounts);
+                // Also load from direct rescue inhaler usage (RescueLogManager)
+                SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                String startDateStr = logDateFormat.format(new Date(startDate));
+                String endDateStr = logDateFormat.format(new Date(endDate));
+
+                RescueLogModel.readFromDB(childId, startDateStr + "_00:00:00", endDateStr + "_23:59:59", new com.example.myapplication.ResultCallBack<HashMap<String, RescueLog>>() {
+                    @Override
+                    public void onComplete(HashMap<String, RescueLog> logs) {
+                        if (logs != null) {
+                            for (RescueLog log : logs.values()) {
+                                String dateKey = dateFormat.format(new Date(log.getTimestamp()));
+                                int currentCount = dailyCounts.getOrDefault(dateKey, 0);
+                                dailyCounts.put(dateKey, currentCount + 1); // Each RescueLog entry is 1 dose
+                            }
+                        }
+
+                        updateRescueChart(dailyCounts);
+                    }
+                });
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading rescue per day", error.toException());
+                Log.e(TAG, "Error loading rescue per day from triage sessions", error.toException());
+                // Still try to load from direct usage even if triage data fails
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                String startDateStr = logDateFormat.format(new Date(startDate));
+                String endDateStr = logDateFormat.format(new Date(endDate));
+
+                RescueLogModel.readFromDB(childId, startDateStr + "_00:00:00", endDateStr + "_23:59:59", new com.example.myapplication.ResultCallBack<HashMap<String, RescueLog>>() {
+                    @Override
+                    public void onComplete(HashMap<String, RescueLog> logs) {
+                        Map<String, Integer> dailyCounts = new HashMap<>();
+                        if (logs != null) {
+                            for (RescueLog log : logs.values()) {
+                                String dateKey = dateFormat.format(new Date(log.getTimestamp()));
+                                int currentCount = dailyCounts.getOrDefault(dateKey, 0);
+                                dailyCounts.put(dateKey, currentCount + 1);
+                            }
+                        }
+
+                        updateRescueChart(dailyCounts);
+                    }
+                });
             }
         });
     }
@@ -557,11 +643,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadSymptomsPerDay() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -600,12 +687,45 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Symptoms Count Per Day", Color.parseColor("#9C27B0"));
     }
 
+    private void loadMedicinePerDay() {
+        Map<String, Integer> dailyCounts = new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDateStr = logDateFormat.format(new Date(startDate));
+        String endDateStr = logDateFormat.format(new Date(endDate));
+
+        // Load from direct controller inhaler usage (ControllerLogManager)
+        ControllerLogModel.readFromDB(childId, startDateStr + "_00:00:00", endDateStr + "_23:59:59", new com.example.myapplication.ResultCallBack<HashMap<String, ControllerLog>>() {
+            @Override
+            public void onComplete(HashMap<String, ControllerLog> logs) {
+                if (logs != null) {
+                    for (ControllerLog log : logs.values()) {
+                        String dateKey = dateFormat.format(new Date(log.getTimestamp()));
+                        int currentCount = dailyCounts.getOrDefault(dateKey, 0);
+                        dailyCounts.put(dateKey, currentCount + 1); // Each ControllerLog entry is 1 dose
+                    }
+                }
+
+                updateMedicineChart(dailyCounts);
+            }
+        });
+    }
+
+    private void updateMedicineChart(Map<String, Integer> dailyCounts) {
+        frameLayoutMedicineChart.removeAllViews();
+        View chartView = ChartComponent.createChartView(this, frameLayoutMedicineChart, ChartComponent.ChartType.BAR);
+        frameLayoutMedicineChart.addView(chartView);
+        BarChart barChart = chartView.findViewById(R.id.barChart);
+        ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Controller Medicine Use Per Day", Color.parseColor("#2196F3"));
+    }
+
     private void loadPersonalBest() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.child("personalBest").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult().getValue() != null) {
@@ -620,11 +740,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadTriageIncidents() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);

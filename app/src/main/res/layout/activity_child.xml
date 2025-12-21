@@ -271,26 +271,22 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/signOutButton"
         android:layout_width="74dp"
         android:layout_height="71dp"
-        android:backgroundTint="#000000"
-        android:fontFamily="@font/happy_monkey"
-        android:gravity="bottom|center_horizontal"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:paddingBottom="10dp"
-        android:textColor="#FFFFFF"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        app:cornerRadius="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="36dp"
+        android:backgroundTint="#FF3333"
+        android:contentDescription="Sign Out"
+        android:scaleType="fitCenter"
+        android:padding="8dp"
+        app:cornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintBottom_toTopOf="@+id/cardViewZone"
+        app:srcCompat="@drawable/exit" />
 
     <ImageView
         android:id="@+id/imageView12"
@@ -417,17 +413,6 @@
         app:layout_constraintVertical_bias="0.945"
         app:srcCompat="@drawable/threat" />
 
-    <ImageView
-        android:id="@+id/imageView43"
-        android:layout_width="60dp"
-        android:layout_height="72dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/exit" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -114,7 +114,9 @@
                         android:id="@+id/RL"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:thumbTint="#000000"
+                        android:trackTint="#CCCCCC" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -136,7 +138,9 @@
                         android:id="@+id/CAS"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:thumbTint="#000000"
+                        android:trackTint="#CCCCCC" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -158,7 +162,9 @@
                         android:id="@+id/S"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:thumbTint="#000000"
+                        android:trackTint="#CCCCCC" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -180,7 +186,9 @@
                         android:id="@+id/T"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:thumbTint="#000000"
+                        android:trackTint="#CCCCCC" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -202,7 +210,9 @@
                         android:id="@+id/PEF"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:thumbTint="#000000"
+                        android:trackTint="#CCCCCC" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -224,7 +234,9 @@
                         android:id="@+id/TI"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:thumbTint="#000000"
+                        android:trackTint="#CCCCCC" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -245,7 +257,9 @@
                         android:id="@+id/SC"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:thumbTint="#000000"
+                        android:trackTint="#CCCCCC" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

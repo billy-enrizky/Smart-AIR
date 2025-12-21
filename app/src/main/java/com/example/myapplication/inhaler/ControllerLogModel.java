@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.ControllerLog;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -28,12 +29,20 @@ public class ControllerLogModel {
     }
     public static void writeIntoDB(ControllerLog controllerlog, CallBack callback){
         if(controllerlog.username == null){
+            android.util.Log.e("ControllerLogModel", "Cannot save controller log: username is null");
             return;
         }
         String username = controllerlog.username;
-        UserManager.mDatabase.child("ControllerLogManager").child(username).child(controllerlog.getDate()).setValue(controllerlog).addOnCompleteListener(new OnCompleteListener<Void>() {
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        com.google.firebase.database.DatabaseReference logRef = UserManager.mDatabase.child("ControllerLogManager").child(encodedUsername).child(controllerlog.getDate());
+        logRef.setValue(controllerlog).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(Task<Void> task) {
+                if (task.isSuccessful()) {
+                    android.util.Log.d("ControllerLogModel", "Controller log saved successfully to Firebase: " + logRef.toString());
+                } else {
+                    android.util.Log.e("ControllerLogModel", "Failed to save controller log", task.getException());
+                }
                 if(callback != null) {
                     callback.onComplete();
                 }
@@ -42,7 +51,8 @@ public class ControllerLogModel {
     }
 
     public static void readFromDB(String username, ResultCallBack<HashMap<String,ControllerLog>> callback){
-        UserManager.mDatabase.child("ControllerLogManager").child(username)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("ControllerLogManager").child(encodedUsername)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -64,7 +74,8 @@ public class ControllerLogModel {
     public static void readFromDB(String username,String Date, ResultCallBack<HashMap<String,ControllerLog>> callback){
         String begin = Date + "_00:00:00"; // Date is of format of "yyyy-MM-dd" eg. "2025-01-01"
         String end   = Date + "_23:59:59";
-        UserManager.mDatabase.child("ControllerLogManager").child(username)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("ControllerLogManager").child(encodedUsername)
                 .orderByKey()
                 .startAt(begin)     // eg. "2025-01-01" , "2025-01-01_00:00:00"
                 .endAt(end)         // eg. "2025-03-01" , "2025-03-01_23:59:59"
@@ -87,7 +98,8 @@ public class ControllerLogModel {
     }
 
     public static void readFromDB(String username,String begin, String end, ResultCallBack<HashMap<String,ControllerLog>> callback){
-        UserManager.mDatabase.child("ControllerLogManager").child(username)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("ControllerLogManager").child(encodedUsername)
                 .orderByKey()
                 .startAt(begin)     // eg. "2025-01-01" , "2025-01-01_00:00:00"
                 .endAt(end)         // eg. "2025-03-01" , "2025-03-01_23:59:59"

@@ -21,6 +21,7 @@ import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.safety.ZoneChangeEvent;
 import com.example.myapplication.notifications.AlertDetector;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DatabaseReference;
 import android.content.Intent;
 
@@ -118,17 +119,19 @@ public class PEFEntryActivity extends AppCompatActivity {
 
         PEFReading reading = new PEFReading(pefValue, timestamp, preMed, postMed, notes);
 
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings")
                 .child(String.valueOf(timestamp));
 
         pefRef.setValue(reading)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        Log.d(TAG, "PEF reading saved successfully to Firebase: " + pefRef.toString());
                         Toast.makeText(this, "PEF reading saved successfully", Toast.LENGTH_SHORT).show();
                         
                         checkAndLogZoneChange(pefValue);
@@ -143,11 +146,12 @@ public class PEFEntryActivity extends AppCompatActivity {
     }
 
     private void checkAndLogZoneChange(int pefValue) {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
         
         childRef.child("personalBest").get().addOnCompleteListener(task -> {
             if (!task.isSuccessful() || task.getResult().getValue() == null) {
@@ -174,7 +178,7 @@ public class PEFEntryActivity extends AppCompatActivity {
                     .child("users")
                     .child(parentId)
                     .child("children")
-                    .child(childId)
+                    .child(encodedChildId)
                     .child("history");
 
             historyRef.orderByKey().limitToLast(1).get().addOnCompleteListener(historyTask -> {
@@ -195,7 +199,14 @@ public class PEFEntryActivity extends AppCompatActivity {
                         pefValue,
                         percentage
                 );
-                historyRef.child(String.valueOf(zoneChange.getTimestamp())).setValue(zoneChange);
+                historyRef.child(String.valueOf(zoneChange.getTimestamp())).setValue(zoneChange)
+                        .addOnCompleteListener(historySaveTask -> {
+                            if (historySaveTask.isSuccessful()) {
+                                Log.d(TAG, "Zone change saved successfully to Firebase");
+                            } else {
+                                Log.e(TAG, "Failed to save zone change", historySaveTask.getException());
+                            }
+                        });
 
                 String childName = childAccount != null ? childAccount.getName() : "Your child";
                 AlertDetector.checkRedZoneDay(parentId, childId, childName, pefValue, personalBest);
@@ -208,11 +219,12 @@ public class PEFEntryActivity extends AppCompatActivity {
         if (childId == null || parentId == null) {
             return;
         }
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
         
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
