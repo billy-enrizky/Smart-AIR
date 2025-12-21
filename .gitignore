@@ -24,3 +24,4 @@ app/keystore/
 app/keystore.properties
 *.keystore
 *.jks
+# Repository cleanup - removed sensitive files from history
