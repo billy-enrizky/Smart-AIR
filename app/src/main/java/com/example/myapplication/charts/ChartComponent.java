@@ -175,7 +175,7 @@ public class ChartComponent {
             public String getFormattedValue(float value) {
                 int index = (int) value;
                 if (index >= 0 && index < labels.size()) {
-                    return labels.get(index);
+                    return normalizeZoneName(labels.get(index));
                 }
                 return "";
             }
@@ -272,17 +272,37 @@ public class ChartComponent {
         chart.setData(pieData);
         chart.getDescription().setEnabled(false);
         chart.setEntryLabelTextSize(12f);
+        chart.setBackgroundColor(Color.TRANSPARENT);
+        chart.setHoleColor(Color.TRANSPARENT);
+        chart.setTransparentCircleColor(Color.TRANSPARENT);
         chart.invalidate();
+    }
+
+    public static String normalizeZoneName(String zoneName) {
+        if (zoneName == null) {
+            return "unknown";
+        }
+        String normalized = zoneName.toLowerCase();
+        if (normalized.contains("green")) {
+            return "green";
+        } else if (normalized.contains("yellow")) {
+            return "yellow";
+        } else if (normalized.contains("red")) {
+            return "red";
+        } else {
+            return "unknown";
+        }
     }
 
     private static List<Integer> getZoneColors(List<String> zones) {
         List<Integer> colors = new ArrayList<>();
         for (String zone : zones) {
-            if ("Green".equalsIgnoreCase(zone)) {
+            String normalized = normalizeZoneName(zone);
+            if ("green".equals(normalized)) {
                 colors.add(Color.parseColor("#4CAF50"));
-            } else if ("Yellow".equalsIgnoreCase(zone)) {
+            } else if ("yellow".equals(normalized)) {
                 colors.add(Color.parseColor("#FFC107"));
-            } else if ("Red".equalsIgnoreCase(zone)) {
+            } else if ("red".equals(normalized)) {
                 colors.add(Color.parseColor("#F44336"));
             } else {
                 colors.add(Color.parseColor("#9E9E9E"));

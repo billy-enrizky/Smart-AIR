@@ -411,17 +411,17 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                     }
 
                     Map<String, Integer> zoneCounts = new HashMap<>();
-                    zoneCounts.put("Green", 0);
-                    zoneCounts.put("Yellow", 0);
-                    zoneCounts.put("Red", 0);
-                    zoneCounts.put("Unknown", 0);
+                    zoneCounts.put("green", 0);
+                    zoneCounts.put("yellow", 0);
+                    zoneCounts.put("red", 0);
+                    zoneCounts.put("unknown", 0);
 
                     if (snapshot.exists() && personalBest != null && personalBest > 0) {
                         for (DataSnapshot child : snapshot.getChildren()) {
                             PEFReading reading = child.getValue(PEFReading.class);
                             if (reading != null) {
                                 Zone zone = ZoneCalculator.calculateZone(reading.getValue(), personalBest);
-                                String zoneName = zone.getDisplayName();
+                                String zoneName = com.example.myapplication.charts.ChartComponent.normalizeZoneName(zone.getDisplayName());
                                 zoneCounts.put(zoneName, zoneCounts.getOrDefault(zoneName, 0) + 1);
                             }
                         }
@@ -490,10 +490,10 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
             return;
         }
         frameLayoutZoneChart.removeAllViews();
-        View chartView = ChartComponent.createChartView(this, frameLayoutZoneChart, ChartComponent.ChartType.PIE);
+        View chartView = ChartComponent.createChartView(this, frameLayoutZoneChart, ChartComponent.ChartType.BAR);
         frameLayoutZoneChart.addView(chartView);
-        com.github.mikephil.charting.charts.PieChart pieChart = chartView.findViewById(R.id.pieChart);
-        ChartComponent.setupPieChart(pieChart, reportData.getZoneDistribution(), "Zone Distribution");
+        com.github.mikephil.charting.charts.BarChart barChart = chartView.findViewById(R.id.barChart);
+        ChartComponent.setupBarChart(barChart, reportData.getZoneDistribution(), "Zone Distribution");
     }
 
     private void updateTrendChart() {
@@ -683,20 +683,20 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         });
     }
 
-    private PieChart createPieChartForPDF(int width, int height) {
-        PieChart pieChart = new PieChart(this);
+    private BarChart createBarChartForPDF(int width, int height) {
+        BarChart barChart = new BarChart(this);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
         );
-        pieChart.setLayoutParams(params);
-        pieChart.setBackgroundColor(Color.WHITE);
+        barChart.setLayoutParams(params);
+        barChart.setBackgroundColor(Color.WHITE);
         
         if (reportData.getZoneDistribution() != null && !reportData.getZoneDistribution().isEmpty()) {
-            ChartComponent.setupPieChart(pieChart, reportData.getZoneDistribution(), "Zone Distribution");
+            ChartComponent.setupBarChart(barChart, reportData.getZoneDistribution(), "Zone Distribution");
         }
         
-        return pieChart;
+        return barChart;
     }
 
     private LineChart createLineChartForPDF(int width, int height) {
@@ -966,9 +966,9 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
             
             int chartWidth = pageWidth - (int)(margin * 2);
             int chartHeight = 400;
-            PieChart pieChart = createPieChartForPDF(chartWidth, chartHeight);
-            if (pieChart != null) {
-                Bitmap zoneChartBitmap = getChartBitmap(pieChart, chartWidth, chartHeight);
+            BarChart barChart = createBarChartForPDF(chartWidth, chartHeight);
+            if (barChart != null) {
+                Bitmap zoneChartBitmap = getChartBitmap(barChart, chartWidth, chartHeight);
                 if (zoneChartBitmap != null) {
                     canvas.drawBitmap(zoneChartBitmap, margin, y, paint);
                     y += zoneChartBitmap.getHeight() + sectionSpacing;
