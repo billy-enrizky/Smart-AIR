@@ -14,6 +14,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Firebase configuration from google-services.json
+        // Project ID: group7-66146
+        // API Key: AIzaSyDyKnTKeQN3hr-qGxdDfLcfnyROmiv8OUU
+        // Database URL: https://group7-66146-default-rtdb.firebaseio.com
+        // Mobile SDK App ID: 1:873564343719:android:e730a81906076d82daba82
+        buildConfigField("String", "FIREBASE_PROJECT_ID", "\"group7-66146\"")
+        buildConfigField("String", "FIREBASE_API_KEY", "\"AIzaSyDyKnTKeQN3hr-qGxdDfLcfnyROmiv8OUU\"")
+        buildConfigField("String", "FIREBASE_DATABASE_URL", "\"https://group7-66146-default-rtdb.firebaseio.com\"")
+        buildConfigField("String", "FIREBASE_APPLICATION_ID", "\"1:873564343719:android:e730a81906076d82daba82\"")
     }
 
     buildTypes {
@@ -31,6 +41,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

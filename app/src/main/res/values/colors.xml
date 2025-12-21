@@ -3,4 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="child_checkin_button_green">#59B300</color>
+    <color name="onboarding_provider_purple">#9C27B0</color>
+    <color name="onboarding_child_green">#4CAF50</color>
+    <color name="onboarding_parent_blue">#2196F3</color>
+    <color name="onboarding_button_cyan">#00E5FF</color>
 </resources>

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.home.ChildActivity;
@@ -65,6 +66,10 @@ public class OnBoardingFragment3 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_on_boarding3, container, false);
+        
+        // Set background color to white
+        view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white));
+        
         Button Start = view.findViewById(R.id.button2);
         Start.setOnClickListener(new View.OnClickListener() {
             @Override

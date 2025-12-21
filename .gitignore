@@ -18,3 +18,4 @@ docs
 *.log
 *.json
 *.md
+*.py
