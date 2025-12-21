@@ -101,13 +101,13 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_child_notes"
-            android:layout_width="400dp"
-            android:layout_height="70dp"
-            android:layout_marginStart="5dp"
+            android:layout_width="337dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/input_field_background"
             android:hint="notes (optional)"
             android:textColorHint="#B0B0B0"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_child_age" />
 
@@ -118,7 +118,7 @@
             android:layout_marginTop="24dp"
             android:onClick="createChildClick"
             android:text="Add"
-            android:textSize="44sp"
+            android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
