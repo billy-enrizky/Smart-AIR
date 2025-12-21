@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.RescueLog;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +32,8 @@ public class RescueLogModel {
             return;
         }
         String username = rescuelog.username;
-        UserManager.mDatabase.child("RescueLogManager").child(username).child(rescuelog.getDate()).setValue(rescuelog).addOnCompleteListener(new OnCompleteListener<Void>() {
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("RescueLogManager").child(encodedUsername).child(rescuelog.getDate()).setValue(rescuelog).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(Task<Void> task) {
                 if(callback != null) {
@@ -42,7 +44,8 @@ public class RescueLogModel {
     }
 
     public static void readFromDB(String username, ResultCallBack<HashMap<String,RescueLog>> callback){
-        UserManager.mDatabase.child("RescueLogManager").child(username)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("RescueLogManager").child(encodedUsername)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -64,7 +67,8 @@ public class RescueLogModel {
     public static void readFromDB(String username,String Date, ResultCallBack<HashMap<String,RescueLog>> callback){
         String begin = Date + "_00:00:00"; // Date is of format of "yyyy-MM-dd" eg. "2025-01-01"
         String end   = Date + "_23:59:59";
-        UserManager.mDatabase.child("RescueLogManager").child(username)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("RescueLogManager").child(encodedUsername)
                 .orderByKey()
                 .startAt(begin)     // eg. "2025-01-01" , "2025-01-01_00:00:00"
                 .endAt(end)         // eg. "2025-03-01" , "2025-03-01_23:59:59"
@@ -87,7 +91,8 @@ public class RescueLogModel {
     }
 
     public static void readFromDB(String username,String begin, String end, ResultCallBack<HashMap<String,RescueLog>> callback){
-        UserManager.mDatabase.child("RescueLogManager").child(username)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("RescueLogManager").child(encodedUsername)
                 .orderByKey()
                 .startAt(begin)     // eg. "2025-01-01" , "2025-01-01_00:00:00"
                 .endAt(end)         // eg. "2025-03-01" , "2025-03-01_23:59:59"

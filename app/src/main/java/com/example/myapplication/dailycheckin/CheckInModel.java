@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.example.myapplication.CallBack;
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.UserManager;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -33,8 +34,9 @@ public class CheckInModel {
     //I don't wanna make sign in too slow.
     public void WriteIntoDB(DailyCheckin checkin, CallBack callback){
         String Date = getDate();
+        String encodedUsername = FirebaseKeyEncoder.encode(checkin.username);
         UserManager.mDatabase.child("CheckInManager")
-                .child(checkin.username).child(Date).setValue(checkin)
+                .child(encodedUsername).child(Date).setValue(checkin)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -57,7 +59,8 @@ public class CheckInModel {
         <It's incorrect to attach A here, as reading might haven't done>
 */
     public static void readFromDB(String username, ResultCallBack<HashMap<String, DailyCheckin>> callback){
-        UserManager.mDatabase.child("CheckInManager").child(username)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("CheckInManager").child(encodedUsername)
             .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -77,7 +80,8 @@ public class CheckInModel {
     }
 
     public static void readFromDB(String username,String Date, ResultCallBack<DailyCheckin> callback){
-        UserManager.mDatabase.child("CheckInManager").child(username).child(Date)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("CheckInManager").child(encodedUsername).child(Date)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -93,7 +97,8 @@ public class CheckInModel {
     }
 
     public static void readFromDB(String username,String begin, String end, ResultCallBack<HashMap<String,DailyCheckin>> callback){
-        UserManager.mDatabase.child("CheckInManager").child(username)
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        UserManager.mDatabase.child("CheckInManager").child(encodedUsername)
                 .orderByKey()
                 .startAt(begin)     // eg. "2025-01-01"
                 .endAt(end)         // eg. "2025-03-01"
