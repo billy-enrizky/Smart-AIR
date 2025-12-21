@@ -59,24 +59,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="#6E8CA0"
-                android:text="Add Date"  android:textColor="#000000"/>
+                android:backgroundTint="#000000"
+                android:text="Add Date"  android:textColor="#FFFFFF"/>
 
             <Button
                 android:id="@+id/buttonSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="#6E8CA0"
-                android:text="Save Schedule"  android:textColor="#000000"/>
+                android:backgroundTint="#000000"
+                android:text="Save Schedule"  android:textColor="#FFFFFF"/>
 
             <Button
                 android:id="@+id/buttonCancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:backgroundTint="#6E8CA0"
-                android:text="Cancel"  android:textColor="#000000"/>
+                android:backgroundTint="#000000"
+                android:text="Cancel"  android:textColor="#FFFFFF"/>
 
         </LinearLayout>
 

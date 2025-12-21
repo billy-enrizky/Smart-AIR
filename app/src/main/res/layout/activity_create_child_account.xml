@@ -15,24 +15,40 @@
         android:paddingTop="16dp"
         android:paddingBottom="32dp">
 
+        <Button
+            android:id="@+id/button14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="48dp"
+            android:backgroundTint="#000000"
+            android:fontFamily="@font/happy_monkey"
+            android:onClick="GoBackToHome"
+            android:text="Back To Home"
+            android:textColor="#FFFFFF"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/create_child_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="104dp"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="24dp"
             android:fontFamily="@font/happy_monkey"
             android:text="Add New Child"
             android:textColor="#000000"
             android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/button14" />
 
         <EditText
             android:id="@+id/input_child_username"
-            android:layout_width="339dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/input_field_background"
             android:ems="10"
             android:fontFamily="@font/happy_monkey"
@@ -41,15 +57,16 @@
             android:textColor="#000000"
             android:textColorHint="#B0B0B0"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.472"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/create_child_title" />
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_child_name"
-            android:layout_width="337dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="160dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/input_field_background"
             android:fontFamily="@font/happy_monkey"
             android:hint="Name"
@@ -57,15 +74,47 @@
             android:textColorHint="#B0B0B0"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.459"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/input_child_username" />
+
+        <EditText
+            android:id="@+id/editTextTextPassword2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/input_field_background"
+            android:ems="10"
+            android:fontFamily="@font/happy_monkey"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textColor="#000000"
+            android:textColorHint="#B0B0B0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/input_child_name" />
+
+        <TextView
+            android:id="@+id/dob_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/happy_monkey"
+            android:text="Date of Birth"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword2" />
 
         <EditText
             android:id="@+id/input_child_dob"
-            android:layout_width="337dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="307dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/input_field_background"
             android:clickable="true"
             android:focusable="false"
@@ -76,28 +125,15 @@
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/dob_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="276dp"
-            android:fontFamily="@font/happy_monkey"
-            android:text="Date of Birth"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/dob_title" />
 
         <EditText
             android:id="@+id/input_child_age"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="87dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/input_field_background"
             android:clickable="false"
             android:ems="10"
@@ -108,14 +144,17 @@
             android:textColor="#000000"
             android:textColorHint="#B0B0B0"
             android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_child_dob" />
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_child_notes"
-            android:layout_width="337dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/input_field_background"
             android:fontFamily="@font/happy_monkey"
             android:hint="notes (optional)"
@@ -129,46 +168,16 @@
             android:id="@+id/create_child_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
             android:fontFamily="@font/happy_monkey"
             android:onClick="createChildClick"
             android:text="Add"
             android:textColor="#000000"
             android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_child_notes" />
-
-        <EditText
-            android:id="@+id/editTextTextPassword2"
-            android:layout_width="337dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="220dp"
-            android:background="@drawable/input_field_background"
-            android:ems="10"
-            android:fontFamily="@font/happy_monkey"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:textColor="#000000"
-            android:textColorHint="#B0B0B0"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/button14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="1dp"
-            android:backgroundTint="#6E8CA0"
-            android:fontFamily="@font/happy_monkey"
-            android:onClick="GoBackToHome"
-            android:text="Back To Home"
-            android:textColor="#FFFFFF"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

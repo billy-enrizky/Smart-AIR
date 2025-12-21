@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="48dp"
-        android:backgroundTint="#6E8CA0"
+        android:backgroundTint="#000000"
         android:text="Back"
         android:textColor="#FFFFFF"
         app:cornerRadius="5dp"

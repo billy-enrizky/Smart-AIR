@@ -66,15 +66,16 @@
         android:id="@+id/backbutton"
         android:layout_width="136dp"
         android:layout_height="60dp"
-        android:backgroundTint="#6E8CA0"
+        android:backgroundTint="#000000"
         android:text="Back"
+        android:textColor="#FFFFFF"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.042"  android:textColor="#000000"/>
+        app:layout_constraintVertical_bias="0.042" />
 
     <Button
         android:id="@+id/confirmbutton"
