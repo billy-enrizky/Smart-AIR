@@ -17,6 +17,8 @@ import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.ControllerLog;
 import com.example.myapplication.ControllerLogModel;
+import com.example.myapplication.RescueLog;
+import com.example.myapplication.RescueLogModel;
 import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.charts.ChartComponent;
 import com.example.myapplication.safety.PEFReading;
@@ -248,6 +250,13 @@ public class TrendSnippetActivity extends AppCompatActivity {
         cal.add(Calendar.DAY_OF_MONTH, -30);
         long startDate = cal.getTimeInMillis();
 
+        Map<String, Integer> dailyCounts = new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDateStr = logDateFormat.format(new Date(startDate));
+        String endDateStr = logDateFormat.format(new Date(endDate));
+
+        // Load from triage sessions (rescueUsage)
         DatabaseReference rescueRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
@@ -259,9 +268,6 @@ public class TrendSnippetActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Map<String, Integer> dailyCounts = new HashMap<>();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         RescueUsage usage = child.getValue(RescueUsage.class);
@@ -273,18 +279,54 @@ public class TrendSnippetActivity extends AppCompatActivity {
                     }
                 }
 
-                runOnUiThread(() -> {
-                    frameLayoutRescueChart.removeAllViews();
-                    View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutRescueChart, ChartComponent.ChartType.BAR);
-                    frameLayoutRescueChart.addView(chartView);
-                    BarChart barChart = chartView.findViewById(R.id.barChart);
-                    ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Rescue Medicine Use Per Day", android.graphics.Color.parseColor("#F44336"));
+                // Load from direct rescue inhaler usage (RescueLogManager)
+                RescueLogModel.readFromDB(childId, startDateStr + "_00:00:00", endDateStr + "_23:59:59", new ResultCallBack<HashMap<String, RescueLog>>() {
+                    @Override
+                    public void onComplete(HashMap<String, RescueLog> logs) {
+                        if (logs != null) {
+                            for (RescueLog log : logs.values()) {
+                                String dateKey = dateFormat.format(new Date(log.getTimestamp()));
+                                int currentCount = dailyCounts.getOrDefault(dateKey, 0);
+                                dailyCounts.put(dateKey, currentCount + 1); // Each RescueLog entry is 1 dose
+                            }
+                        }
+
+                        runOnUiThread(() -> {
+                            frameLayoutRescueChart.removeAllViews();
+                            View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutRescueChart, ChartComponent.ChartType.BAR);
+                            frameLayoutRescueChart.addView(chartView);
+                            BarChart barChart = chartView.findViewById(R.id.barChart);
+                            ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Rescue Medicine Use Per Day", android.graphics.Color.parseColor("#F44336"));
+                        });
+                    }
                 });
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading rescue per day", error.toException());
+                Log.e(TAG, "Error loading rescue per day from triage sessions", error.toException());
+                // Still try to load from direct usage even if triage data fails
+                RescueLogModel.readFromDB(childId, startDateStr + "_00:00:00", endDateStr + "_23:59:59", new ResultCallBack<HashMap<String, RescueLog>>() {
+                    @Override
+                    public void onComplete(HashMap<String, RescueLog> logs) {
+                        Map<String, Integer> dailyCounts = new HashMap<>();
+                        if (logs != null) {
+                            for (RescueLog log : logs.values()) {
+                                String dateKey = dateFormat.format(new Date(log.getTimestamp()));
+                                int currentCount = dailyCounts.getOrDefault(dateKey, 0);
+                                dailyCounts.put(dateKey, currentCount + 1);
+                            }
+                        }
+
+                        runOnUiThread(() -> {
+                            frameLayoutRescueChart.removeAllViews();
+                            View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutRescueChart, ChartComponent.ChartType.BAR);
+                            frameLayoutRescueChart.addView(chartView);
+                            BarChart barChart = chartView.findViewById(R.id.barChart);
+                            ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Rescue Medicine Use Per Day", android.graphics.Color.parseColor("#F44336"));
+                        });
+                    }
+                });
             }
         });
     }
