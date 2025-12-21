@@ -10,7 +10,9 @@ import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -18,10 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
@@ -68,17 +73,17 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     private Button buttonEndDate;
     private Button buttonGeneratePDF;
     private TextView textViewChildName;
-    private TextView textViewRescueFrequency;
-    private TextView textViewAdherence;
-    private TextView textViewSymptomBurden;
     private FrameLayout frameLayoutZoneChart;
     private FrameLayout frameLayoutTrendChart;
     private FrameLayout frameLayoutRescueChart;
     private FrameLayout frameLayoutSymptomsChart;
     private FrameLayout frameLayoutMedicineChart;
 
-    private LinearLayout linearLayoutSharedItems;
+    private RecyclerView recyclerViewSharedItems;
+    private RecyclerView recyclerViewReportSummary;
     private TextView textViewNoSharing;
+    private SharingStatusAdapter sharingStatusAdapter;
+    private ReportSummaryAdapter reportSummaryAdapter;
 
     private String parentId;
     private String childId;
@@ -135,17 +140,23 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         buttonEndDate = findViewById(R.id.buttonEndDate);
         buttonGeneratePDF = findViewById(R.id.buttonGeneratePDF);
         textViewChildName = findViewById(R.id.textViewChildName);
-        textViewRescueFrequency = findViewById(R.id.textViewRescueFrequency);
-        textViewAdherence = findViewById(R.id.textViewAdherence);
-        textViewSymptomBurden = findViewById(R.id.textViewSymptomBurden);
         frameLayoutZoneChart = findViewById(R.id.frameLayoutZoneChart);
         frameLayoutTrendChart = findViewById(R.id.frameLayoutTrendChart);
         frameLayoutRescueChart = findViewById(R.id.frameLayoutRescueChart);
         frameLayoutSymptomsChart = findViewById(R.id.frameLayoutSymptomsChart);
         frameLayoutMedicineChart = findViewById(R.id.frameLayoutMedicineChart);
 
-        linearLayoutSharedItems = findViewById(R.id.linearLayoutSharedItems);
+        recyclerViewSharedItems = findViewById(R.id.recyclerViewSharedItems);
+        recyclerViewReportSummary = findViewById(R.id.recyclerViewReportSummary);
         textViewNoSharing = findViewById(R.id.textViewNoSharing);
+
+        sharingStatusAdapter = new SharingStatusAdapter(new ArrayList<>());
+        recyclerViewSharedItems.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewSharedItems.setAdapter(sharingStatusAdapter);
+
+        reportSummaryAdapter = new ReportSummaryAdapter(new ArrayList<>());
+        recyclerViewReportSummary.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewReportSummary.setAdapter(reportSummaryAdapter);
 
         if (childName != null) {
             textViewChildName.setText("Child: " + childName);
@@ -187,12 +198,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
 
     private void updateSharedTag() {
         if (childPermissions == null) {
-            linearLayoutSharedItems.setVisibility(View.GONE);
+            recyclerViewSharedItems.setVisibility(View.GONE);
             textViewNoSharing.setVisibility(View.VISIBLE);
+            sharingStatusAdapter.updateItems(new ArrayList<>());
             return;
         }
 
-        linearLayoutSharedItems.removeAllViews();
         List<String> sharedItems = new ArrayList<>();
 
         if (Boolean.TRUE.equals(childPermissions.getRescueLogs())) {
@@ -218,20 +229,13 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
         }
 
         if (sharedItems.isEmpty()) {
-            linearLayoutSharedItems.setVisibility(View.GONE);
+            recyclerViewSharedItems.setVisibility(View.GONE);
             textViewNoSharing.setVisibility(View.VISIBLE);
+            sharingStatusAdapter.updateItems(new ArrayList<>());
         } else {
             textViewNoSharing.setVisibility(View.GONE);
-            linearLayoutSharedItems.setVisibility(View.VISIBLE);
-
-            for (String item : sharedItems) {
-                TextView itemView = new TextView(this);
-                itemView.setText("• " + item);
-                itemView.setTextSize(14f);
-                itemView.setTextColor(android.graphics.Color.parseColor("#4CAF50"));
-                itemView.setPadding(0, 4, 0, 4);
-                linearLayoutSharedItems.addView(itemView);
-            }
+            recyclerViewSharedItems.setVisibility(View.VISIBLE);
+            sharingStatusAdapter.updateItems(sharedItems);
         }
     }
 
@@ -624,9 +628,17 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
 
     private void updateUI() {
         if (reportData.getRescueFrequency() >= 0 && reportData.getControllerAdherence() >= 0 && reportData.getSymptomBurdenDays() >= 0) {
-            textViewRescueFrequency.setText("Rescue Frequency: " + reportData.getRescueFrequency() + " uses");
-            textViewAdherence.setText("Controller Adherence: " + String.format(Locale.getDefault(), "%.1f%%", reportData.getControllerAdherence()));
-            textViewSymptomBurden.setText("Symptom Burden: " + reportData.getSymptomBurdenDays() + " problem days");
+            List<String> summaryItems = new ArrayList<>();
+            summaryItems.add("Rescue Frequency: " + reportData.getRescueFrequency() + " uses");
+            summaryItems.add("Controller Adherence: " + String.format(Locale.getDefault(), "%.1f%%", reportData.getControllerAdherence()));
+            summaryItems.add("Symptom Burden: " + reportData.getSymptomBurdenDays() + " problem days");
+            reportSummaryAdapter.updateItems(summaryItems);
+        } else {
+            List<String> summaryItems = new ArrayList<>();
+            summaryItems.add("Rescue Frequency: Loading...");
+            summaryItems.add("Controller Adherence: Loading...");
+            summaryItems.add("Symptom Burden: Loading...");
+            reportSummaryAdapter.updateItems(summaryItems);
         }
     }
 
@@ -1508,6 +1520,90 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
             sum += point.getPefValue();
         }
         return sum / reportData.getPefTrendData().size();
+    }
+
+    private class SharingStatusAdapter extends RecyclerView.Adapter<SharingStatusAdapter.ViewHolder> {
+        private List<String> sharedItems;
+
+        public SharingStatusAdapter(List<String> sharedItems) {
+            this.sharedItems = sharedItems;
+        }
+
+        public void updateItems(List<String> newItems) {
+            this.sharedItems = newItems;
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_provider_sharing_status, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            if (position >= 0 && position < sharedItems.size()) {
+                holder.textViewSharedItem.setText("• " + sharedItems.get(position));
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return sharedItems != null ? sharedItems.size() : 0;
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView textViewSharedItem;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                textViewSharedItem = itemView.findViewById(R.id.textViewSharedItem);
+            }
+        }
+    }
+
+    private class ReportSummaryAdapter extends RecyclerView.Adapter<ReportSummaryAdapter.ViewHolder> {
+        private List<String> summaryItems;
+
+        public ReportSummaryAdapter(List<String> summaryItems) {
+            this.summaryItems = summaryItems;
+        }
+
+        public void updateItems(List<String> newItems) {
+            this.summaryItems = newItems;
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_report_summary, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            if (position >= 0 && position < summaryItems.size()) {
+                holder.textViewSummaryItem.setText(summaryItems.get(position));
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return summaryItems != null ? summaryItems.size() : 0;
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView textViewSummaryItem;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                textViewSummaryItem = itemView.findViewById(R.id.textViewSummaryItem);
+            }
+        }
     }
 }
 

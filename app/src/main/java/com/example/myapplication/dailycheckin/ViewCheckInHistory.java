@@ -10,12 +10,16 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.ResultCallBack;
@@ -42,9 +46,13 @@ public class ViewCheckInHistory extends AppCompatActivity {
     private static final String TAG = "ViewCheckInHistory";
     
     TextView historyTextTitle;
-    TextView historyText;
+    TextView textViewEmpty;
+    RecyclerView recyclerViewCheckIns;
     String history = "";
     Button exportButton;
+    
+    private CheckInAdapter adapter;
+    private ArrayList<DailyCheckin> checkIns;
     
     // Realtime listener references for both encoded and raw paths
     private DatabaseReference checkInRefEncoded;
@@ -70,8 +78,14 @@ public class ViewCheckInHistory extends AppCompatActivity {
         }else{
             historyTextTitle.setText("History for " + SignInChildProfileActivity.getCurrentChild().getName());
         }
-        this.historyText = (TextView)findViewById(R.id.display_history);
+        this.textViewEmpty = (TextView)findViewById(R.id.textViewEmpty);
+        this.recyclerViewCheckIns = (RecyclerView)findViewById(R.id.recyclerViewCheckIns);
         exportButton = (Button)findViewById(R.id.export_pdf_button);
+        
+        checkIns = new ArrayList<>();
+        adapter = new CheckInAdapter(checkIns);
+        recyclerViewCheckIns.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewCheckIns.setAdapter(adapter);
         exportButton.setOnClickListener(v -> {
             // Call your PDF export logic here.
             try {
@@ -370,8 +384,26 @@ public class ViewCheckInHistory extends AppCompatActivity {
         }
         
         Log.d(TAG, "Displaying " + datesProcessed + " check-ins (filtered from " + totalEntries + " total entries)");
-        historyText.setText(history);
-        historyText.setTextSize(14);
+        
+        // Update RecyclerView adapter
+        checkIns.clear();
+        for (String date : datesInOrder) {
+            ArrayList<DailyCheckin> entriesForDate = entriesByDate.get(date);
+            Collections.sort(entriesForDate, (a, b) -> Long.compare(
+                (b.getTimestamp() != 0 ? b.getTimestamp() : 0),
+                (a.getTimestamp() != 0 ? a.getTimestamp() : 0)
+            ));
+            checkIns.addAll(entriesForDate);
+        }
+        adapter.notifyDataSetChanged();
+        
+        if (checkIns.isEmpty()) {
+            textViewEmpty.setVisibility(View.VISIBLE);
+            recyclerViewCheckIns.setVisibility(View.GONE);
+        } else {
+            textViewEmpty.setVisibility(View.GONE);
+            recyclerViewCheckIns.setVisibility(View.VISIBLE);
+        }
     }
     
     private void detachCheckInListener() {
@@ -469,5 +501,97 @@ public class ViewCheckInHistory extends AppCompatActivity {
         }
 
         document.close();
+    }
+    
+    private class CheckInAdapter extends RecyclerView.Adapter<CheckInAdapter.ViewHolder> {
+        private ArrayList<DailyCheckin> checkIns;
+        private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+        public CheckInAdapter(ArrayList<DailyCheckin> checkIns) {
+            this.checkIns = checkIns;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_check_in_history, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            DailyCheckin entry = checkIns.get(position);
+            
+            // Format date and time
+            String dateTime;
+            if (entry.getTimestamp() != 0) {
+                dateTime = dateFormat.format(new Date(entry.getTimestamp())) + " " + 
+                          timeFormat.format(new Date(entry.getTimestamp()));
+            } else {
+                dateTime = "Unknown";
+            }
+            holder.textViewDate.setText(dateTime);
+            
+            // Show who logged the check-in
+            holder.textViewLoggedBy.setText("Logged by: " + entry.getLoggedBy());
+            
+            // Show symptoms if not provider or if provider has permission
+            if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER)) {
+                holder.textViewNightWaking.setText("Night waking: " + entry.getNightWaking());
+                holder.textViewNightWaking.setVisibility(View.VISIBLE);
+                
+                holder.textViewActivityLimits.setText(entry.getActivityLimits());
+                holder.textViewActivityLimits.setVisibility(View.VISIBLE);
+                
+                holder.textViewCoughWheeze.setText("Cough/Wheeze level: " + entry.getCoughWheezeLevel());
+                holder.textViewCoughWheeze.setVisibility(View.VISIBLE);
+            } else {
+                holder.textViewNightWaking.setVisibility(View.GONE);
+                holder.textViewActivityLimits.setVisibility(View.GONE);
+                holder.textViewCoughWheeze.setVisibility(View.GONE);
+            }
+            
+            // Show triggers if not provider or if provider has permission
+            if (!UserManager.currentUser.getAccount().equals(AccountType.PROVIDER)) {
+                StringBuilder triggersText = new StringBuilder("Triggers: ");
+                if (entry.getTriggers() != null && !entry.getTriggers().isEmpty()) {
+                    for (int i = 0; i < entry.getTriggers().size(); i++) {
+                        if (i > 0) triggersText.append(", ");
+                        triggersText.append(entry.getTriggers().get(i));
+                    }
+                } else {
+                    triggersText.append("None");
+                }
+                holder.textViewTriggers.setText(triggersText.toString());
+                holder.textViewTriggers.setVisibility(View.VISIBLE);
+            } else {
+                holder.textViewTriggers.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return checkIns.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView textViewDate;
+            TextView textViewLoggedBy;
+            TextView textViewNightWaking;
+            TextView textViewActivityLimits;
+            TextView textViewCoughWheeze;
+            TextView textViewTriggers;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                textViewDate = itemView.findViewById(R.id.textViewDate);
+                textViewLoggedBy = itemView.findViewById(R.id.textViewLoggedBy);
+                textViewNightWaking = itemView.findViewById(R.id.textViewNightWaking);
+                textViewActivityLimits = itemView.findViewById(R.id.textViewActivityLimits);
+                textViewCoughWheeze = itemView.findViewById(R.id.textViewCoughWheeze);
+                textViewTriggers = itemView.findViewById(R.id.textViewTriggers);
+            }
+        }
     }
 }

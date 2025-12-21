@@ -89,12 +89,11 @@
                 android:textSize="16sp"
                 android:textStyle="bold"  android:textColor="#000000"/>
 
-            <LinearLayout
-                android:id="@+id/linearLayoutSharedItems"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSharedItems"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical"
                 android:visibility="gone" />
 
             <TextView
@@ -115,29 +114,11 @@
                 android:textSize="16sp"
                 android:textStyle="bold"  android:textColor="#000000"/>
 
-            <TextView
-                android:id="@+id/textViewRescueFrequency"
-                android:layout_width="wrap_content"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewReportSummary"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Rescue Frequency: Loading..."
-                android:textSize="14sp"  android:textColor="#000000"/>
-
-            <TextView
-                android:id="@+id/textViewAdherence"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Controller Adherence: Loading..."
-                android:textSize="14sp"  android:textColor="#000000"/>
-
-            <TextView
-                android:id="@+id/textViewSymptomBurden"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Symptom Burden: Loading..."
-                android:textSize="14sp"  android:textColor="#000000"/>
+                android:layout_marginTop="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
