@@ -19,3 +19,8 @@ docs
 *.json
 *.md
 *.py
+# Keystore files - DO NOT COMMIT
+app/keystore/
+app/keystore.properties
+*.keystore
+*.jks

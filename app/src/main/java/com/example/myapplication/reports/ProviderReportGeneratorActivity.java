@@ -643,6 +643,13 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadSymptomsPerDay() {
+        Map<String, Integer> dailyCounts = new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDateStr = logDateFormat.format(new Date(startDate));
+        String endDateStr = logDateFormat.format(new Date(endDate));
+
+        // Load from triage sessions (incidents)
         String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
@@ -651,29 +658,71 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                 .child(encodedChildId)
                 .child("incidents");
 
-        Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Use direct listener instead of orderByChild query to avoid index requirements
+        // Filter by date range in code after loading
+        incidentRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Map<String, Integer> dailyCounts = new HashMap<>();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         TriageIncident incident = child.getValue(TriageIncident.class);
-                        if (incident != null) {
+                        if (incident != null && incident.getTimestamp() >= startDate && incident.getTimestamp() <= endDate) {
                             String dateKey = dateFormat.format(new Date(incident.getTimestamp()));
                             dailyCounts.put(dateKey, dailyCounts.getOrDefault(dateKey, 0) + 1);
                         }
                     }
+                    Log.d(TAG, "Loaded incidents from Firebase path: " + incidentRef.toString());
+                } else {
+                    Log.d(TAG, "No incidents found at Firebase path: " + incidentRef.toString());
                 }
 
-                updateSymptomsChart(dailyCounts);
+                // Also load from daily check-ins (CheckInManager)
+                com.example.myapplication.dailycheckin.CheckInModel.readFromDB(childId, startDateStr, endDateStr, new com.example.myapplication.ResultCallBack<HashMap<String, com.example.myapplication.dailycheckin.DailyCheckin>>() {
+                    @Override
+                    public void onComplete(HashMap<String, com.example.myapplication.dailycheckin.DailyCheckin> checkIns) {
+                        if (checkIns != null) {
+                            for (Map.Entry<String, com.example.myapplication.dailycheckin.DailyCheckin> entry : checkIns.entrySet()) {
+                                String dateKey = entry.getKey(); // CheckInManager uses date as key (yyyy-MM-dd)
+                                com.example.myapplication.dailycheckin.DailyCheckin checkIn = entry.getValue();
+                                // Count check-ins with symptoms (coughWheezeLevel > 0 or nightWaking or activityLimits)
+                                if (checkIn != null && (checkIn.getCoughWheezeLevel() > 0 || checkIn.getNightWaking() || 
+                                        (checkIn.getActivityLimits() != null && !checkIn.getActivityLimits().isEmpty()))) {
+                                    if (dateKey != null && !dateKey.isEmpty()) {
+                                        dailyCounts.put(dateKey, dailyCounts.getOrDefault(dateKey, 0) + 1);
+                                    }
+                                }
+                            }
+                        }
+
+                        updateSymptomsChart(dailyCounts);
+                    }
+                });
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading symptoms per day", error.toException());
+                Log.e(TAG, "Error loading symptoms per day from triage sessions at Firebase path: " + incidentRef.toString(), error.toException());
+                // Still try to load from daily check-ins even if triage data fails
+                com.example.myapplication.dailycheckin.CheckInModel.readFromDB(childId, startDateStr, endDateStr, new com.example.myapplication.ResultCallBack<HashMap<String, com.example.myapplication.dailycheckin.DailyCheckin>>() {
+                    @Override
+                    public void onComplete(HashMap<String, com.example.myapplication.dailycheckin.DailyCheckin> checkIns) {
+                        Map<String, Integer> dailyCounts = new HashMap<>();
+                        if (checkIns != null) {
+                            for (Map.Entry<String, com.example.myapplication.dailycheckin.DailyCheckin> entry : checkIns.entrySet()) {
+                                String dateKey = entry.getKey(); // CheckInManager uses date as key (yyyy-MM-dd)
+                                com.example.myapplication.dailycheckin.DailyCheckin checkIn = entry.getValue();
+                                if (checkIn != null && (checkIn.getCoughWheezeLevel() > 0 || checkIn.getNightWaking() || 
+                                        (checkIn.getActivityLimits() != null && !checkIn.getActivityLimits().isEmpty()))) {
+                                    if (dateKey != null && !dateKey.isEmpty()) {
+                                        dailyCounts.put(dateKey, dailyCounts.getOrDefault(dateKey, 0) + 1);
+                                    }
+                                }
+                            }
+                        }
+
+                        updateSymptomsChart(dailyCounts);
+                    }
+                });
             }
         });
     }
