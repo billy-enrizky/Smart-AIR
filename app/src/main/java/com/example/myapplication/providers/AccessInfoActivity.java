@@ -3,6 +3,8 @@ package com.example.myapplication.providers;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,6 +46,7 @@ public class AccessInfoActivity extends AppCompatActivity {
     Button peakFlow;
     Button triageIncidents;
     Button summaryCharts;
+    TextView textViewClickChildFirst;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -70,19 +73,18 @@ public class AccessInfoActivity extends AppCompatActivity {
         triageIncidents.setVisibility(Button.GONE);
         summaryCharts = findViewById(R.id.sc);
         summaryCharts.setVisibility(Button.GONE);
+        textViewClickChildFirst = findViewById(R.id.textViewClickChildFirst);
         container = findViewById(R.id.childListContainer);
+        textView = findViewById(R.id.textViewCurrentChild);
+        textView.setText("Current Child: null\nClick name to switch");
         UserManager.isProviderAccount(this);
         currentUser = (ProviderAccount) UserManager.currentUser;
         LinkedParentsId = currentUser.getLinkedParentsId();
         LinkedChildren = new ArrayList<>();
         initialization();
+        SetButtonVisibility();
     }
     public void initialization(){
-        textView = new TextView(this);
-        textView.setText("Current Child: null" + "\nClick name to switch");
-        textView.setTextSize(20);
-        textView.setPadding(40,30,40,30);
-        container.addView(textView);
         for(int i = 0; i < LinkedParentsId.size(); i++) {
             String ParentID = LinkedParentsId.get(i);
             ParentAccount parent = new ParentAccount();
@@ -119,16 +121,28 @@ public class AccessInfoActivity extends AppCompatActivity {
                 !currentPermission.getTriageIncidents()){
             return;
         }
-        TextView tv = new TextView(this);
-        tv.setText("Name: " + child.getName() + "\n" + "Notes: " + child.getNotes());
-        tv.setTextSize(20);
-        tv.setPadding(40,30,40,30);
-        tv.setOnClickListener(v -> {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View cardView = inflater.inflate(R.layout.item_child_card_provider, container, false);
+        
+        TextView textViewChildName = cardView.findViewById(R.id.textViewChildName);
+        TextView textViewNotes = cardView.findViewById(R.id.textViewNotes);
+        
+        textViewChildName.setText(child.getName());
+        
+        String notes = child.getNotes();
+        if(notes != null && !notes.trim().isEmpty()){
+            textViewNotes.setText(notes);
+        } else {
+            textViewNotes.setText("No notes");
+        }
+        
+        cardView.setOnClickListener(v -> {
             currentChild = child;
-            textView.setText("Current Child: " + child.getName() +   "\nClick name to switch");
+            textView.setText("Current Child: " + child.getName() + "\nClick name to switch");
             SetButtonVisibility();
         });
-        container.addView(tv);
+        
+        container.addView(cardView);
     }
     public void SetButtonVisibility(){
         if(currentChild == null){
@@ -139,8 +153,10 @@ public class AccessInfoActivity extends AppCompatActivity {
             peakFlow.setVisibility(Button.GONE);
             triageIncidents.setVisibility(Button.GONE);
             summaryCharts.setVisibility(Button.GONE);
+            textViewClickChildFirst.setVisibility(TextView.VISIBLE);
             return;
         }
+        textViewClickChildFirst.setVisibility(TextView.GONE);
         if(!currentChild.getPermission().getPeakFlow()){//PEF
             peakFlow.setVisibility(Button.GONE);
         }else{
