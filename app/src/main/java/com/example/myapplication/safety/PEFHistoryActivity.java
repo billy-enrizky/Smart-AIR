@@ -23,6 +23,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -148,18 +149,19 @@ public class PEFHistoryActivity extends AppCompatActivity {
     private void loadHistory(String parentId, String childId) {
         historyItems.clear();
         
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         DatabaseReference historyRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("history");
 
         Query pefQuery = pefRef.orderByChild("timestamp");
@@ -265,18 +267,19 @@ public class PEFHistoryActivity extends AppCompatActivity {
     }
 
     private void removeAllHistory() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         DatabaseReference historyRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("history");
 
         pefRef.removeValue().addOnCompleteListener(task1 -> {
@@ -296,13 +299,14 @@ public class PEFHistoryActivity extends AppCompatActivity {
     }
 
     private void deleteHistoryItem(HistoryItem item, int position) {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         if (item.isZoneChange()) {
             ZoneChangeEvent event = item.getZoneChange();
             DatabaseReference historyRef = UserManager.mDatabase
                     .child("users")
                     .child(parentId)
                     .child("children")
-                    .child(childId)
+                    .child(encodedChildId)
                     .child("history")
                     .child(String.valueOf(event.getTimestamp()));
 
@@ -328,7 +332,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
                     .child("users")
                     .child(parentId)
                     .child("children")
-                    .child(childId)
+                    .child(encodedChildId)
                     .child("pefReadings")
                     .child(String.valueOf(reading.getTimestamp()));
 
@@ -340,7 +344,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
                                 .child("users")
                                 .child(parentId)
                                 .child("children")
-                                .child(childId)
+                                .child(encodedChildId)
                                 .child("history")
                                 .child(String.valueOf(event.getTimestamp()));
                         historyRef.removeValue();

@@ -39,6 +39,7 @@ import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -160,11 +161,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadChildPermissions() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -298,11 +300,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadRescueFrequency() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference rescueRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("rescueUsage");
 
         Query query = rescueRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -362,11 +365,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadAdherence() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -389,11 +393,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadSymptomBurden() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -421,11 +426,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadZoneDistribution() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         Query query = pefRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -436,7 +442,7 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
                         .child("users")
                         .child(parentId)
                         .child("children")
-                        .child(childId);
+                        .child(encodedChildId);
 
                 childRef.child("personalBest").get().addOnCompleteListener(pbTask -> {
                     Integer personalBest = null;
@@ -480,11 +486,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadPEFTrend() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         Query query = pefRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -551,11 +558,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadRescuePerDay() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference rescueRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("rescueUsage");
 
         Query query = rescueRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -635,11 +643,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadSymptomsPerDay() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -711,11 +720,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadPersonalBest() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.child("personalBest").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult().getValue() != null) {
@@ -730,11 +740,12 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadTriageIncidents() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);

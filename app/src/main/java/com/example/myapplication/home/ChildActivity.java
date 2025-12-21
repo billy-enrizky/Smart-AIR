@@ -39,6 +39,7 @@ import com.example.myapplication.safety.TriageActivity;
 import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -304,11 +305,12 @@ public class ChildActivity extends AppCompatActivity {
         detachZoneListeners();
 
         // Attach listener for PEF readings (real-time updates)
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         pefReadingsRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         latestPEFQuery = pefReadingsRef.orderByChild("timestamp").limitToLast(1);
@@ -337,7 +339,7 @@ public class ChildActivity extends AppCompatActivity {
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childAccountListener = new ValueEventListener() {
             @Override

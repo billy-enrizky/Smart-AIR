@@ -24,6 +24,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.notifications.AlertDetector;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.HashMap;
@@ -71,11 +72,12 @@ public class TriageActivity extends AppCompatActivity {
             childId = intent.getStringExtra("childId");
             parentId = intent.getStringExtra("parentId");
             
+            String encodedChildId = FirebaseKeyEncoder.encode(childId);
             DatabaseReference childRef = UserManager.mDatabase
                     .child("users")
                     .child(parentId)
                     .child("children")
-                    .child(childId);
+                    .child(encodedChildId);
             
             childRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult().getValue() != null) {
@@ -410,11 +412,12 @@ public class TriageActivity extends AppCompatActivity {
         
         String parentId = childAccount.getParent_id();
         String childId = childAccount.getID();
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings")
                 .child(String.valueOf(timestamp));
         
@@ -449,12 +452,13 @@ public class TriageActivity extends AppCompatActivity {
     private void fetchLatestPEFAndCalculateZone(Integer personalBest) {
         String parentId = childAccount.getParent_id();
         String childId = childAccount.getID();
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
         
         pefRef.orderByChild("timestamp").limitToLast(1).get().addOnCompleteListener(task -> {
@@ -589,11 +593,12 @@ public class TriageActivity extends AppCompatActivity {
         
         String parentId = childAccount.getParent_id();
         String childId = childAccount.getID();
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents")
                 .child(String.valueOf(incident.getTimestamp()));
         
@@ -611,12 +616,15 @@ public class TriageActivity extends AppCompatActivity {
     }
 
     private void saveRescueUsage(int count) {
+        String parentId = childAccount.getParent_id();
+        String childId = childAccount.getID();
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         for (int i = 0; i < count; i++) {
             DatabaseReference rescueRef = UserManager.mDatabase
                     .child("users")
-                    .child(childAccount.getParent_id())
+                    .child(parentId)
                     .child("children")
-                    .child(childAccount.getID())
+                    .child(encodedChildId)
                     .child("rescueUsage")
                     .child(String.valueOf(System.currentTimeMillis() + i));
             
@@ -638,6 +646,7 @@ public class TriageActivity extends AppCompatActivity {
     private void checkRapidRescueAlert() {
         String parentId = childAccount.getParent_id();
         String childId = childAccount.getID();
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         
         long threeHoursAgo = System.currentTimeMillis() - (3 * 60 * 60 * 1000);
         
@@ -645,7 +654,7 @@ public class TriageActivity extends AppCompatActivity {
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("rescueUsage");
         
         rescueRef.orderByChild("timestamp").startAt(threeHoursAgo).get().addOnCompleteListener(task -> {

@@ -27,6 +27,7 @@ import com.example.myapplication.safety.TriageIncident;
 import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -102,11 +103,12 @@ public class TrendSnippetActivity extends AppCompatActivity {
     }
 
     private void loadChildAccount() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -151,11 +153,12 @@ public class TrendSnippetActivity extends AppCompatActivity {
         cal.add(Calendar.DAY_OF_MONTH, -30);
         long startDate = cal.getTimeInMillis();
 
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         Query query = pefRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -205,11 +208,12 @@ public class TrendSnippetActivity extends AppCompatActivity {
         cal.add(Calendar.DAY_OF_MONTH, -30);
         long startDate = cal.getTimeInMillis();
 
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         Query query = pefRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -257,11 +261,12 @@ public class TrendSnippetActivity extends AppCompatActivity {
         String endDateStr = logDateFormat.format(new Date(endDate));
 
         // Load from triage sessions (rescueUsage)
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference rescueRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("rescueUsage");
 
         Query query = rescueRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
@@ -337,11 +342,12 @@ public class TrendSnippetActivity extends AppCompatActivity {
         cal.add(Calendar.DAY_OF_MONTH, -30);
         long startDate = cal.getTimeInMillis();
 
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);

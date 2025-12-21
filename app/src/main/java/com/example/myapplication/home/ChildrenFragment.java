@@ -39,6 +39,7 @@ import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ParentAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.example.myapplication.childmanaging.CreateChildActivity;
 import com.example.myapplication.childmanaging.EditNotesActivity;
 import com.google.firebase.database.DataSnapshot;
@@ -185,12 +186,13 @@ public class ChildrenFragment extends Fragment {
     private void attachChildZoneListener(ChildAccount child) {
         String parentId = child.getParent_id();
         String childId = child.getID();
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
         
         Query latestPEFQuery = pefRef.orderByChild("timestamp").limitToLast(1);
@@ -227,7 +229,7 @@ public class ChildrenFragment extends Fragment {
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
         
         childAccountRefs.put(childId, childAccountRef);
         

@@ -21,6 +21,7 @@ import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.safety.ZoneChangeEvent;
 import com.example.myapplication.notifications.AlertDetector;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DatabaseReference;
 import android.content.Intent;
 
@@ -118,11 +119,12 @@ public class PEFEntryActivity extends AppCompatActivity {
 
         PEFReading reading = new PEFReading(pefValue, timestamp, preMed, postMed, notes);
 
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings")
                 .child(String.valueOf(timestamp));
 
@@ -144,11 +146,12 @@ public class PEFEntryActivity extends AppCompatActivity {
     }
 
     private void checkAndLogZoneChange(int pefValue) {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
         
         childRef.child("personalBest").get().addOnCompleteListener(task -> {
             if (!task.isSuccessful() || task.getResult().getValue() == null) {
@@ -175,7 +178,7 @@ public class PEFEntryActivity extends AppCompatActivity {
                     .child("users")
                     .child(parentId)
                     .child("children")
-                    .child(childId)
+                    .child(encodedChildId)
                     .child("history");
 
             historyRef.orderByKey().limitToLast(1).get().addOnCompleteListener(historyTask -> {
@@ -216,11 +219,12 @@ public class PEFEntryActivity extends AppCompatActivity {
         if (childId == null || parentId == null) {
             return;
         }
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
         
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {

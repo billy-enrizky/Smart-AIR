@@ -3,6 +3,7 @@ package com.example.myapplication.notifications;
 import android.util.Log;
 
 import com.example.myapplication.UserManager;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.example.myapplication.safety.PEFReading;
 import com.example.myapplication.safety.Zone;
 import com.example.myapplication.safety.ZoneCalculator;
@@ -38,12 +39,13 @@ public class AlertDetector {
 
     public static void checkRapidRescue(String parentId, String childId, String childName) {
         long threeHoursAgo = System.currentTimeMillis() - (3 * 60 * 60 * 1000L);
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
 
         DatabaseReference rescueRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("rescueUsage");
 
         Query query = rescueRef.orderByChild("timestamp").startAt(threeHoursAgo);
@@ -83,11 +85,12 @@ public class AlertDetector {
             return;
         }
 
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("pefReadings");
 
         Query query = pefRef.orderByChild("timestamp").limitToLast(2);
