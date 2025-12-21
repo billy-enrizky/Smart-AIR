@@ -164,8 +164,11 @@ public class PEFHistoryActivity extends AppCompatActivity {
                 .child(encodedChildId)
                 .child("history");
 
+        // IMPORTANT: PEF entries persist forever, just like rescue medicine logs
+        // This method loads ALL PEF readings from Firebase without any date filtering
         // Use addListenerForSingleValueEvent directly instead of orderByChild query
         // This ensures we get all PEF readings regardless of index requirements
+        // No time limit - all historical PEF entries are loaded and displayed
         final int[] loadCount = {0};
         final int totalLoads = 2;
 
@@ -176,13 +179,29 @@ public class PEFHistoryActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    long oldestTimestamp = Long.MAX_VALUE;
+                    long newestTimestamp = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         PEFReading reading = child.getValue(PEFReading.class);
                         if (reading != null) {
                             pefReadings.add(reading);
+                            long timestamp = reading.getTimestamp();
+                            if (timestamp < oldestTimestamp) {
+                                oldestTimestamp = timestamp;
+                            }
+                            if (timestamp > newestTimestamp) {
+                                newestTimestamp = timestamp;
+                            }
                         }
                     }
-                    Log.d(TAG, "Loaded " + pefReadings.size() + " PEF readings from Firebase path: " + pefRef.toString());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    if (pefReadings.size() > 0) {
+                        Log.d(TAG, "Loaded " + pefReadings.size() + " PEF readings from Firebase path: " + pefRef.toString());
+                        Log.d(TAG, "PEF history date range: " + sdf.format(new Date(oldestTimestamp)) + " to " + sdf.format(new Date(newestTimestamp)));
+                        Log.d(TAG, "PEF entries persist forever - all historical entries loaded (no date filtering)");
+                    } else {
+                        Log.d(TAG, "No PEF readings found at Firebase path: " + pefRef.toString());
+                    }
                 } else {
                     Log.d(TAG, "No PEF readings found at Firebase path: " + pefRef.toString());
                 }
@@ -213,6 +232,7 @@ public class PEFHistoryActivity extends AppCompatActivity {
                         }
                     }
                     Log.d(TAG, "Loaded " + zoneChanges.size() + " zone changes from Firebase path: " + historyRef.toString());
+                    Log.d(TAG, "Zone change history persists forever - all historical entries loaded (no date filtering)");
                 } else {
                     Log.d(TAG, "No zone changes found at Firebase path: " + historyRef.toString());
                 }

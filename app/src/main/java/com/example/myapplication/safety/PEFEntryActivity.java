@@ -130,10 +130,13 @@ public class PEFEntryActivity extends AppCompatActivity {
                 .child("pefReadings")
                 .child(String.valueOf(timestamp));
 
+        // PEF entries persist forever in Firebase, just like rescue medicine logs
+        // Each entry is stored with timestamp as key and will never be automatically deleted
         pefRef.setValue(reading)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "PEF reading saved successfully to Firebase: " + pefRef.toString());
+                        Log.d(TAG, "PEF entry will persist forever - stored at: users/" + parentId + "/children/" + encodedChildId + "/pefReadings/" + timestamp);
                         Toast.makeText(this, "PEF reading saved successfully", Toast.LENGTH_SHORT).show();
                         
                         checkAndLogZoneChange(pefValue);
