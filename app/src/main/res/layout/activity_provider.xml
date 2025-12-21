@@ -23,12 +23,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="136dp"
         android:layout_marginBottom="766dp"
+        android:backgroundTint="#000000"
         android:onClick="Signout"
         android:text="Sign out"
         android:textSize="24sp"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"  android:textColor="#000000"/>
+        app:layout_constraintStart_toStartOf="parent"  android:textColor="#FFFFFF"/>
 
     <Button
         android:id="@+id/button16"
