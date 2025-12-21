@@ -17,6 +17,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
 import com.example.myapplication.userdata.ProviderAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
@@ -89,7 +90,8 @@ public class ProviderReportActivity extends AppCompatActivity {
     }
 
     private void checkPermissionAndLoadIncidents() {
-        UserManager.mDatabase.child("users").child(parentId).child("children").child(childId).get()
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
+        UserManager.mDatabase.child("users").child(parentId).child("children").child(encodedChildId).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         ChildAccount child = task.getResult().getValue(ChildAccount.class);
@@ -109,11 +111,12 @@ public class ProviderReportActivity extends AppCompatActivity {
     }
 
     private void loadIncidents() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp");

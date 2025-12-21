@@ -15,6 +15,7 @@ import com.example.myapplication.UserManager;
 import com.example.myapplication.medication.ControllerSchedule;
 import com.example.myapplication.providers.AccessInfoActivity;
 import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.Locale;
@@ -50,11 +51,12 @@ public class AdherenceSummaryActivity extends AppCompatActivity {
         this.finish();
     }
     private void loadAdherence() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {

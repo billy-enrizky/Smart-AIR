@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -90,11 +91,12 @@ public class IncidentHistoryActivity extends AppCompatActivity {
 
 
     private void loadIncidents(String parentId, String childId) {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId)
+                .child(encodedChildId)
                 .child("incidents");
 
         Query query = incidentRef.orderByChild("timestamp");

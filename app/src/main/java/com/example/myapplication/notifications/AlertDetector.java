@@ -152,9 +152,10 @@ public class AlertDetector {
     }
 
     public static void checkInventoryStatus(String parentId, String childId, String childName) {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference inhalerRef = UserManager.mDatabase
                 .child("InhalerManager")
-                .child(childId);
+                .child(encodedChildId);
 
         inhalerRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
