@@ -29,7 +29,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Controller Medication Schedule"
                 android:textSize="20sp"
-                android:textStyle="bold"  android:textColor="#FFFFFF"/>
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/textViewChildName"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Child: "
-                android:textSize="16sp"  android:textColor="#FFFFFF"/>
+                android:textSize="16sp"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/textViewInstructions"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Select specific dates when controller medication should be taken. You can add multiple dates and the schedule does not need to be continuous (every day). Multiple controller doses can be logged on the same day."
-                android:textSize="14sp"  android:textColor="#FFFFFF"/>
+                android:textSize="14sp"  android:textColor="#000000"/>
 
             <LinearLayout
                 android:id="@+id/linearLayoutDates"
