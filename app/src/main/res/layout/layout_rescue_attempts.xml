@@ -60,8 +60,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:background="@drawable/input_field_background"
         android:fontFamily="@font/happy_monkey"
         android:hint="Enter number (1-10)"
+        android:textColorHint="#B0B0B0"
         android:inputType="number"
         android:visibility="gone" />
 

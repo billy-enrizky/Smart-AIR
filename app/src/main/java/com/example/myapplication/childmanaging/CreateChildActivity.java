@@ -2,12 +2,10 @@ package com.example.myapplication.childmanaging;
 
 import static com.google.firebase.auth.FirebaseAuth.getInstance;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -35,7 +33,7 @@ public class CreateChildActivity extends AppCompatActivity {
     private EditText childUsernameEditText;
 
     private EditText childNameEditText;
-    private DatePicker childDobDatePicker;
+    private EditText childDobEditText;
     public int year = Calendar.getInstance().get(Calendar.YEAR);
     public int month = Calendar.getInstance().get(Calendar.MONTH)+1;
     public int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
@@ -44,22 +42,6 @@ public class CreateChildActivity extends AppCompatActivity {
     private EditText childPasswordEditText;
     private Button createChildButton;
     boolean usernameTaken = false;
-    private final View.OnTouchListener datePickerTouchInterceptor = (view, motionEvent) -> {
-        if (motionEvent == null) {
-            return false;
-        }
-        int action = motionEvent.getActionMasked();
-        ViewParent parent = view.getParent();
-        if (parent == null) {
-            return false;
-        }
-        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
-            parent.requestDisallowInterceptTouchEvent(true);
-        } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-            parent.requestDisallowInterceptTouchEvent(false);
-        }
-        return false;
-    };
 
     private FirebaseAuth mAuth;
 
@@ -67,6 +49,12 @@ public class CreateChildActivity extends AppCompatActivity {
         this.year = year;
         this.month = month;
         this.day = day;
+        updateDobDisplay();
+    }
+
+    private void updateDobDisplay() {
+        String dateString = String.format("%d/%d/%d", month, day, year);
+        childDobEditText.setText(dateString);
     }
 
     private void updateAgeFromDob() {
@@ -89,7 +77,7 @@ public class CreateChildActivity extends AppCompatActivity {
             year = todayReset.get(Calendar.YEAR);
             month = todayReset.get(Calendar.MONTH) + 1;
             day = todayReset.get(Calendar.DAY_OF_MONTH);
-            childDobDatePicker.updateDate(year, month - 1, day);
+            updateDobDisplay();
 
             calculatedAge = 0;
         }
@@ -104,15 +92,27 @@ public class CreateChildActivity extends AppCompatActivity {
         childUsernameEditText = (EditText)findViewById(R.id.input_child_username);
         childNameEditText = (EditText)findViewById(R.id.input_child_name);
         childPasswordEditText = (EditText)findViewById(R.id.editTextTextPassword2);
-        childDobDatePicker = (DatePicker)findViewById(R.id.input_child_dob);
-        childDobDatePicker.init(year, month - 1, day, new DatePicker.OnDateChangedListener() {
+        childDobEditText = (EditText)findViewById(R.id.input_child_dob);
+        updateDobDisplay();
+        childDobEditText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDateChanged(DatePicker view, int selectedYear, int selectedMonthOfYear, int selectedDayOfMonth) {
-                setDate(selectedYear, selectedMonthOfYear + 1, selectedDayOfMonth);
-                updateAgeFromDob();
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    CreateChildActivity.this,
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int selectedYear, int selectedMonthOfYear, int selectedDayOfMonth) {
+                            setDate(selectedYear, selectedMonthOfYear + 1, selectedDayOfMonth);
+                            updateAgeFromDob();
+                        }
+                    },
+                    year,
+                    month - 1,
+                    day
+                );
+                datePickerDialog.show();
             }
         });
-        enableDatePickerScroll(childDobDatePicker);
         UserManager.isParentAccount(this);
         childAgeEditText = (EditText)findViewById(R.id.input_child_age);
         updateAgeFromDob();
@@ -122,18 +122,6 @@ public class CreateChildActivity extends AppCompatActivity {
 
     }
 
-    private void enableDatePickerScroll(View view) {
-        if (view == null) {
-            return;
-        }
-        view.setOnTouchListener(datePickerTouchInterceptor);
-        if (view instanceof ViewGroup) {
-            ViewGroup viewGroup = (ViewGroup) view;
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                enableDatePickerScroll(viewGroup.getChildAt(i));
-            }
-        }
-    }
 
     public void createChildClick(View view) {
         usernameTaken = false;

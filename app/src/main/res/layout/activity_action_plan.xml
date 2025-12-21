@@ -58,8 +58,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/input_field_background"
                 android:gravity="top|start"
                 android:hint="Steps for Green Zone"
+                android:textColorHint="#B0B0B0"
                 android:inputType="textMultiLine"
                 android:minLines="3" />
 
@@ -74,8 +76,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/input_field_background"
                 android:gravity="top|start"
                 android:hint="Steps for Yellow Zone"
+                android:textColorHint="#B0B0B0"
                 android:inputType="textMultiLine"
                 android:minLines="3" />
 
@@ -90,8 +94,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/input_field_background"
                 android:gravity="top|start"
                 android:hint="Steps for Red Zone"
+                android:textColorHint="#B0B0B0"
                 android:inputType="textMultiLine"
                 android:minLines="3" />
 
