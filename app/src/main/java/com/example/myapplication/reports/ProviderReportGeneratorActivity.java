@@ -773,9 +773,10 @@ public class ProviderReportGeneratorActivity extends AppCompatActivity {
     }
 
     private void loadTriggers() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference checkInRef = UserManager.mDatabase
                 .child("CheckInManager")
-                .child(childId);
+                .child(encodedChildId);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String startDateStr = dateFormat.format(new Date(startDate));

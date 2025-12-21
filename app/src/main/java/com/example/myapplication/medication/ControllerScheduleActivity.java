@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.R;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.userdata.ChildAccount;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.firebase.database.DatabaseReference;
 
 import java.text.SimpleDateFormat;
@@ -156,11 +157,12 @@ public class ControllerScheduleActivity extends AppCompatActivity {
     }
 
     private void loadExistingSchedule() {
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -186,11 +188,12 @@ public class ControllerScheduleActivity extends AppCompatActivity {
 
         ControllerSchedule schedule = new ControllerSchedule(scheduleDates);
 
+        String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference childRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
-                .child(childId);
+                .child(encodedChildId);
 
         childRef.child("controllerSchedule").setValue(schedule).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
