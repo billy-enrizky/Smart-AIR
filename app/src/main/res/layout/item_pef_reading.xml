@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="Date"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewPEFValue"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="PEF: 0 L/min"
-            android:textSize="18sp" />
+            android:textSize="18sp"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewZoneInfo"
@@ -37,7 +37,7 @@
             android:text=""
             android:textSize="16sp"
             android:textStyle="bold"
-            android:visibility="gone" />
+            android:visibility="gone"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewZonePercentage"
@@ -46,7 +46,7 @@
             android:layout_marginTop="4dp"
             android:text=""
             android:textSize="14sp"
-            android:visibility="gone" />
+            android:visibility="gone"  android:textColor="#000000"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,7 +61,7 @@
                 android:layout_marginEnd="16dp"
                 android:text="Pre-med"
                 android:textSize="14sp"
-                android:visibility="gone" />
+                android:visibility="gone"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/textViewPostMed"
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:text="Post-med"
                 android:textSize="14sp"
-                android:visibility="gone" />
+                android:visibility="gone"  android:textColor="#000000"/>
         </LinearLayout>
 
         <TextView
@@ -79,7 +79,7 @@
             android:layout_marginTop="8dp"
             android:text=""
             android:textSize="14sp"
-            android:visibility="gone" />
+            android:visibility="gone"  android:textColor="#000000"/>
 
         <Button
             android:id="@+id/buttonDelete"

@@ -19,14 +19,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="08:00"
-            android:textSize="18sp" />
+            android:textSize="18sp"  android:textColor="#000000"/>
 
         <Button
             android:id="@+id/buttonRemove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#6E8CA0"
-            android:text="Remove" />
+            android:text="Remove"  android:textColor="#000000"/>
 
     </LinearLayout>
 

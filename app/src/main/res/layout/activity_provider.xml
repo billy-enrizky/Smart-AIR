@@ -28,7 +28,7 @@
         android:textSize="24sp"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/button16"
@@ -40,7 +40,7 @@
         android:onClick="AcceptInvitation"
         app:cornerRadius="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/button22"
@@ -52,7 +52,7 @@
         android:onClick="AccessInfo"
         app:cornerRadius="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textView44"
@@ -76,7 +76,7 @@
         android:text="Link To Parent"
         android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <ImageView
         android:id="@+id/imageView33"

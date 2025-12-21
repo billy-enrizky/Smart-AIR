@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="Child Name"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewZoneName"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Zone Not Available"
-            android:textSize="18sp" />
+            android:textSize="18sp"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewZonePercentage"
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text=""
-            android:textSize="14sp" />
+            android:textSize="14sp"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewLastPEF"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text=""
-            android:textSize="12sp" />
+            android:textSize="12sp"  android:textColor="#000000"/>
 
         <Button
             android:id="@+id/buttonTrendSnippet"

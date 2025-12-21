@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="Date"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewZoneChange"
@@ -28,7 +28,7 @@
             android:layout_marginTop="8dp"
             android:text="Zone Change"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewZoneDetails"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text=""
-            android:textSize="14sp" />
+            android:textSize="14sp"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewPEFValue"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text=""
-            android:textSize="14sp" />
+            android:textSize="14sp"  android:textColor="#000000"/>
 
         <Button
             android:id="@+id/buttonDelete"

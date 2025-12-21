@@ -82,7 +82,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/activity_limits_filter_title"
@@ -96,7 +96,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/night_waking_filter" />
+        app:layout_constraintTop_toBottomOf="@+id/night_waking_filter"  android:textColor="#000000"/>
 
     <com.google.android.material.slider.Slider
         android:id="@+id/cough_wheeze_slider_filter"
@@ -125,7 +125,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cough_wheeze_slider_filter" />
+        app:layout_constraintTop_toBottomOf="@+id/cough_wheeze_slider_filter"  android:textColor="#000000"/>
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/triggers_filter"
@@ -225,6 +225,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.144"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_limits_filter" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_limits_filter"  android:textColor="#000000"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

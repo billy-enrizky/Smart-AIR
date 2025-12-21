@@ -18,7 +18,7 @@
         android:text="Back To Home"
         app:layout_constraintBottom_toTopOf="@+id/childListContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/createChildPageButton"
@@ -29,7 +29,7 @@
         android:onClick="CreateNewChild"
         android:text="Add New Child"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <LinearLayout
         android:id="@+id/childListContainer"
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Current Child: \nClick name to switch"
-            android:textSize="20sp" />
+            android:textSize="20sp"  android:textColor="#000000"/>
     </LinearLayout>
 
     <Button
@@ -63,7 +63,7 @@
         android:text="Sign In"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button21" />
+        app:layout_constraintTop_toBottomOf="@+id/button21"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/button21"
@@ -75,7 +75,7 @@
         android:text="Modify Notes"
         app:layout_constraintBottom_toTopOf="@+id/button20"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextText2"  android:textColor="#000000"/>
 
     <EditText
         android:id="@+id/editTextText2"
@@ -104,7 +104,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/button20" />
+        app:layout_constraintStart_toEndOf="@+id/button20"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/dailyCheckInButton"
@@ -117,7 +117,7 @@
         android:text="Daily Check-in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button21"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextText2"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/debugButton"
@@ -129,7 +129,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/debugButton2"
@@ -141,6 +141,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"  android:textColor="#000000"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

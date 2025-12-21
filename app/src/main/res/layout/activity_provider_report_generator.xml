@@ -43,7 +43,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Provider Report Generator"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/textViewChildName"
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Child: "
-                android:textSize="16sp" />
+                android:textSize="16sp"  android:textColor="#000000"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Select Date Range (3-6 months)"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <Button
                 android:id="@+id/buttonStartDate"
@@ -87,7 +87,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Provider Sharing Status"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <LinearLayout
                 android:id="@+id/linearLayoutSharedItems"
@@ -113,7 +113,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Report Summary"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/textViewRescueFrequency"
@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Rescue Frequency: Loading..."
-                android:textSize="14sp" />
+                android:textSize="14sp"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/textViewAdherence"
@@ -129,7 +129,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Controller Adherence: Loading..."
-                android:textSize="14sp" />
+                android:textSize="14sp"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/textViewSymptomBurden"
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Symptom Burden: Loading..."
-                android:textSize="14sp" />
+                android:textSize="14sp"  android:textColor="#000000"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -145,7 +145,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Zone Distribution"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <FrameLayout
                 android:id="@+id/frameLayoutZoneChart"
@@ -159,7 +159,7 @@
                 android:layout_marginTop="24dp"
                 android:text="PEF Trend"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <FrameLayout
                 android:id="@+id/frameLayoutTrendChart"
@@ -173,7 +173,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Rescue Medicine Use Per Day"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <FrameLayout
                 android:id="@+id/frameLayoutRescueChart"
@@ -187,7 +187,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Symptoms Count Per Day"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <FrameLayout
                 android:id="@+id/frameLayoutSymptomsChart"

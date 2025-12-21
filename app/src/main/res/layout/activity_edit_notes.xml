@@ -14,6 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Modify Notes"
+        android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Child Name"
+        android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
@@ -35,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Notes:"
+        android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewChildName" />
@@ -48,6 +51,7 @@
         android:background="@drawable/input_field_background"
         android:gravity="top|start"
         android:hint="Enter notes for this child"
+        android:textColor="#000000"
         android:textColorHint="#B0B0B0"
         android:inputType="textMultiLine"
         android:minLines="5"
@@ -63,6 +67,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#6E8CA0"
         android:text="Save"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextNotes" />
@@ -74,6 +79,7 @@
         android:layout_marginTop="16dp"
         android:backgroundTint="#6E8CA0"
         android:text="Cancel"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonSave" />

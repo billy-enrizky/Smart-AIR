@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:backgroundTint="#6E8CA0"
-            android:text="Sign out" />
+            android:text="Sign out"  android:textColor="#000000"/>
 
         <FrameLayout
             android:id="@+id/buttonNotifications"
@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#6E8CA0"
-                android:text="Alerts" />
+                android:text="Alerts"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/textViewNotificationBadge"
@@ -64,7 +64,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/topBar"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"  android:textColor="#000000"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewChildren"

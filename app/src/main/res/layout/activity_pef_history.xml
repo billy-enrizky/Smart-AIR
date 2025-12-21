@@ -16,7 +16,7 @@
         android:backgroundTint="#6E8CA0"
         android:text="Back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/buttonRemoveAll"
@@ -39,7 +39,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonBack"  android:textColor="#000000"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPEF"
@@ -62,7 +62,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

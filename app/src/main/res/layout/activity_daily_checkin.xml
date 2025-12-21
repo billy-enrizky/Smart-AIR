@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <CheckBox
         android:id="@+id/night_waking"
@@ -43,7 +43,7 @@
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/daily_checkin_title" />
+        app:layout_constraintTop_toBottomOf="@+id/daily_checkin_title"  android:textColor="#000000"/>
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/activity_limits"
@@ -94,7 +94,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/night_waking" />
+        app:layout_constraintTop_toBottomOf="@+id/night_waking"  android:textColor="#000000"/>
 
     <com.google.android.material.slider.Slider
         android:id="@+id/cough_wheeze_slider_filter"
@@ -123,7 +123,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_limits" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_limits"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/log_checkin"
@@ -138,7 +138,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/triggers" />
+        app:layout_constraintTop_toBottomOf="@+id/triggers"  android:textColor="#000000"/>
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/triggers"
@@ -206,7 +206,7 @@
         android:text="Back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

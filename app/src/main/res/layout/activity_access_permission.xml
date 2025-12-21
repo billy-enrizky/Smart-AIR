@@ -38,7 +38,7 @@
         android:text="Rescue logs"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/RL"
-        app:layout_constraintTop_toTopOf="@+id/RL" />
+        app:layout_constraintTop_toTopOf="@+id/RL"  android:textColor="#000000"/>
 
     <com.google.android.material.chip.Chip
         android:id="@+id/PEF"
@@ -82,7 +82,7 @@
         android:onClick="GoBackToHome"
         android:text="Back To Home"
         app:layout_constraintStart_toStartOf="@+id/ChildList2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <LinearLayout
         android:id="@+id/ChildList2"
@@ -103,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Current Child: \nClick name to switch"
-            android:textSize="20sp" />
+            android:textSize="20sp"  android:textColor="#000000"/>
 
     </LinearLayout>
 
@@ -116,7 +116,7 @@
         android:text="Controller adherence summary"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/button3"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textView27"
@@ -125,7 +125,7 @@
         android:text="Symptoms"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/CAS"
-        app:layout_constraintTop_toBottomOf="@+id/CAS" />
+        app:layout_constraintTop_toBottomOf="@+id/CAS"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textView26"
@@ -134,7 +134,7 @@
         android:text="Triggers"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/S"
-        app:layout_constraintTop_toBottomOf="@+id/S" />
+        app:layout_constraintTop_toBottomOf="@+id/S"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textView30"
@@ -143,7 +143,7 @@
         android:text="Peak-flow (PEF)"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/PEF"
-        app:layout_constraintTop_toTopOf="@+id/PEF" />
+        app:layout_constraintTop_toTopOf="@+id/PEF"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textView32"
@@ -153,7 +153,7 @@
         android:text="                   Summary charts\n(dashboard/report visuals)"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/SC" />
+        app:layout_constraintEnd_toEndOf="@+id/SC"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textView31"
@@ -162,7 +162,7 @@
         android:text="Triage incidents"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/TI"
-        app:layout_constraintTop_toTopOf="@+id/TI" />
+        app:layout_constraintTop_toTopOf="@+id/TI"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/button3"
@@ -173,6 +173,6 @@
         android:onClick="ApplyChange"
         android:text="Apply Change"
         app:layout_constraintBottom_toTopOf="@+id/textView30"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"  android:textColor="#000000"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

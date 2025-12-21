@@ -23,7 +23,7 @@
         android:onClick="Back"
         android:text="Back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textView39"
@@ -34,7 +34,7 @@
         android:text="Current Child: "
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textView50"
@@ -45,5 +45,5 @@
         android:text="Controller Adherence:"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

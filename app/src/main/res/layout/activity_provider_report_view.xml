@@ -18,7 +18,7 @@
         android:backgroundTint="#6E8CA0"
         android:text="Back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textViewTitle"
@@ -31,7 +31,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonBack"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/buttonSwitchPDF"
@@ -42,7 +42,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/buttonSavePDF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/buttonSavePDF"
@@ -54,7 +54,7 @@
         android:text="Save PDF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/buttonSwitchPDF"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle"  android:textColor="#000000"/>
 
     <ScrollView
         android:layout_width="0dp"

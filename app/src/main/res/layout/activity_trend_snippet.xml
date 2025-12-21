@@ -43,7 +43,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Trend Snippet"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/ZD"
@@ -52,7 +52,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Zone Distribution (Last 30 Days)"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <FrameLayout
                 android:id="@+id/frameLayoutZoneChart"
@@ -67,7 +67,7 @@
                 android:layout_marginTop="24dp"
                 android:text="PEF Trend (Last 30 Days)"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <FrameLayout
                 android:id="@+id/frameLayoutTrendChart"
@@ -82,7 +82,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Rescue Medicine Use Per Day (Last 30 Days)"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <FrameLayout
                 android:id="@+id/frameLayoutRescueChart"
@@ -97,7 +97,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Symptoms Count Per Day (Last 30 Days)"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"  android:textColor="#000000"/>
 
             <FrameLayout
                 android:id="@+id/frameLayoutSymptomsChart"

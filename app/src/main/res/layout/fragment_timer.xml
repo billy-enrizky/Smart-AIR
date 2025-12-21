@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:text="Re-check in:"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"  android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/textViewTimer"
@@ -22,7 +22,7 @@
         android:layout_marginTop="16dp"
         android:text="10:00"
         android:textSize="48sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/buttonRecheck"
@@ -31,7 +31,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="24dp"
         android:text="Re-check Now"
-        android:visibility="gone" />
+        android:visibility="gone"  android:textColor="#000000"/>
 
     <Button
         android:id="@+id/buttonDismiss"
@@ -40,7 +40,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
         android:text="Dismiss"
-        android:visibility="gone" />
+        android:visibility="gone"  android:textColor="#000000"/>
 
 </LinearLayout>
 

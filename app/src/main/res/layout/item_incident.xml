@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="Date"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewDecision"
@@ -28,7 +28,7 @@
             android:layout_marginTop="8dp"
             android:text="Decision"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewRedFlags"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text=""
-            android:textSize="14sp" />
+            android:textSize="14sp"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewZone"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text=""
-            android:textSize="14sp" />
+            android:textSize="14sp"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewPEF"
@@ -53,7 +53,7 @@
             android:layout_marginTop="4dp"
             android:text=""
             android:textSize="14sp"
-            android:visibility="gone" />
+            android:visibility="gone"  android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/textViewRescue"
@@ -62,7 +62,7 @@
             android:layout_marginTop="4dp"
             android:text=""
             android:textSize="14sp"
-            android:visibility="gone" />
+            android:visibility="gone"  android:textColor="#000000"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
 
