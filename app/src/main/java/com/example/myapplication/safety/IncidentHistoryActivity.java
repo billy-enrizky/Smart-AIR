@@ -43,6 +43,10 @@ public class IncidentHistoryActivity extends AppCompatActivity {
     private List<TriageIncident> incidents;
     private String parentId;
     private String childId;
+    
+    // Realtime listener references
+    private DatabaseReference incidentRef;
+    private ValueEventListener incidentListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,25 +87,45 @@ public class IncidentHistoryActivity extends AppCompatActivity {
         adapter = new IncidentAdapter(incidents);
         recyclerViewIncidents.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewIncidents.setAdapter(adapter);
-
-        loadIncidents(parentId, childId);
-
-
     }
-
-
-    private void loadIncidents(String parentId, String childId) {
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        attachIncidentListener();
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        detachIncidentListener();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        detachIncidentListener();
+    }
+    
+    private void attachIncidentListener() {
+        if (parentId == null || childId == null) {
+            return;
+        }
+        
+        // Detach existing listener first to prevent duplicates
+        detachIncidentListener();
+        
         String encodedChildId = FirebaseKeyEncoder.encode(childId);
-        DatabaseReference incidentRef = UserManager.mDatabase
+        incidentRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
                 .child(encodedChildId)
                 .child("incidents");
 
-        Query query = incidentRef.orderByChild("timestamp");
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Use direct listener instead of orderByChild query to avoid index requirements
+        // Use addValueEventListener for realtime updates similar to personalBest
+        incidentListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 incidents.clear();
@@ -112,7 +136,12 @@ public class IncidentHistoryActivity extends AppCompatActivity {
                             incidents.add(incident);
                         }
                     }
-                    Collections.reverse(incidents);
+                    // Sort by timestamp descending (newest first)
+                    Collections.sort(incidents, (a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
+                    Log.d(TAG, "Loaded " + incidents.size() + " incidents from Firebase path: " + incidentRef.toString());
+                    Log.d(TAG, "Incident history loaded with realtime updates");
+                } else {
+                    Log.d(TAG, "No incidents found at Firebase path: " + incidentRef.toString());
                 }
                 
                 adapter.notifyDataSetChanged();
@@ -128,9 +157,19 @@ public class IncidentHistoryActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading incidents", error.toException());
+                Log.e(TAG, "Error loading incidents from Firebase path: " + incidentRef.toString(), error.toException());
             }
-        });
+        };
+        
+        incidentRef.addValueEventListener(incidentListener);
+    }
+    
+    private void detachIncidentListener() {
+        if (incidentRef != null && incidentListener != null) {
+            incidentRef.removeEventListener(incidentListener);
+            incidentListener = null;
+        }
+        incidentRef = null;
     }
 
     private static class IncidentAdapter extends RecyclerView.Adapter<IncidentAdapter.ViewHolder> {

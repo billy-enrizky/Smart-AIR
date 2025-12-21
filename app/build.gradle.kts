@@ -1,5 +1,16 @@
 plugins {
     id("com.android.application")
+    alias(libs.plugins.google.firebase.crashlytics)
+}
+
+import java.util.Properties
+import java.io.FileInputStream
+
+// Load keystore properties
+val keystorePropertiesFile = rootProject.file("app/keystore.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -26,6 +37,27 @@ android {
         buildConfigField("String", "FIREBASE_APPLICATION_ID", "\"1:873564343719:android:e730a81906076d82daba82\"")
     }
 
+    signingConfigs {
+        getByName("debug") {
+            // Debug signing uses default debug keystore
+        }
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                val keystorePath = keystoreProperties.getProperty("storeFile")
+                storeFile = file(keystorePath)
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            } else {
+                // Fallback to debug keystore if keystore.properties doesn't exist
+                storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -33,6 +65,20 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+    
+    applicationVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val currentFileName = output.outputFileName
+            val newFileName = when (variant.buildType.name) {
+                "release" -> "SMART AIR.apk"
+                else -> currentFileName
+            }
+            output.outputFileName = newFileName
         }
     }
     compileOptions {
@@ -58,6 +104,7 @@ dependencies {
     implementation(libs.viewpager2)
     implementation(libs.recyclerview)
     implementation(libs.fragment)
+    implementation(libs.firebase.crashlytics)
     testImplementation(libs.junit)
     testImplementation("org.mockito:mockito-core:5.1.1")
     testImplementation("org.mockito:mockito-core:5.11.0")

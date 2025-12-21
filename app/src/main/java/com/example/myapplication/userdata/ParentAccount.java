@@ -13,7 +13,9 @@ import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import com.google.firebase.database.IgnoreExtraProperties;
 
+@IgnoreExtraProperties
 public class ParentAccount extends UserData implements Cloneable {
     String Email;
     HashMap<String, ChildAccount> children;

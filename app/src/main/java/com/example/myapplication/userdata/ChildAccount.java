@@ -13,7 +13,9 @@ import com.example.myapplication.utils.FirebaseKeyEncoder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.IgnoreExtraProperties;
 
+@IgnoreExtraProperties
 public class ChildAccount extends UserData {
     String Parent_id;
     String password;

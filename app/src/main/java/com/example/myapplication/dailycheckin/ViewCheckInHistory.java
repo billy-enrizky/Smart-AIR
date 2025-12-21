@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,6 +20,11 @@ import com.example.myapplication.ResultCallBack;
 import com.example.myapplication.UserManager;
 import com.example.myapplication.childmanaging.SignInChildProfileActivity;
 import com.example.myapplication.userdata.AccountType;
+import com.example.myapplication.utils.FirebaseKeyEncoder;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,10 +34,16 @@ import java.util.Collections;
 import java.util.HashMap;
 
 public class ViewCheckInHistory extends AppCompatActivity {
+    private static final String TAG = "ViewCheckInHistory";
+    
     TextView historyTextTitle;
     TextView historyText;
     String history = "";
     Button exportButton;
+    
+    // Realtime listener references
+    private DatabaseReference checkInRef;
+    private ValueEventListener checkInListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +57,6 @@ public class ViewCheckInHistory extends AppCompatActivity {
             historyTextTitle.setText("History for " + SignInChildProfileActivity.getCurrentChild().getName());
         }
         this.historyText = (TextView)findViewById(R.id.display_history);
-        createHistory();
         exportButton = (Button)findViewById(R.id.export_pdf_button);
         exportButton.setOnClickListener(v -> {
             // Call your PDF export logic here.
@@ -55,33 +66,69 @@ public class ViewCheckInHistory extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
         });
-
     }
-
-    public void returnToSymptoms(View view) {
-        Intent intent = new Intent(this, FilterCheckInBySymptoms.class);
-        Intent thisintent = getIntent();
-        if(thisintent.hasExtra("permissionToTriggers")){
-            intent.putExtra("permissionToTriggers", thisintent.getStringExtra("permissionToTriggers"));
-        }
-        if(thisintent.hasExtra("permissionToSymptoms")){
-            intent.putExtra("permissionToSymptoms", thisintent.getStringExtra("permissionToSymptoms"));
-        }
-        if(thisintent.hasExtra("isProvider")){
-            intent.putExtra("isProvider", thisintent.getStringExtra("isProvider"));
-            intent.putExtra("childName", thisintent.getStringExtra("childName"));
-        }
-        startActivity(intent);
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        attachCheckInListener();
     }
-
-    public void createHistory() {
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        detachCheckInListener();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        detachCheckInListener();
+    }
+    
+    private void attachCheckInListener() {
         CheckInHistoryFilters filters = CheckInHistoryFilters.getInstance();
-        CheckInModel.readFromDB(CheckInHistoryFilters.getInstance().getUsername(), filters.getStartDate(), filters.getEndDate(), new ResultCallBack<HashMap<String,DailyCheckin>>(){
+        String username = filters.getUsername();
+        
+        if (username == null) {
+            return;
+        }
+        
+        // Detach existing listener first to prevent duplicates
+        detachCheckInListener();
+        
+        String encodedUsername = FirebaseKeyEncoder.encode(username);
+        checkInRef = UserManager.mDatabase.child("CheckInManager").child(encodedUsername);
+        
+        // Use addValueEventListener for realtime updates similar to personalBest
+        // Apply date range and filters in code after loading
+        checkInListener = new ValueEventListener() {
             @Override
-            public void onComplete(HashMap<String,DailyCheckin> result){
-                ArrayList<String>datesInOrder = new ArrayList<>(result.keySet());
-                //Toast.makeText(ViewCheckInHistory.this, "# of dates: " + datesInOrder.size(), Toast.LENGTH_SHORT).show();
+            public void onDataChange(DataSnapshot snapshot) {
+                HashMap<String, DailyCheckin> result = new HashMap<>();
+                if (snapshot.exists()) {
+                    for (DataSnapshot s : snapshot.getChildren()) {
+                        String date = s.getKey();
+                        DailyCheckin record = s.getValue(DailyCheckin.class);
+                        if (record != null) {
+                            // Apply date range filter
+                            String startDate = filters.getStartDate();
+                            String endDate = filters.getEndDate();
+                            if ((startDate == null || date.compareTo(startDate) >= 0) &&
+                                (endDate == null || date.compareTo(endDate) <= 0)) {
+                                result.put(date, record);
+                            }
+                        }
+                    }
+                    Log.d(TAG, "Loaded " + result.size() + " check-ins with realtime updates (after date filtering)");
+                } else {
+                    Log.d(TAG, "No check-ins found at Firebase path: " + checkInRef.toString());
+                }
+                
+                // Process and display history
+                ArrayList<String> datesInOrder = new ArrayList<>(result.keySet());
                 Collections.sort(datesInOrder);
+                history = "";
                 int datesProcessed = 0;
                 for (String date: datesInOrder) {
                     DailyCheckin entry = result.get(date);
@@ -105,15 +152,46 @@ public class ViewCheckInHistory extends AppCompatActivity {
                         history = history + message + "\n";
                     }
                 }
-                //Toast.makeText(ViewCheckInHistory.this, "# of entries: " + datesProcessed, Toast.LENGTH_SHORT).show();
                 if (history.isEmpty()) {
                     history = "No data for selected filters.";
                 }
                 historyText.setText(history);
                 historyText.setTextSize(14);
             }
-        });
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, "Error loading check-in history from Firebase path: " + checkInRef.toString(), error.toException());
+            }
+        };
+        
+        checkInRef.addValueEventListener(checkInListener);
     }
+    
+    private void detachCheckInListener() {
+        if (checkInRef != null && checkInListener != null) {
+            checkInRef.removeEventListener(checkInListener);
+            checkInListener = null;
+        }
+        checkInRef = null;
+    }
+
+    public void returnToSymptoms(View view) {
+        Intent intent = new Intent(this, FilterCheckInBySymptoms.class);
+        Intent thisintent = getIntent();
+        if(thisintent.hasExtra("permissionToTriggers")){
+            intent.putExtra("permissionToTriggers", thisintent.getStringExtra("permissionToTriggers"));
+        }
+        if(thisintent.hasExtra("permissionToSymptoms")){
+            intent.putExtra("permissionToSymptoms", thisintent.getStringExtra("permissionToSymptoms"));
+        }
+        if(thisintent.hasExtra("isProvider")){
+            intent.putExtra("isProvider", thisintent.getStringExtra("isProvider"));
+            intent.putExtra("childName", thisintent.getStringExtra("childName"));
+        }
+        startActivity(intent);
+    }
+
 
     public void exportToPdf() throws IOException {
         File documentsDir = this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);

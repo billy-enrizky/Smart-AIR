@@ -22,7 +22,9 @@ import com.example.myapplication.safety.ZoneCalculator;
 import com.example.myapplication.safety.ZoneChangeEvent;
 import com.example.myapplication.notifications.AlertDetector;
 import com.example.myapplication.utils.FirebaseKeyEncoder;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import android.content.Intent;
 
 import java.text.SimpleDateFormat;
@@ -128,10 +130,20 @@ public class PEFEntryActivity extends AppCompatActivity {
                 .child("pefReadings")
                 .child(String.valueOf(timestamp));
 
+        // PEF entries persist forever in Firebase, just like rescue medicine logs
+        // Each entry is stored with timestamp as key and will never be automatically deleted
+        String firebasePath = "users/" + parentId + "/children/" + encodedChildId + "/pefReadings/" + timestamp;
+        Log.d(TAG, "savePEFReading: Saving PEF reading to Firebase");
+        Log.d(TAG, "savePEFReading: childId=" + childId + ", encodedChildId=" + encodedChildId + ", parentId=" + parentId);
+        Log.d(TAG, "savePEFReading: Firebase path=" + firebasePath);
+        Log.d(TAG, "savePEFReading: PEF value=" + pefValue + ", timestamp=" + timestamp + " (" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(timestamp)) + ")");
+        
         pefRef.setValue(reading)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "PEF reading saved successfully to Firebase: " + pefRef.toString());
+                        Log.d(TAG, "savePEFReading: PEF reading saved successfully to Firebase: " + pefRef.toString());
+                        Log.d(TAG, "savePEFReading: PEF entry will persist forever - stored at: " + firebasePath);
+                        Log.d(TAG, "savePEFReading: Reading data - value=" + reading.getValue() + ", timestamp=" + reading.getTimestamp() + ", preMed=" + reading.isPreMed() + ", postMed=" + reading.isPostMed() + ", notes=" + reading.getNotes());
                         Toast.makeText(this, "PEF reading saved successfully", Toast.LENGTH_SHORT).show();
                         
                         checkAndLogZoneChange(pefValue);
@@ -139,7 +151,8 @@ public class PEFEntryActivity extends AppCompatActivity {
                         setResult(RESULT_OK);
                         finish();
                     } else {
-                        Log.e(TAG, "Failed to save PEF reading", task.getException());
+                        Log.e(TAG, "savePEFReading: Failed to save PEF reading to Firebase path: " + firebasePath, task.getException());
+                        Log.e(TAG, "savePEFReading: Error details - " + (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
                         Toast.makeText(this, "Failed to save PEF reading", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -181,38 +194,65 @@ public class PEFEntryActivity extends AppCompatActivity {
                     .child(encodedChildId)
                     .child("history");
 
-            historyRef.orderByKey().limitToLast(1).get().addOnCompleteListener(historyTask -> {
-                Zone previousZone = Zone.UNKNOWN;
-                if (historyTask.isSuccessful() && historyTask.getResult().hasChildren()) {
-                    for (com.google.firebase.database.DataSnapshot snapshot : historyTask.getResult().getChildren()) {
-                        ZoneChangeEvent event = snapshot.getValue(ZoneChangeEvent.class);
-                        if (event != null && event.getNewZone() != null) {
-                            previousZone = event.getNewZone();
+            // Use direct listener instead of orderByKey query to avoid index requirements
+            // Find the latest zone change in code after loading
+            historyRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+                    Zone previousZone = Zone.UNKNOWN;
+                    long latestTimestamp = 0;
+                    
+                    if (snapshot.exists()) {
+                        for (com.google.firebase.database.DataSnapshot child : snapshot.getChildren()) {
+                            ZoneChangeEvent event = child.getValue(ZoneChangeEvent.class);
+                            if (event != null && event.getNewZone() != null) {
+                                long eventTimestamp = event.getTimestamp();
+                                if (eventTimestamp > latestTimestamp) {
+                                    latestTimestamp = eventTimestamp;
+                                    previousZone = event.getNewZone();
+                                }
+                            }
                         }
+                        Log.d(TAG, "Loaded zone history to find previous zone from Firebase path: " + historyRef.toString());
+                    } else {
+                        Log.d(TAG, "No zone history found at Firebase path: " + historyRef.toString());
                     }
+                    
+                    saveZoneChange(previousZone, newZone, pefValue, percentage, personalBest, historyRef);
                 }
 
-                ZoneChangeEvent zoneChange = new ZoneChangeEvent(
-                        System.currentTimeMillis(),
-                        previousZone,
-                        newZone,
-                        pefValue,
-                        percentage
-                );
-                historyRef.child(String.valueOf(zoneChange.getTimestamp())).setValue(zoneChange)
-                        .addOnCompleteListener(historySaveTask -> {
-                            if (historySaveTask.isSuccessful()) {
-                                Log.d(TAG, "Zone change saved successfully to Firebase");
-                            } else {
-                                Log.e(TAG, "Failed to save zone change", historySaveTask.getException());
-                            }
-                        });
-
-                String childName = childAccount != null ? childAccount.getName() : "Your child";
-                AlertDetector.checkRedZoneDay(parentId, childId, childName, pefValue, personalBest);
-                AlertDetector.checkWorseAfterDose(parentId, childId, childName, pefValue, personalBest);
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.e(TAG, "Error loading zone history from Firebase path: " + historyRef.toString(), error.toException());
+                    // Continue with UNKNOWN previous zone if loading fails
+                    saveZoneChange(Zone.UNKNOWN, newZone, pefValue, percentage, personalBest, historyRef);
+                }
             });
         });
+    }
+
+    private void saveZoneChange(Zone previousZone, Zone newZone, int pefValue, double percentage, 
+                                Integer personalBest, DatabaseReference historyRef) {
+
+        ZoneChangeEvent zoneChange = new ZoneChangeEvent(
+                System.currentTimeMillis(),
+                previousZone,
+                newZone,
+                pefValue,
+                percentage
+        );
+        historyRef.child(String.valueOf(zoneChange.getTimestamp())).setValue(zoneChange)
+                .addOnCompleteListener(historySaveTask -> {
+                    if (historySaveTask.isSuccessful()) {
+                        Log.d(TAG, "Zone change saved successfully to Firebase");
+                    } else {
+                        Log.e(TAG, "Failed to save zone change", historySaveTask.getException());
+                    }
+                });
+
+        String childName = childAccount != null ? childAccount.getName() : "Your child";
+        AlertDetector.checkRedZoneDay(parentId, childId, childName, pefValue, personalBest);
+        AlertDetector.checkWorseAfterDose(parentId, childId, childName, pefValue, personalBest);
     }
 
     private void loadChildAccount() {

@@ -47,6 +47,12 @@ public class PEFHistoryActivity extends AppCompatActivity {
     private String parentId;
     private String childId;
     private boolean isProvider;
+    
+    // Realtime listener references
+    private DatabaseReference pefRef;
+    private DatabaseReference historyRef;
+    private ValueEventListener pefListener;
+    private ValueEventListener historyListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,95 +144,156 @@ public class PEFHistoryActivity extends AppCompatActivity {
         adapter = new HistoryAdapter(historyItems, parentId, childId, this);
         recyclerViewPEF.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewPEF.setAdapter(adapter);
-
-        loadHistory(parentId, childId);
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        attachHistoryListeners();
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        detachHistoryListeners();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        detachHistoryListeners();
     }
     
     public void refreshHistory() {
-        loadHistory(parentId, childId);
+        // Realtime listeners will automatically update, but we can trigger a refresh
+        attachHistoryListeners();
     }
-
-    private void loadHistory(String parentId, String childId) {
-        historyItems.clear();
+    
+    private void attachHistoryListeners() {
+        if (parentId == null || childId == null) {
+            return;
+        }
+        
+        // Detach existing listeners first to prevent duplicates
+        detachHistoryListeners();
         
         String encodedChildId = FirebaseKeyEncoder.encode(childId);
-        DatabaseReference pefRef = UserManager.mDatabase
+        pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
                 .child(encodedChildId)
                 .child("pefReadings");
 
-        DatabaseReference historyRef = UserManager.mDatabase
+        historyRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
                 .child("children")
                 .child(encodedChildId)
                 .child("history");
 
-        Query pefQuery = pefRef.orderByChild("timestamp");
-        Query historyQuery = historyRef.orderByKey();
+        // IMPORTANT: PEF entries persist forever, just like rescue medicine logs
+        // This method loads ALL PEF readings from Firebase with realtime updates
+        // Use addValueEventListener for realtime updates similar to personalBest
+        // No time limit - all historical PEF entries are loaded and displayed
+        final List<PEFReading>[] pefReadingsRef = new List[]{new ArrayList<>()};
+        final List<ZoneChangeEvent>[] zoneChangesRef = new List[]{new ArrayList<>()};
+        final boolean[] pefLoaded = {false};
+        final boolean[] historyLoaded = {false};
 
-        final int[] loadCount = {0};
-        final int totalLoads = 2;
-
-        final List<PEFReading> pefReadings = new ArrayList<>();
-        final List<ZoneChangeEvent> zoneChanges = new ArrayList<>();
-
-        pefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        pefListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                pefReadingsRef[0].clear();
                 if (snapshot.exists()) {
+                    long oldestTimestamp = Long.MAX_VALUE;
+                    long newestTimestamp = 0;
                     for (DataSnapshot child : snapshot.getChildren()) {
                         PEFReading reading = child.getValue(PEFReading.class);
                         if (reading != null) {
-                            pefReadings.add(reading);
+                            pefReadingsRef[0].add(reading);
+                            long timestamp = reading.getTimestamp();
+                            if (timestamp < oldestTimestamp) {
+                                oldestTimestamp = timestamp;
+                            }
+                            if (timestamp > newestTimestamp) {
+                                newestTimestamp = timestamp;
+                            }
                         }
                     }
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    if (pefReadingsRef[0].size() > 0) {
+                        Log.d(TAG, "Loaded " + pefReadingsRef[0].size() + " PEF readings from Firebase path: " + pefRef.toString());
+                        Log.d(TAG, "PEF history date range: " + sdf.format(new Date(oldestTimestamp)) + " to " + sdf.format(new Date(newestTimestamp)));
+                        Log.d(TAG, "PEF entries persist forever - all historical entries loaded with realtime updates (no date filtering)");
+                    } else {
+                        Log.d(TAG, "No PEF readings found at Firebase path: " + pefRef.toString());
+                    }
+                } else {
+                    Log.d(TAG, "No PEF readings found at Firebase path: " + pefRef.toString());
                 }
-                loadCount[0]++;
-                if (loadCount[0] == totalLoads) {
-                    combineAndDisplayHistory(pefReadings, zoneChanges);
+                pefLoaded[0] = true;
+                // Combine and display when both are loaded
+                if (pefLoaded[0] && historyLoaded[0]) {
+                    combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading PEF history", error.toException());
-                loadCount[0]++;
-                if (loadCount[0] == totalLoads) {
-                    combineAndDisplayHistory(pefReadings, zoneChanges);
-                }
+                Log.e(TAG, "Error loading PEF history from Firebase path: " + pefRef.toString(), error.toException());
             }
-        });
+        };
 
-        historyQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        pefRef.addValueEventListener(pefListener);
+
+        historyListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                zoneChangesRef[0].clear();
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         ZoneChangeEvent event = child.getValue(ZoneChangeEvent.class);
                         if (event != null && event.getNewZone() != null) {
-                            zoneChanges.add(event);
+                            zoneChangesRef[0].add(event);
                         }
                     }
+                    Log.d(TAG, "Loaded " + zoneChangesRef[0].size() + " zone changes from Firebase path: " + historyRef.toString());
+                    Log.d(TAG, "Zone change history persists forever - all historical entries loaded with realtime updates (no date filtering)");
+                } else {
+                    Log.d(TAG, "No zone changes found at Firebase path: " + historyRef.toString());
                 }
-                loadCount[0]++;
-                if (loadCount[0] == totalLoads) {
-                    combineAndDisplayHistory(pefReadings, zoneChanges);
+                historyLoaded[0] = true;
+                // Combine and display when both are loaded
+                if (pefLoaded[0] && historyLoaded[0]) {
+                    combineAndDisplayHistory(new ArrayList<>(pefReadingsRef[0]), new ArrayList<>(zoneChangesRef[0]));
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading zone change history", error.toException());
-                loadCount[0]++;
-                if (loadCount[0] == totalLoads) {
-                    combineAndDisplayHistory(pefReadings, zoneChanges);
-                }
+                Log.e(TAG, "Error loading zone change history from Firebase path: " + historyRef.toString(), error.toException());
             }
-        });
+        };
+
+        historyRef.addValueEventListener(historyListener);
     }
+    
+    private void detachHistoryListeners() {
+        if (pefRef != null && pefListener != null) {
+            pefRef.removeEventListener(pefListener);
+            pefListener = null;
+        }
+        
+        if (historyRef != null && historyListener != null) {
+            historyRef.removeEventListener(historyListener);
+            historyListener = null;
+        }
+        
+        pefRef = null;
+        historyRef = null;
+    }
+
 
     private void combineAndDisplayHistory(List<PEFReading> pefReadings, List<ZoneChangeEvent> zoneChanges) {
         historyItems.clear();

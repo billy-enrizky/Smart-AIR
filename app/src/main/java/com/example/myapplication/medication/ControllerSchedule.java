@@ -2,6 +2,7 @@ package com.example.myapplication.medication;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 /**
  * Represents a controller medication schedule.
@@ -14,6 +15,7 @@ import java.util.List;
  * Time matching is not required - a day is considered adherent if at least one
  * controller log exists for that day.
  */
+@IgnoreExtraProperties
 public class ControllerSchedule {
     private List<String> dates;  // Dates in yyyy-MM-dd format
 

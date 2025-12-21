@@ -161,8 +161,9 @@ public class TrendSnippetActivity extends AppCompatActivity {
                 .child(encodedChildId)
                 .child("pefReadings");
 
-        Query query = pefRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Use direct listener instead of orderByChild query to avoid index requirements
+        // Filter by date range in code after loading
+        pefRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Map<String, Integer> zoneCounts = new HashMap<>();
@@ -174,12 +175,15 @@ public class TrendSnippetActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         PEFReading reading = child.getValue(PEFReading.class);
-                        if (reading != null) {
+                        if (reading != null && reading.getTimestamp() >= startDate && reading.getTimestamp() <= endDate) {
                             Zone zone = ZoneCalculator.calculateZone(reading.getValue(), personalBest);
                             String zoneName = ChartComponent.normalizeZoneName(zone.getDisplayName());
                             zoneCounts.put(zoneName, zoneCounts.getOrDefault(zoneName, 0) + 1);
                         }
                     }
+                    Log.d(TAG, "Loaded PEF readings for zone distribution from Firebase path: " + pefRef.toString());
+                } else {
+                    Log.d(TAG, "No PEF readings found at Firebase path: " + pefRef.toString());
                 }
 
                 runOnUiThread(() -> {
@@ -193,13 +197,14 @@ public class TrendSnippetActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading zone distribution", error.toException());
+                Log.e(TAG, "Error loading zone distribution from Firebase path: " + pefRef.toString(), error.toException());
             }
         });
     }
 
     private void loadPEFTrend() {
         if (personalBest == null || personalBest <= 0) {
+            Log.w(TAG, "loadPEFTrend: Skipping because personalBest is null or <= 0. personalBest=" + personalBest);
             return;
         }
 
@@ -209,6 +214,12 @@ public class TrendSnippetActivity extends AppCompatActivity {
         long startDate = cal.getTimeInMillis();
 
         String encodedChildId = FirebaseKeyEncoder.encode(childId);
+        String firebasePath = "users/" + parentId + "/children/" + encodedChildId + "/pefReadings";
+        Log.d(TAG, "loadPEFTrend: Loading PEF data for chart");
+        Log.d(TAG, "loadPEFTrend: childId=" + childId + ", encodedChildId=" + encodedChildId + ", parentId=" + parentId);
+        Log.d(TAG, "loadPEFTrend: Firebase path=" + firebasePath);
+        Log.d(TAG, "loadPEFTrend: Date range: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(startDate)) + " to " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(endDate)));
+        
         DatabaseReference pefRef = UserManager.mDatabase
                 .child("users")
                 .child(parentId)
@@ -216,34 +227,120 @@ public class TrendSnippetActivity extends AppCompatActivity {
                 .child(encodedChildId)
                 .child("pefReadings");
 
-        Query query = pefRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Use direct listener instead of orderByChild query to avoid index requirements
+        // Filter by date range in code after loading
+        // Check encoded path first (current standard), then raw path for backward compatibility
+        final List<ChartComponent.PEFDataPoint> dataPoints = new ArrayList<>();
+        final long finalStartDate = startDate;
+        final long finalEndDate = endDate;
+        
+        pefRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                List<ChartComponent.PEFDataPoint> dataPoints = new ArrayList<>();
+                int totalReadings = 0;
+                boolean foundData = false;
+                
                 if (snapshot.exists()) {
+                    foundData = true;
+                    totalReadings = (int) snapshot.getChildrenCount();
+                    Log.d(TAG, "loadPEFTrend: Found " + totalReadings + " total PEF readings in Firebase at encoded path");
+                    
                     for (DataSnapshot child : snapshot.getChildren()) {
                         PEFReading reading = child.getValue(PEFReading.class);
                         if (reading != null) {
-                            dataPoints.add(new ChartComponent.PEFDataPoint(reading.getTimestamp(), reading.getValue()));
+                            long timestamp = reading.getTimestamp();
+                            if (timestamp >= finalStartDate && timestamp <= finalEndDate) {
+                                dataPoints.add(new ChartComponent.PEFDataPoint(timestamp, reading.getValue()));
+                            }
+                            Log.d(TAG, "loadPEFTrend: Reading - timestamp=" + timestamp + " (" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(timestamp)) + "), value=" + reading.getValue() + ", inRange=" + (timestamp >= finalStartDate && timestamp <= finalEndDate));
+                        } else {
+                            Log.w(TAG, "loadPEFTrend: Failed to parse PEF reading from snapshot: " + child.getKey());
                         }
                     }
+                    Log.d(TAG, "loadPEFTrend: Loaded " + dataPoints.size() + " PEF readings in date range out of " + totalReadings + " total from Firebase path: " + pefRef.toString());
+                } else {
+                    Log.d(TAG, "loadPEFTrend: No PEF readings found at encoded Firebase path: " + pefRef.toString());
                 }
 
-                dataPoints.sort((a, b) -> Long.compare(a.getTimestamp(), b.getTimestamp()));
+                // If no data found at encoded path and encoded != raw, check raw path for backward compatibility
+                // This handles data saved before the encoding fix was applied
+                if (!foundData && !encodedChildId.equals(childId)) {
+                    Log.d(TAG, "loadPEFTrend: Checking raw childId path for backward compatibility: " + childId);
+                    DatabaseReference rawPefRef = UserManager.mDatabase
+                            .child("users")
+                            .child(parentId)
+                            .child("children")
+                            .child(childId)
+                            .child("pefReadings");
+                    
+                    rawPefRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot rawSnapshot) {
+                            if (rawSnapshot.exists()) {
+                                int rawTotalReadings = (int) rawSnapshot.getChildrenCount();
+                                Log.d(TAG, "loadPEFTrend: Found " + rawTotalReadings + " total PEF readings in Firebase at raw path (backward compatibility)");
+                                
+                                for (DataSnapshot child : rawSnapshot.getChildren()) {
+                                    PEFReading reading = child.getValue(PEFReading.class);
+                                    if (reading != null) {
+                                        long timestamp = reading.getTimestamp();
+                                        if (timestamp >= finalStartDate && timestamp <= finalEndDate) {
+                                            dataPoints.add(new ChartComponent.PEFDataPoint(timestamp, reading.getValue()));
+                                        }
+                                        Log.d(TAG, "loadPEFTrend: Reading (raw path) - timestamp=" + timestamp + " (" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(timestamp)) + "), value=" + reading.getValue() + ", inRange=" + (timestamp >= finalStartDate && timestamp <= finalEndDate));
+                                    }
+                                }
+                                Log.d(TAG, "loadPEFTrend: Loaded " + dataPoints.size() + " total PEF readings in date range from raw path: " + rawPefRef.toString());
+                            } else {
+                                Log.d(TAG, "loadPEFTrend: No PEF readings found at raw Firebase path either: " + rawPefRef.toString());
+                            }
+                            
+                            dataPoints.sort((a, b) -> Long.compare(a.getTimestamp(), b.getTimestamp()));
 
-                runOnUiThread(() -> {
-                    frameLayoutTrendChart.removeAllViews();
-                    View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutTrendChart, ChartComponent.ChartType.LINE);
-                    frameLayoutTrendChart.addView(chartView);
-                    LineChart lineChart = chartView.findViewById(R.id.lineChart);
-                    ChartComponent.setupLineChart(lineChart, dataPoints, "PEF Trend");
-                });
+                            runOnUiThread(() -> {
+                                frameLayoutTrendChart.removeAllViews();
+                                View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutTrendChart, ChartComponent.ChartType.LINE);
+                                frameLayoutTrendChart.addView(chartView);
+                                LineChart lineChart = chartView.findViewById(R.id.lineChart);
+                                ChartComponent.setupLineChart(lineChart, dataPoints, "PEF Trend");
+                                Log.d(TAG, "loadPEFTrend: Chart updated with " + dataPoints.size() + " data points");
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            Log.e(TAG, "loadPEFTrend: Error loading PEF trend from raw Firebase path: " + rawPefRef.toString(), error.toException());
+                            // Still update chart with data from encoded path (if any)
+                            dataPoints.sort((a, b) -> Long.compare(a.getTimestamp(), b.getTimestamp()));
+                            runOnUiThread(() -> {
+                                frameLayoutTrendChart.removeAllViews();
+                                View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutTrendChart, ChartComponent.ChartType.LINE);
+                                frameLayoutTrendChart.addView(chartView);
+                                LineChart lineChart = chartView.findViewById(R.id.lineChart);
+                                ChartComponent.setupLineChart(lineChart, dataPoints, "PEF Trend");
+                                Log.d(TAG, "loadPEFTrend: Chart updated with " + dataPoints.size() + " data points");
+                            });
+                        }
+                    });
+                } else {
+                    // Data found at encoded path or encoded == raw, update chart
+                    dataPoints.sort((a, b) -> Long.compare(a.getTimestamp(), b.getTimestamp()));
+
+                    runOnUiThread(() -> {
+                        frameLayoutTrendChart.removeAllViews();
+                        View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutTrendChart, ChartComponent.ChartType.LINE);
+                        frameLayoutTrendChart.addView(chartView);
+                        LineChart lineChart = chartView.findViewById(R.id.lineChart);
+                        ChartComponent.setupLineChart(lineChart, dataPoints, "PEF Trend");
+                        Log.d(TAG, "loadPEFTrend: Chart updated with " + dataPoints.size() + " data points");
+                    });
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading PEF trend", error.toException());
+                Log.e(TAG, "loadPEFTrend: Error loading PEF trend from Firebase path: " + pefRef.toString(), error.toException());
+                Log.e(TAG, "loadPEFTrend: Error code: " + error.getCode() + ", message: " + error.getMessage());
             }
         });
     }
@@ -342,6 +439,13 @@ public class TrendSnippetActivity extends AppCompatActivity {
         cal.add(Calendar.DAY_OF_MONTH, -30);
         long startDate = cal.getTimeInMillis();
 
+        Map<String, Integer> dailyCounts = new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDateStr = logDateFormat.format(new Date(startDate));
+        String endDateStr = logDateFormat.format(new Date(endDate));
+
+        // Load from triage sessions (incidents)
         String encodedChildId = FirebaseKeyEncoder.encode(childId);
         DatabaseReference incidentRef = UserManager.mDatabase
                 .child("users")
@@ -350,35 +454,83 @@ public class TrendSnippetActivity extends AppCompatActivity {
                 .child(encodedChildId)
                 .child("incidents");
 
-        Query query = incidentRef.orderByChild("timestamp").startAt(startDate).endAt(endDate);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Use direct listener instead of orderByChild query to avoid index requirements
+        // Filter by date range in code after loading
+        incidentRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Map<String, Integer> dailyCounts = new HashMap<>();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
                 if (snapshot.exists()) {
                     for (DataSnapshot child : snapshot.getChildren()) {
                         TriageIncident incident = child.getValue(TriageIncident.class);
-                        if (incident != null) {
+                        if (incident != null && incident.getTimestamp() >= startDate && incident.getTimestamp() <= endDate) {
                             String dateKey = dateFormat.format(new Date(incident.getTimestamp()));
                             dailyCounts.put(dateKey, dailyCounts.getOrDefault(dateKey, 0) + 1);
                         }
                     }
+                    Log.d(TAG, "Loaded incidents from Firebase path: " + incidentRef.toString());
+                } else {
+                    Log.d(TAG, "No incidents found at Firebase path: " + incidentRef.toString());
                 }
 
-                runOnUiThread(() -> {
-                    frameLayoutSymptomsChart.removeAllViews();
-                    View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutSymptomsChart, ChartComponent.ChartType.BAR);
-                    frameLayoutSymptomsChart.addView(chartView);
-                    BarChart barChart = chartView.findViewById(R.id.barChart);
-                    ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Symptoms Count Per Day", android.graphics.Color.parseColor("#9C27B0"));
+                // Also load from daily check-ins (CheckInManager)
+                com.example.myapplication.dailycheckin.CheckInModel.readFromDB(childId, startDateStr, endDateStr, new ResultCallBack<HashMap<String, com.example.myapplication.dailycheckin.DailyCheckin>>() {
+                    @Override
+                    public void onComplete(HashMap<String, com.example.myapplication.dailycheckin.DailyCheckin> checkIns) {
+                        if (checkIns != null) {
+                            for (Map.Entry<String, com.example.myapplication.dailycheckin.DailyCheckin> entry : checkIns.entrySet()) {
+                                String dateKey = entry.getKey(); // CheckInManager uses date as key (yyyy-MM-dd)
+                                com.example.myapplication.dailycheckin.DailyCheckin checkIn = entry.getValue();
+                                // Count check-ins with symptoms (coughWheezeLevel > 0 or nightWaking or activityLimits)
+                                if (checkIn != null && (checkIn.getCoughWheezeLevel() > 0 || checkIn.getNightWaking() || 
+                                        (checkIn.getActivityLimits() != null && !checkIn.getActivityLimits().isEmpty()))) {
+                                    if (dateKey != null && !dateKey.isEmpty()) {
+                                        dailyCounts.put(dateKey, dailyCounts.getOrDefault(dateKey, 0) + 1);
+                                    }
+                                }
+                            }
+                        }
+
+                        runOnUiThread(() -> {
+                            frameLayoutSymptomsChart.removeAllViews();
+                            View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutSymptomsChart, ChartComponent.ChartType.BAR);
+                            frameLayoutSymptomsChart.addView(chartView);
+                            BarChart barChart = chartView.findViewById(R.id.barChart);
+                            ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Symptoms Count Per Day", android.graphics.Color.parseColor("#9C27B0"));
+                        });
+                    }
                 });
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.e(TAG, "Error loading symptoms per day", error.toException());
+                Log.e(TAG, "Error loading symptoms per day from triage sessions at Firebase path: " + incidentRef.toString(), error.toException());
+                // Still try to load from daily check-ins even if triage data fails
+                com.example.myapplication.dailycheckin.CheckInModel.readFromDB(childId, startDateStr, endDateStr, new ResultCallBack<HashMap<String, com.example.myapplication.dailycheckin.DailyCheckin>>() {
+                    @Override
+                    public void onComplete(HashMap<String, com.example.myapplication.dailycheckin.DailyCheckin> checkIns) {
+                        Map<String, Integer> dailyCounts = new HashMap<>();
+                        if (checkIns != null) {
+                            for (Map.Entry<String, com.example.myapplication.dailycheckin.DailyCheckin> entry : checkIns.entrySet()) {
+                                String dateKey = entry.getKey(); // CheckInManager uses date as key (yyyy-MM-dd)
+                                com.example.myapplication.dailycheckin.DailyCheckin checkIn = entry.getValue();
+                                if (checkIn != null && (checkIn.getCoughWheezeLevel() > 0 || checkIn.getNightWaking() || 
+                                        (checkIn.getActivityLimits() != null && !checkIn.getActivityLimits().isEmpty()))) {
+                                    if (dateKey != null && !dateKey.isEmpty()) {
+                                        dailyCounts.put(dateKey, dailyCounts.getOrDefault(dateKey, 0) + 1);
+                                    }
+                                }
+                            }
+                        }
+
+                        runOnUiThread(() -> {
+                            frameLayoutSymptomsChart.removeAllViews();
+                            View chartView = ChartComponent.createChartView(TrendSnippetActivity.this, frameLayoutSymptomsChart, ChartComponent.ChartType.BAR);
+                            frameLayoutSymptomsChart.addView(chartView);
+                            BarChart barChart = chartView.findViewById(R.id.barChart);
+                            ChartComponent.setupDailyBarChart(barChart, dailyCounts, "Symptoms Count Per Day", android.graphics.Color.parseColor("#9C27B0"));
+                        });
+                    }
+                });
             }
         });
     }
